@@ -1,6 +1,7 @@
 package com.myviroapp;
-
+import android.os.Bundle;
 import com.facebook.react.ReactActivity;
+import com.airbnb.android.react.maps.MapsPackage;
 
 public class MainActivity extends ReactActivity {
 
@@ -12,4 +13,16 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "myviroapp";
   }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(null);
+  }
+//   @Override
+// protected List<ReactPackage> getPackages() {
+//    return Arrays.<ReactPackage>asList(
+//       new MainReactPackage(),
+//       new MapsPackage()
+//    );
+// }
 }
