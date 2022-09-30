@@ -18,7 +18,9 @@
     <!-- Usage of accelerometer and gyroscope -->
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" tools:replace="required" />
     <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="false" tools:replace="required" />
-
+    <!-- Added permissions -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
       android:name=".MainApplication"

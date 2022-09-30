@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
+// import * as Location from 'expo-location';
 
 export default function CacheMap() {
 
@@ -19,6 +20,19 @@ export default function CacheMap() {
     const onRegionChange = (region) => {
         this.setState({ region });
     }
+
+    //Grabs Location
+	// findCoordinates = async () => {
+	//     //Are the coordinates always gonna be where the person is?
+	//     //Maybe they drag a pin where it will be?
+	// 	await Location.getCurrentPositionAsync({
+    //         accuracy: 5
+	// 	}).then(	position => {
+    //         //const currentLocation = JSON.stringify(position);
+    //         this.setState({ location : position});
+    //     });
+	// };
+
     const styles = StyleSheet.create({
         container: {
           ...StyleSheet.absoluteFillObject,
