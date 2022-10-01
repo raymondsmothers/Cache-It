@@ -1,37 +1,59 @@
-import * as React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { View, Text, PermissionsAndroid, StyleSheet } from 'react-native';
 import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
-// import * as Location from 'expo-location';
+import Geolocation from 'react-native-geolocation-service';
 
 export default function CacheMap() {
+    const [initialPosition, setInitialPosition] = useState({})
+    const [hasLocationPermission, setHasLocationPermission] = useState(false)
+    const [position, setPosition] = useState({
+      latitude: 10,
+      longitude: 10,
+      latitudeDelta: 0.1,
+      longitudeDelta: 0.1,
+    });
+  
+    useEffect(() => {
+      if (hasLocationPermission) {
 
-
-    const getInitialState = () => {
-        return {
-          region: {
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.0922,
+        Geolocation.getCurrentPosition((pos) => {
+          const crd = pos.coords;
+          setPosition({
+            latitude: crd.latitude,
+            longitude: crd.longitude,
+            latitudeDelta: 0.0421,
             longitudeDelta: 0.0421,
-          },
-        };
-    }
-      
-    const onRegionChange = (region) => {
-        this.setState({ region });
-    }
+          });
+        }).catch((err) => {
+          console.log(err);
+        });
+      }
+    }, [hasLocationPermission]);
 
-    //Grabs Location
-	// findCoordinates = async () => {
-	//     //Are the coordinates always gonna be where the person is?
-	//     //Maybe they drag a pin where it will be?
-	// 	await Location.getCurrentPositionAsync({
-    //         accuracy: 5
-	// 	}).then(	position => {
-    //         //const currentLocation = JSON.stringify(position);
-    //         this.setState({ location : position});
-    //     });
-	// };
+      async function requestLocationPermission() 
+      {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              'title': 'Example App',
+              'message': 'Example App access to your location '
+            }
+          )
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            // console.log("You can use the location")
+            // alert("You can use the location");
+            setHasLocationPermission(true)
+          } else {
+            console.log("location permission denied")
+            // alert("Location permission denied");
+          }
+        } catch (err) {
+          console.warn(err)
+        }
+      }
+      
+
 
     const styles = StyleSheet.create({
         container: {
@@ -51,13 +73,13 @@ export default function CacheMap() {
 
             <MapView
              provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+             initialRegion={position}
+
              style={styles.map}
-             region={{
-               latitude: 37.78825,
-               longitude: -122.4324,
-               latitudeDelta: 0.015,
-               longitudeDelta: 0.0121,
-             }}
+             followsUserLocation={true}
+             showsUserLocation={true}
+             showsMyLocationButton={true}
+            //  initialRegion={initialPosition}
             />
            </View>
 
