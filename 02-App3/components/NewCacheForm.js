@@ -38,7 +38,7 @@ export default function NewCacheForm() {
           }
         )
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log("You can use the location")
+          // console.log("You can use the location")
           // alert("You can use the location");
         } else {
           console.log("location permission denied")
@@ -53,7 +53,7 @@ export default function NewCacheForm() {
     const findCoordinates = async () => {
           Geolocation.getCurrentPosition(
               (position) => {
-                console.log(position);
+                // console.log(position);
               },
               (error) => {
                 // See error code charts below.
@@ -62,6 +62,10 @@ export default function NewCacheForm() {
               { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
           );
     };
+
+    const generateItemLocations = async () => {
+        //generate numItems coordinate pairs
+    }
 
 
     return (
