@@ -8458,17 +8458,15 @@
   dependencies:
     "@types/geojson" "^7946.0.8"
 
-<<<<<<< HEAD
 "react-native-os@^1.2.6":
   "integrity" "sha512-OlT+xQAcvkcnf7imgXiu+myMkqDt4xw2bP5SlVo19hEn5XHBkPMLX7dk3sSGxxncH/ToMDsf1KLyrPabNVtadA=="
   "resolved" "https://registry.npmjs.org/react-native-os/-/react-native-os-1.2.6.tgz"
   "version" "1.2.6"
-=======
+
 "react-native-pager-view@*", "react-native-pager-view@^6.0.0", "react-native-pager-view@>= 4.0.0":
   "integrity" "sha512-0qUMUmA/Lhv76F+fbCcYB+iuODH6Lp6E1EYlXw+GM3Ns3FaKFtBaVYXKQSfNhqnTUg9YEOY3HuX+ZMKBSHwNbA=="
   "resolved" "https://registry.npmjs.org/react-native-pager-view/-/react-native-pager-view-6.0.0.tgz"
   "version" "6.0.0"
->>>>>>> 1f2b5fd42cf0632ccfea8234a01e3ee5de21f3d6
 
 "react-native-paper@^4.12.4":
   "integrity" "sha512-NMfLSIN0Ql/KCTSimhgzbEOgz371dqDAgChnp2VE4H7n1B0Pwy0bzPKmY/T8trVvEdmJRXrbXAusaFq8elDXNg=="
@@ -8508,11 +8506,15 @@
     "react-freeze" "^1.0.0"
     "warn-once" "^0.1.0"
 
-<<<<<<< HEAD
 "react-native-svg@^9.6.4", "react-native-svg@9.6.4":
   "integrity" "sha512-6SlbGx0vlXHyDPQXSpX+8o6bNjxKFNJsISoboAkR7YWW6hdnkMg/HJXCgT6oJC0/ClKtSO7ZPrQcK4HR65kDNg=="
   "resolved" "https://registry.npmjs.org/react-native-svg/-/react-native-svg-9.6.4.tgz"
   "version" "9.6.4"
+
+"react-native-tab-view@^3.2.1", "react-native-tab-view@>= 3.0.0":
+  "integrity" "sha512-/3htrnDJ8hXXO6M5tDKgGPan5NhiVG4oN6SH8LgQtbAO2y+YI104sjlbPOxhLUBpbj43tOQerUtJF7ENcHEPaw=="
+  "resolved" "https://registry.npmjs.org/react-native-tab-view/-/react-native-tab-view-3.2.1.tgz"
+  "version" "3.2.1"
 
 "react-native-tcp@^3.3.2":
   "integrity" "sha512-zjFmjAvYOsBkR1MF7htuPlk+uOzTykKaeu/eN+I7fkZ7UqBCW+9u/gJgWCv6Tjfn2tGgku6hsEWril4Oy3zJhg=="
@@ -8536,12 +8538,6 @@
     "inherits" "^2.0.1"
     "ip-regex" "^1.0.3"
     "util" "^0.10.3"
-=======
-"react-native-tab-view@^3.2.1", "react-native-tab-view@>= 3.0.0":
-  "integrity" "sha512-/3htrnDJ8hXXO6M5tDKgGPan5NhiVG4oN6SH8LgQtbAO2y+YI104sjlbPOxhLUBpbj43tOQerUtJF7ENcHEPaw=="
-  "resolved" "https://registry.npmjs.org/react-native-tab-view/-/react-native-tab-view-3.2.1.tgz"
-  "version" "3.2.1"
->>>>>>> 1f2b5fd42cf0632ccfea8234a01e3ee5de21f3d6
 
 "react-native-vector-icons@*":
   "integrity" "sha512-wKYLaFuQST/chH3AJRjmOLoLy3JEs1JR6zMNgTaemFpNoXs0ztRnTxcxFD9xhX7cJe1/zoN5BpQYe7kL0m5yyA=="
