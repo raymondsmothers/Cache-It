@@ -1,6 +1,6 @@
 import { ViroAnimations, ViroARScene, ViroARSceneNavigator, ViroBox, ViroMaterials } from '@viro-community/react-viro';
 import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 const ARVisionScene = () => {
   const [text, setText] = useState('Initializing AR...');
@@ -23,7 +23,8 @@ const ARVisionScene = () => {
   
 
   return (
-    <ViroARScene onTrackingUpdated={onInitialized}>
+    <ViroARScene >
+    {/* <ViroARScene onTrackingUpdated={onInitialized}> */}
         <ViroBox position={[0, -.5, -1]}
           animation={{name: "rotate", run: true, loop: true}}
           scale={[.3, .3, .1]} 
@@ -51,15 +52,19 @@ const ARVisionScene = () => {
 
 export default () => {
   return (
-    <ViroARSceneNavigator
-      autofocus={true}
-      initialScene={{
-        scene: ARVisionScene,
-      }}
-      style={styles.f1}
-    />
+    <View style={styles.f1}>
+
+      <ViroARSceneNavigator
+        autofocus={false}
+        initialScene={{
+          scene: ARVisionScene,
+        }}
+        style={styles.f1}
+      />
+    </View>
   );
 };
+
 
 ViroMaterials.createMaterials({
   grid: {
@@ -77,6 +82,16 @@ ViroAnimations.registerAnimations({
 });
 var styles = StyleSheet.create({
   f1: {flex: 1},
+  container: {
+    ...StyleSheet.absoluteFillObject,
+  //   height: 400,
+    width: 400,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
   helloWorldTextStyle: {
     fontFamily: 'Arial',
     fontSize: 30,
