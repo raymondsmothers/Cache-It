@@ -2,6 +2,11 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, PermissionsAndroid, StyleSheet} from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
+import {
+  withWalletConnect,
+  useWalletConnect,
+} from '@walletconnect/react-native-dapp';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function CacheMap() {
   const [mapRef, setMapRef] = useState();
@@ -13,6 +18,7 @@ export default function CacheMap() {
     latitudeDelta: 0.1,
     longitudeDelta: 0.1,
   });
+  const connector = useWalletConnect();
 
   const mapStyle = [
     {
@@ -78,6 +84,11 @@ export default function CacheMap() {
       requestLocationPermission();
     }
   }, [hasLocationPermission]);
+
+  useEffect(() => {
+    console.log('Connector info: ', connector);
+    console.log('Current account: ', connector.accounts[0]);
+  }, [connector]);
 
   async function requestLocationPermission() {
     try {

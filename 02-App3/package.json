@@ -17,6 +17,7 @@
     "@tradle/react-native-http": "^2.0.1",
     "@viro-community/react-viro": "^2.23.0",
     "@walletconnect/react-native-dapp": "^1.8.0",
+    "@walletconnect/web3-provider": "^1.8.0",
     "assert": "^1.5.0",
     "browserify-zlib": "^0.1.4",
     "buffer": "^4.9.2",
