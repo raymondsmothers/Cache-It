@@ -30,7 +30,12 @@ export default function App() {
         asyncStorage: AsyncStorage,
       }}>
       <NavigationContainer>
-        <Tab.Navigator>
+        <Tab.Navigator
+          screenOptions={{
+            lazy: true,
+            unmountOnBlur: true,
+          }}>
+          {/* <Tab.Navigator tabBarPosition='bottom'> */}
           <Tab.Screen
             name="CacheMap"
             component={CacheMap}

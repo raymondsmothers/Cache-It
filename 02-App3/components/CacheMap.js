@@ -13,6 +13,33 @@ export default function CacheMap() {
       latitudeDelta: 0.1,
       longitudeDelta: 0.1,
     });
+
+    const mapStyle = [
+      {
+          featureType: "administrative.land_parcel",
+          stylers: [
+              {
+                  visibility: "off"
+              }
+          ]
+      },
+      {
+          featureType: "poi",
+          stylers: [
+              {
+                  visibility: "off"
+              }
+          ]
+      },
+      {
+          featureType: "administrative.neighborhood",
+          stylers: [
+              {
+                  visibility: "off"
+              }
+          ]
+      }
+  ]
   
     useEffect(() => {
       if (hasLocationPermission) {
@@ -90,13 +117,17 @@ export default function CacheMap() {
         map: {
           ...StyleSheet.absoluteFillObject,
         },
-       });
+    });
 
     return (
         <View style={styles.container}>
 
             <MapView
               ref={map => {setMapRef(map)}}
+              showsBuildings={true}
+              showsPointsOfInterest={false}
+              customMapStyle={mapStyle}
+
              provider={PROVIDER_GOOGLE} // remove if not using Google Maps
              style={styles.map}
              followsUserLocation={true}
