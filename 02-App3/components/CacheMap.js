@@ -86,8 +86,9 @@ export default function CacheMap() {
   }, [hasLocationPermission]);
 
   useEffect(() => {
-    console.log('Connector info: ', connector);
-    console.log('Current account: ', connector.accounts[0]);
+    if (connector.accounts) {
+      console.log('Connector info: ', connector.accounts[0]);
+    }
   }, [connector]);
 
   async function requestLocationPermission() {
