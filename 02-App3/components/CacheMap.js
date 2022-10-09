@@ -7,6 +7,8 @@ import {
   useWalletConnect,
 } from '@walletconnect/react-native-dapp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NewCacheOverlay from './NewCacheOverlay';
+import randomLocation from 'random-location'; // Used only for testing; generates random points in given area
 
 export default function CacheMap() {
   const [mapRef, setMapRef] = useState();
@@ -126,21 +128,36 @@ export default function CacheMap() {
     },
   });
 
+  // The following values are set simply to test the NewCacheOverlay functionality
+  const locations = Array();
+  const numberOfPoints = 3;
+  const radius = 300;
+  for (let i = 0; i < numberOfPoints; i++) {
+    let point = randomLocation.randomCirclePoint(initialPosition, radius);
+    locations.push(point);
+  }
+
   return (
-    <View style={styles.container}>
-      <MapView
-        ref={map => {
-          setMapRef(map);
-        }}
-        showsBuildings={true}
-        showsPointsOfInterest={false}
-        customMapStyle={mapStyle}
-        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-        style={styles.map}
-        followsUserLocation={true}
-        showsUserLocation={true}
-        showsMyLocationButton={true}
+    <MapView
+      ref={map => {
+        setMapRef(map);
+      }}
+      showsBuildings={true}
+      showsPointsOfInterest={false}
+      customMapStyle={mapStyle}
+      provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+      style={styles.map}
+      followsUserLocation={true}
+      showsUserLocation={true}
+      showsMyLocationButton={true}
+    >
+      <NewCacheOverlay
+        cacheName={"Something"}
+        radius={radius}
+        center={{latitude: initialPosition.latitude, longitude: initialPosition.longitude}}
+        numberOfPoints={1}
+        coordinates={locations}
       />
-    </View>
+    </MapView>
   );
 }
