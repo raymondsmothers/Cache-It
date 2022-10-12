@@ -19,12 +19,13 @@ export default function App() {
 
     useEffect(() => {
         if (hasLocationPermission) {
-          findCoordinates();
+          findCoordinates()
         }
         else {
           requestLocationPermission()
         }
     }, [hasLocationPermission]);
+
 
 
       async function requestLocationPermission() 
@@ -65,7 +66,7 @@ export default function App() {
                 // See error code charts below.
                 console.log(error.code, error.message);
               },
-              { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+              { enableHighAccuracy: true, timeout: 20000, maximumAge: 100000 }
           );
     };
 

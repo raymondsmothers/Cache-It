@@ -46,7 +46,7 @@ export default function CacheMap() {
             latitude: locationContext?.latitude,
             longitude: locationContext?.longitude,
             latitudeDelta: locationContext?.latitudeDelta,
-            longitudeDelta: locationContext?.longitudeDelta``,
+            longitudeDelta: locationContext?.longitudeDelta,
           },
           zoom: 15,
       }, {duration: 2000});
