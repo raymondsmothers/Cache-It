@@ -3,6 +3,8 @@ import { RecyclerViewBackedScrollViewComponent, Text, View, Button } from 'react
 import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid  } from "react-native";
 // import * as Location from 'expo-location';
 import Geolocation from 'react-native-geolocation-service';
+import { useNavigation } from '@react-navigation/native';
+import randomLocation from 'random-location';
 
 
 const styles = StyleSheet.create({
@@ -21,6 +23,10 @@ export default function NewCacheForm() {
     const [numItems, onChangeNumItems] = useState(5);
     const [currentPosition, setCurrentPosition] = useState();
     const [permissionsGranted, setPermissionsGranted] = useState(false);
+    let fixedRadius = 0;
+
+    const navigation = useNavigation();
+
 
     useEffect(() => {
         // Update the document title using the browser API
@@ -53,7 +59,7 @@ export default function NewCacheForm() {
       } catch (err) {
         console.warn(err)
       }
-    }
+    };
     
     // //Grabs Location
     const findCoordinates = async () => {
@@ -77,27 +83,36 @@ export default function NewCacheForm() {
     };
 
     const generateItemLocations = async () => {
-        //generate numItems coordinate pairs within radius
-        // const currentPosition =  await findCoordinates;
-        console.log("currentPosition: " + JSON.stringify(currentPosition));
-        var randomCoords = [];
-        for(var i = 0; i < numItems; i++) {
-          //generate rannum * radius for delta lat and delta long
+        // //generate numItems coordinate pairs within radius
+        // // const currentPosition =  await findCoordinates;
+        // console.log("currentPosition: " + JSON.stringify(currentPosition));
+        // var randomCoords = [];
+        // for(var i = 0; i < numItems; i++) {
+        //   //generate rannum * radius for delta lat and delta long
 
-          var latDelta = (Math.random() - 0.5) * radius * (1 / 60); //1 / 60 of a degree = 1 mile
-          var longDelta = (Math.random() - 0.5) * radius * (1 / 60);
-          console.log("latd: " + latDelta)
-          //ensure hypotenuse is less than radius, otherwise generate again
-          if(Math.sqrt(latDelta * latDelta + longDelta * longDelta) > radius) {
-            i--;
-          }
-          else {
-              randomCoords[i] = [currentPosition.latitude + latDelta, currentPosition.longitude + longDelta];
-              console.log("Coords " + i + ": " + randomCoords[i]);
-          }
+        //   var latDelta = (Math.random() - 0.5) * radius * (1 / 60); //1 / 60 of a degree = 1 mile
+        //   var longDelta = (Math.random() - 0.5) * radius * (1 / 60);
+        //   console.log("latd: " + latDelta)
+        //   //ensure hypotenuse is less than radius, otherwise generate again
+        //   if(Math.sqrt(latDelta * latDelta + longDelta * longDelta) > radius) {
+        //     i--;
+        //   }
+        //   else {
+        //       randomCoords[i] = [currentPosition.latitude + latDelta, currentPosition.longitude + longDelta];
+        //       console.log("Coords " + i + ": " + randomCoords[i]);
+        //   }
+        // }
+        const randomCoords = Array();
+        findCoordinates();
+        fixedRadius = radius * 1609.34;
+        for (let i = 0; i < numItems; i++)
+        {
+          let coord = randomLocation.randomCirclePoint(currentPosition, fixedRadius);
+          randomCoords.push(coord);
         }
+
         return randomCoords;
-    }
+    };
 
     const submitHandler = async () => {
       console.log("name: " + name);
@@ -106,10 +121,15 @@ export default function NewCacheForm() {
       const birthdate = Date.now();
       console.log("Birthday: " + birthdate);
       const itemLocations = generateItemLocations();
-
-
-    }
-
+      fixedRadius = radius * 1609.34;
+      console.log("fixedRadius: " + fixedRadius);
+      navigation.navigate("CacheMap", {
+        cacheName: {name},
+        numberOfItems: {numItems},
+        cacheRadius: {fixedRadius},
+        cacheLocations: {itemLocations}
+      });
+    };
 
     return (
       <SafeAreaView>

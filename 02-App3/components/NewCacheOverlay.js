@@ -1,13 +1,15 @@
 import React from 'react';
-import { View, Button } from 'react-native';
+import { View } from 'react-native';
 import { Circle, Marker } from 'react-native-maps';
 
 export default function NewCacheOverlay(props) {
     const defaultCircleColor = "#0000ff40";
-    console.log(props.renderComponent);
-    if(!props.renderComponent) {
+    // console.log(props.render);
+    if(!props.render) {
         return <View></View>;
     }
+
+    console.log(JSON.stringify(props.coordinates));
 
     return (
         <View>
@@ -17,10 +19,11 @@ export default function NewCacheOverlay(props) {
                     longitude: props.center.longitude
                 }}
                 fillColor={defaultCircleColor}
-                radius={Number(props.radius)}
+                radius={props.radius}
             />
             {props.coordinates.map((marker, index) => (
-                <Marker 
+                <Marker
+                    title={props.cacheName}
                     key={index}
                     coordinate={marker}
                 />
