@@ -1,20 +1,12 @@
-import { useFocusEffect } from '@react-navigation/native';
 import React, {useContext, useState, useEffect} from 'react';
 import { Text, StyleSheet, View } from 'react-native';
 import ARvision from './ARvision';
-// import { LocationContext } from '../App';
 import Geolocation from 'react-native-geolocation-service';
-import { LocationContext } from '../App';
 
 export default function SeekScreen() {
-    // const locationContext = useContext(LocationContext)
     const [nearestItemCoords, setNearestItemCoords] = useState([])
     const [distanceToNearestItem, setDistancetoNearestItem] = useState(10000000000)
-    // const [currentPosition, setCurrentPosition] = useState(useContext(LocationContext));
-    // const [currentPosition, setCurrentPosition] = useState({
-    //     'latitude': 0,
-    //     'longitude': 0,
-    // });
+
 
     const getItemCoords = () => {
         var coords = []
@@ -27,10 +19,8 @@ export default function SeekScreen() {
 
     const calculateShortestDistance = async (currentPosition) => {
         //get coords
-        console.log("printing distance")
         const coords = getItemCoords()
         //reset during every check
-        // setDistancetoNearestItem(100000000)
         var shortestHyp = 1000000
         var shortestHypCoords = {}
         await coords.forEach(crd => {
@@ -39,83 +29,59 @@ export default function SeekScreen() {
             const latDelta = Math.abs(currentPosition?.latitude - crd.latitude)
             const longDelta = Math.abs(currentPosition?.longitude - crd.longitude)
             const hyp = Math.sqrt(latDelta * latDelta + longDelta * longDelta)
-            console.log("hyp: " + hyp)
             //set new coords and nearestItem if shorter than current shortestCoord
             if(hyp < shortestHyp) {
-                console.log("in here")
                 shortestHyp = hyp
                 shortestHypCoords = crd
                 
                 setNearestItemCoords(shortestHypCoords)
                 setDistancetoNearestItem(shortestHyp)
-                // setDistancetoNearestItem(hyp)
-                // setNearestItemCoords(crd)
             }
         });
-        // setDistancetoNearestItem(shortestHyp)
-        // setNearestItemCoords(shortestHypCoords)
-        // console.log("Nearest point: " + JSON.stringify(nearestItemCoords))
-        // console.log("distance to nearest point: " + distanceToNearestItem)
     }
-
-    //calculateShortestDiatance every 1 seconds
-    // useEffect(() => {
-    //     refreshDistanceCalculation()
-    // })
-
-    const MINUTE_MS = 60000;
 
     useEffect(() => {
         const interval = setInterval( async () => {
-            // console.log('Logs every few seconds');
             await findCoordinates()
             calculateShortestDistance()
         }, 1000);
 
-        return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-    }, [])
+        return () => clearInterval(interval); 
+      }, [])
 
 
     // //Grabs Location
     const findCoordinates = async () => {
         //May be able to use watchPosition here instead 
-        await Geolocation.getCurrentPosition(
+        const watcher = await Geolocation.watchPosition(
             (position) => {
               const crd = position.coords;
-                // console.log(position);
-                //   setCurrentPosition({
-                //     latitude: crd.latitude,
-                //     longitude: crd.longitude,
-                //     latitudeDelta: global.latDelta,
-                //     longitudeDelta: global.longDelta,
-                //   });
               calculateShortestDistance({
                 latitude: crd.latitude,
                 longitude: crd.longitude,
                 latitudeDelta: global.latDelta,
                 longitudeDelta: global.longDelta,
               })
-            //   console.log("current location: " +  JSON.stringify(currentPosition, null, 2) )
 
             },
             (error) => {
               // See error code charts below.
               console.log(error.code, error.message);
             },
-            { enableHighAccuracy: true, timeout: 150000, maximumAge: 0 }
+            { interval: 1000, distanceFilter: 3, enableHighAccuracy: true, timeout: 150000, maximumAge: 0 }
         );
   };
 
     return (
-        //TODO this logic doesn't work, we may need a isLoading 
-        (distanceToNearestItem > 0.000085 && distanceToNearestItem != 100000000) ? (
+        (distanceToNearestItem > 0.0001 && distanceToNearestItem != 100000000) ? (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text style={styles.text}>Seek Screen </Text>
             <Text style={styles.text}> {"Closest Coordinate: \n" + JSON.stringify(nearestItemCoords, null, 2)}  </Text>
             <Text style={styles.text}> {"Distance: \n" + distanceToNearestItem}  </Text>
-            {/* <Text style={styles.text}> {"Current Location: \n" + JSON.stringify(currentPosition, null, 2)}  </Text> */}
           </View>
         ) : (
+            //Maybe we show AR Vision when they are within 0.01, then only allow dragging of ar object when they are within 0.001? So they can move closer to a visible AR object?
+
             <ARvision></ARvision>
         )
     );
