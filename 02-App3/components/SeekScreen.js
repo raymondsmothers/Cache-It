@@ -25,14 +25,15 @@ export default function SeekScreen() {
     }
 
 
-    const calculateShortestDistance = (currentPosition) => {
+    const calculateShortestDistance = async (currentPosition) => {
         //get coords
         console.log("printing distance")
         const coords = getItemCoords()
         //reset during every check
-        setDistancetoNearestItem(100000000)
-
-        coords.forEach(crd => {
+        // setDistancetoNearestItem(100000000)
+        var shortestHyp = 1000000
+        var shortestHypCoords = {}
+        await coords.forEach(crd => {
             //for each coords
             //calculate hypotenuse
             const latDelta = Math.abs(currentPosition?.latitude - crd.latitude)
@@ -40,12 +41,19 @@ export default function SeekScreen() {
             const hyp = Math.sqrt(latDelta * latDelta + longDelta * longDelta)
             console.log("hyp: " + hyp)
             //set new coords and nearestItem if shorter than current shortestCoord
-            if(hyp < distanceToNearestItem) {
+            if(hyp < shortestHyp) {
                 console.log("in here")
-                setDistancetoNearestItem(hyp)
-                setNearestItemCoords(crd)
+                shortestHyp = hyp
+                shortestHypCoords = crd
+                
+                setNearestItemCoords(shortestHypCoords)
+                setDistancetoNearestItem(shortestHyp)
+                // setDistancetoNearestItem(hyp)
+                // setNearestItemCoords(crd)
             }
         });
+        // setDistancetoNearestItem(shortestHyp)
+        // setNearestItemCoords(shortestHypCoords)
         // console.log("Nearest point: " + JSON.stringify(nearestItemCoords))
         // console.log("distance to nearest point: " + distanceToNearestItem)
     }
@@ -67,14 +75,6 @@ export default function SeekScreen() {
         return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
     }, [])
 
-    const refreshDistanceCalculation = async () => {
-        // console.log("currentPosition: " + JSON.stringify(currentPosition));
-        while(true) {
-            await findCoordinates()
-            await calculateShortestDistance()
-            await new Promise(r => setTimeout(r, 3000))
-        }
-    }
 
     // //Grabs Location
     const findCoordinates = async () => {
@@ -107,7 +107,8 @@ export default function SeekScreen() {
   };
 
     return (
-        (distanceToNearestItem > 0.000015) ? (
+        //TODO this logic doesn't work, we may need a isLoading 
+        (distanceToNearestItem > 0.000085 && distanceToNearestItem != 100000000) ? (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text style={styles.text}>Seek Screen </Text>
             <Text style={styles.text}> {"Closest Coordinate: \n" + JSON.stringify(nearestItemCoords, null, 2)}  </Text>
