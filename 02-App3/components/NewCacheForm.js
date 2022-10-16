@@ -20,15 +20,17 @@ export default function NewCacheForm() {
     const [radius, onChangeRadius] = useState(1);
     const [numItems, onChangeNumItems] = useState(5);
     const [currentPosition, setCurrentPosition] = useState();
-
+    const [permissionsGranted, setPermissionsGranted] = useState(false);
 
     useEffect(() => {
         // Update the document title using the browser API
-        requestLocationPermission()
-        findCoordinates();
+        requestLocationPermission();
+        if(!permissionsGranted) {
+          findCoordinates();
+        }
+        // console.log("[NewCacheForm] useEffect has been called");
         // generateItemLocations();
     });
-
 
     async function requestLocationPermission() 
     {
@@ -39,10 +41,11 @@ export default function NewCacheForm() {
             'title': 'Example App',
             'message': 'Example App access to your location '
           }
-        )
+        );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           // console.log("You can use the location")
           // alert("You can use the location");
+          setPermissionsGranted(true);
         } else {
           console.log("location permission denied")
           // alert("Location permission denied");
