@@ -21,7 +21,7 @@ export default function SeekScreen() {
     //Distance in degrees to nearest item
     const [distanceToNearestItem, setDistancetoNearestItem] = useState(10000000000)
     //sets pulse duration, 1 is strongest, 20 is weakest
-    const [pulseStrength, setPulseStrength] = useState(1)
+    const [pulseStrength, setPulseStrength] = useState(20)
     const Ring = ({ delay, duration }) => {
       const ring = useSharedValue(0);
     
@@ -79,8 +79,6 @@ export default function SeekScreen() {
                 shortestHyp = hyp
                 shortestHypCoords = crd
                 
-                setNearestItemCoords(shortestHypCoords)
-                setDistancetoNearestItem(shortestHyp)
                 //convert distance to meters
                 // 111 kms is ~ 1 arc of longitude or lat
                 const shortestHypInMeters = shortestHyp * 111 * 1000;
@@ -91,6 +89,9 @@ export default function SeekScreen() {
                 // const newPulseStrength = Math.ceil(Math.min(1000 / shortestHypInMeters, 20))
                 const newPulseStrength = Math.ceil(Math.min(shortestHypInMeters / 25, 20))
                 setPulseStrength(newPulseStrength)
+                
+                setNearestItemCoords(shortestHypCoords)
+                setDistancetoNearestItem(shortestHypInMeters)
             }
         });
     }
@@ -129,8 +130,8 @@ export default function SeekScreen() {
   };
 
     return (
-        (true) ? (
-        // (distanceToNearestItem > 0.0001 && distanceToNearestItem != 100000000) ? (
+        // (true) ? (
+        (distanceToNearestItem > 25 && distanceToNearestItem != 100000000) ? (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <Text style={styles.text}>Seek Screen </Text>
               <Text style={styles.text}> {"pulseStrength: \n" + pulseStrength}  </Text>
@@ -153,7 +154,7 @@ export default function SeekScreen() {
                 <Ring duration={1000 * pulseStrength} delay={250 * pulseStrength} />
                 <Ring duration={1000 * pulseStrength} delay={750 * pulseStrength} />
               </View>
-              <Text style={styles.text}> {"Distance: \n" + distanceToNearestItem}  </Text>
+              <Text style={styles.text}> {"Distance: \n" + distanceToNearestItem + " Meters"}  </Text>
           </View>
         ) : (
             //Maybe we show AR Vision when they are within 0.01, then only allow dragging of ar object when they are within 0.001? So they can move closer to a visible AR object?
