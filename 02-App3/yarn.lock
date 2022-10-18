@@ -2029,6 +2029,14 @@
     "color" "^4.2.3"
     "warn-once" "^0.1.0"
 
+"@react-navigation/native-stack@^6.9.0":
+  "integrity" "sha512-cwqm/2GO0hf94OFRuH6R0beZPVKY4vMFxrdAPaDwwoukN5a0UgcsMYxrN8s2huwssTCuGScABFME9GnqG5hC5w=="
+  "resolved" "https://registry.npmjs.org/@react-navigation/native-stack/-/native-stack-6.9.0.tgz"
+  "version" "6.9.0"
+  dependencies:
+    "@react-navigation/elements" "^1.3.6"
+    "warn-once" "^0.1.0"
+
 "@react-navigation/native@^6.0.0", "@react-navigation/native@^6.0.13":
   "integrity" "sha512-CwaJcAGbhv3p3ECablxBkw8QBCGDWXqVRwQ4QbelajNW623m3sNTC9dOF6kjp8au6Rg9B5e0KmeuY0xWbPk79A=="
   "resolved" "https://registry.npmjs.org/@react-navigation/native/-/native-6.0.13.tgz"
@@ -4020,6 +4028,11 @@
   "resolved" "https://registry.npmjs.org/crypto-random-string/-/crypto-random-string-2.0.0.tgz"
   "version" "2.0.0"
 
+"crypto@^1.0.1":
+  "integrity" "sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig=="
+  "resolved" "https://registry.npmjs.org/crypto/-/crypto-1.0.1.tgz"
+  "version" "1.0.1"
+
 "cssom@^0.4.4":
   "integrity" "sha512-p3pvU7r1MyyqbTk+WbNJIgJjG2VmTIaB10rI93LzVPrmDJKkzKYMtxxyAvQXR/NS6otuzveI7+7BBq3SjBS2mw=="
   "resolved" "https://registry.npmjs.org/cssom/-/cssom-0.4.4.tgz"
@@ -5530,11 +5543,6 @@
   "integrity" "sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw=="
   "resolved" "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   "version" "1.0.0"
-
-"fsevents@^2.3.2":
-  "integrity" "sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA=="
-  "resolved" "https://registry.npmjs.org/fsevents/-/fsevents-2.3.2.tgz"
-  "version" "2.3.2"
 
 "function-bind@^1.1.1":
   "integrity" "sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A=="
