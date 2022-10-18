@@ -12,6 +12,13 @@ import IntroductionPage from './components/introduction';
 import WalletConnectProvider from '@walletconnect/react-native-dapp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { LogBox } from 'react-native';
+
+// The following disables the warning messages for the 'Require cycle' issue
+// TODO: Fix this issue
+LogBox.ignoreLogs(["Require cycle: node_modules\react-native-crypto\index.js -> node_modules\react-native-randombytes\index.js -> node_modules\sjcl\sjcl.js -> node_modules\react-native-crypto\index.js"]);
+console.disableYellowBox = true;
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
