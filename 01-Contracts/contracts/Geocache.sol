@@ -5,9 +5,8 @@ pragma solidity 0.8.13;
 /// @author: hborska
 
 import "hardhat/console.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import {IERC165} from "@openzeppelin/contracts/interfaces/IERC165.sol";
 import {AdminControl} from "@manifoldxyz/libraries-solidity/contracts/access/AdminControl.sol";
+import {IERC165} from "@openzeppelin/contracts/interfaces/IERC165.sol";
 import {IERC1155CreatorCore} from "@manifoldxyz/creator-core-solidity/contracts/core/IERC1155CreatorCore.sol";
 import {IERC1155} from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import {ICreatorExtensionTokenURI} from "@manifoldxyz/creator-core-solidity/contracts/extensions/ICreatorExtensionTokenURI.sol";
@@ -15,6 +14,9 @@ import {ICreatorExtensionTokenURI} from "@manifoldxyz/creator-core-solidity/cont
 // Custom errors
 error NotCreator();
 error NonExistentToken();
+error NotActiveGeocache();
+error UserAlreadyFound();
+error AlreadyMintedToken();
 
 contract Geocache is AdminControl, ICreatorExtensionTokenURI {
     struct GeocacheInstance {
@@ -22,7 +24,9 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         string tokenURI; // img
         string dateCreated; // when geocache was created
         uint256 numItems; // # of items in the geocache
-        bool isActive;
+        bool isActive; // if all items have been found or not
+        uint256 xCoord;
+        uint256 yCoord;
     }
 
     // manifold creator contract address
@@ -36,6 +40,9 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
 
     // mapping the geocache id to number of items in a geocache -- maybe move this to metadata?
     mapping(uint256 => uint256) public geocacheToNumFound;
+
+    // mapping to keep track of one mint per tokenId per address
+    mapping(uint256 => mapping(address => bool)) public hasMintedTokenId;
 
     constructor(address _creatorContract) {
         creatorContract = _creatorContract;
@@ -88,7 +95,9 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
             _tokenURI,
             _dateCreated,
             _numItems,
-            true
+            true, 
+            0, // change x and y coord later, for now static
+            0
         );
         ++numGeocaches;
 
@@ -117,32 +126,26 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
     function mintItemInGeocache(uint256 _geocacheId, address _user)
         external
         onlyOwner
-    // adminRequired
     {
         // Check that _tokenId exists
-        if (_geocacheId > numGeocaches) revert NonExistentToken();
+        if (_geocacheId >= numGeocaches) revert NonExistentToken();
+        console.log(numGeocaches);
         // Require that the user hasn't found yet
-        require(
-            IERC1155(creatorContract).balanceOf(_user, _geocacheId) == 0,
-            "User already has found this item"
-        );
+        if(hasMintedTokenId[_geocacheId][_user]) revert UserAlreadyFound();
 
         GeocacheInstance memory geocache = tokenIdToGeocache[_geocacheId];
 
         // Require that the geocache is active
-        require(
-            geocache.isActive,
-            "All of the items in this geocache have been found"
-        );
-
-        _mint(_geocacheId, _user);
+        if (!geocache.isActive) revert NotActiveGeocache();
 
         geocacheToNumFound[_geocacheId]++;
-
+        hasMintedTokenId[_geocacheId][_user] = true;
         // If all of the items are found, deactivating the geocache
         if (geocacheToNumFound[_geocacheId] == geocache.numItems) {
             tokenIdToGeocache[_geocacheId].isActive = false;
         }
+
+        _mint(_geocacheId, _user);
     }
 
     /**
