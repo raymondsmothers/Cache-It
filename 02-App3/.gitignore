@@ -61,3 +61,6 @@ buck-out/
 #android configuration
 android/gradle.properties
 android/gradlew
+
+#IDEK
+java_pid6828.hprof

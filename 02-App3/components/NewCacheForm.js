@@ -1,6 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import { RecyclerViewBackedScrollViewComponent, Text, View, Button } from 'react-native';
 import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid  } from "react-native";
+import { LocationContext } from '../App';
 // import * as Location from 'expo-location';
 import Geolocation from 'react-native-geolocation-service';
 import { useNavigation } from '@react-navigation/native';
@@ -21,71 +22,19 @@ export default function NewCacheForm() {
     const [name, onChangeName] = useState("Default Name");
     const [radius, onChangeRadius] = useState(1);
     const [numItems, onChangeNumItems] = useState(5);
-    const [currentPosition, setCurrentPosition] = useState();
-    const [permissionsGranted, setPermissionsGranted] = useState(false);
     let fixedRadius = 0;
 
     const navigation = useNavigation();
+    // const [currentPosition, setCurrentPosition] = useState();
+    const locationContext = useContext(LocationContext)
 
 
-    useEffect(() => {
-        // Update the document title using the browser API
-        requestLocationPermission();
-        if(!permissionsGranted) {
-          findCoordinates();
-        }
-        // console.log("[NewCacheForm] useEffect has been called");
-        // generateItemLocations();
-    });
 
-    async function requestLocationPermission() 
-    {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            'title': 'Example App',
-            'message': 'Example App access to your location '
-          }
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          // console.log("You can use the location")
-          // alert("You can use the location");
-          setPermissionsGranted(true);
-        } else {
-          console.log("location permission denied")
-          // alert("Location permission denied");
-        }
-      } catch (err) {
-        console.warn(err)
-      }
-    };
-    
-    // //Grabs Location
-    const findCoordinates = async () => {
-          await Geolocation.getCurrentPosition(
-              (position) => {
-                const crd = position.coords;
-            // console.log(position);
-                setCurrentPosition({
-                  latitude: crd.latitude,
-                  longitude: crd.longitude,
-                  latitudeDelta: 0.421,
-                  longitudeDelta: 0.421,
-                });
-              },
-              (error) => {
-                // See error code charts below.
-                console.log(error.code, error.message);
-              },
-              { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-          );
-    };
 
     const generateItemLocations = async () => {
-        // //generate numItems coordinate pairs within radius
-        // // const currentPosition =  await findCoordinates;
-        // console.log("currentPosition: " + JSON.stringify(currentPosition));
+        //generate numItems coordinate pairs within radius
+        // const currentPosition =  await findCoordinates;
+        console.log("currentPosition: " + JSON.stringify(locationContext));
         // var randomCoords = [];
         // for(var i = 0; i < numItems; i++) {
         //   //generate rannum * radius for delta lat and delta long
@@ -98,17 +47,16 @@ export default function NewCacheForm() {
         //     i--;
         //   }
         //   else {
-        //       randomCoords[i] = [currentPosition.latitude + latDelta, currentPosition.longitude + longDelta];
+        //       randomCoords[i] = [locationContext.latitude + latDelta, locationContext.longitude + longDelta];
         //       console.log("Coords " + i + ": " + randomCoords[i]);
         //   }
-        // }
         const randomCoords = Array();
-        findCoordinates();
+        // findCoordinates();
         fixedRadius = radius * 1609.34;
         for (let i = 0; i < numItems; i++)
         {
-          let coord = randomLocation.randomCirclePoint(currentPosition, fixedRadius);
-          randomCoords.push(coord);
+          let coord = randomLocation.randomCirclePoint(locationContext, fixedRadius);
+          randomCoords.push(coord);        
         }
 
         return randomCoords;
