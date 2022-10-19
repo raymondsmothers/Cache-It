@@ -27,8 +27,26 @@ const ARVisionScene = () => {
   return (
     <ViroARScene >
     {/* <ViroARScene onTrackingUpdated={onInitialized}> */}
-        {/* <ViroBox */}
-        <Viro3DObject
+      <ViroBox position={[0, -.5, -1]}
+          animation={{name: "rotate", run: true, loop: true}}
+          scale={[.3, .3, .1]} 
+          materials={["grid"]} 
+          onClick={(position, source) => console.log('Click', position, source)}
+          dragType="FixedDistance"
+          dragPlane={{
+            planePoint: [0, -1, 0],
+            planeNormal: [0, 1, 0],
+            maxDistance: 500
+          }}
+          onDrag={(dragToPos, source) => {    
+            console.log('Drag', dragToPos, source);
+            // dragtoPos[0]: x position    
+            // dragtoPos[1]: y position    
+            // dragtoPos[2]: z position
+          }}
+
+          />  
+                {/* <Viro3DObject
         source={require("../res/geocaching_capsules_2_Blender.obj")}
         resources={[
           require("../res/geocaching_capsules_2_Blender.mtl")
@@ -78,7 +96,7 @@ const ARVisionScene = () => {
             // dragtoPos[2]: z position
           }
 
-          />
+          /> */}
           
     </ViroARScene>
   );

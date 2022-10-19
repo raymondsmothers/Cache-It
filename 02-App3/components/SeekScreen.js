@@ -10,18 +10,21 @@ import Animated, {
   withTiming,
   interpolate,
 } from "react-native-reanimated";
+import { LocationContext } from '../App';
 
-// import Pulse from 'react-native-pulse';
-import AnimatedRingExample from './AnimatedRing';
 
 
 
 export default function SeekScreen() {
     const [nearestItemCoords, setNearestItemCoords] = useState([])
+    const locationContext = useContext(LocationContext)
+
     //Distance in degrees to nearest item
-    const [distanceToNearestItem, setDistancetoNearestItem] = useState(10000000000)
+    const [distanceToNearestItem, setDistancetoNearestItem] = useState(undefined)
     //sets pulse duration, 1 is strongest, 20 is weakest
     const [pulseStrength, setPulseStrength] = useState(20)
+
+
     const Ring = ({ delay, duration }) => {
       const ring = useSharedValue(0);
     
@@ -96,13 +99,19 @@ export default function SeekScreen() {
         });
     }
 
+    //Immediately calculate initial shortest distance using location context
     useEffect(() => {
-        const interval = setInterval( async () => {
-            await findCoordinates()
-            calculateShortestDistance()
-        }, 1000);
+      calculateShortestDistance(locationContext)
+    }, [])
 
-        return () => clearInterval(interval); 
+    //Every second check
+    useEffect(() => {
+        // const interval = setInterval( async () => {
+            findCoordinates()
+            // calculateShortestDistance()
+        // }, 1000);
+
+        // return () => clearInterval(interval); 
       }, [])
 
 
@@ -131,7 +140,7 @@ export default function SeekScreen() {
 
     return (
         // (true) ? (
-        (distanceToNearestItem > 25 && distanceToNearestItem != 100000000) ? (
+        (distanceToNearestItem > 10 && distanceToNearestItem) ? (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <Text style={styles.text}>Seek Screen </Text>
               <Text style={styles.text}> {"pulseStrength: \n" + pulseStrength}  </Text>
@@ -148,7 +157,6 @@ export default function SeekScreen() {
                   flexDirection: "column",
                 }}
               >
-              {/**this aniation isn't updated on a state update from seekscreen :/ */}
                 <Ring duration={1000 * pulseStrength} delay={0} />
                 <Ring duration={1000 * pulseStrength} delay={500 * pulseStrength} />
                 <Ring duration={1000 * pulseStrength} delay={250 * pulseStrength} />
