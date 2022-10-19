@@ -35,21 +35,6 @@ export default function NewCacheForm() {
         //generate numItems coordinate pairs within radius
         // const currentPosition =  await findCoordinates;
         console.log("currentPosition: " + JSON.stringify(locationContext));
-        // var randomCoords = [];
-        // for(var i = 0; i < numItems; i++) {
-        //   //generate rannum * radius for delta lat and delta long
-
-        //   var latDelta = (Math.random() - 0.5) * radius * (1 / 60); //1 / 60 of a degree = 1 mile
-        //   var longDelta = (Math.random() - 0.5) * radius * (1 / 60);
-        //   console.log("latd: " + latDelta)
-        //   //ensure hypotenuse is less than radius, otherwise generate again
-        //   if(Math.sqrt(latDelta * latDelta + longDelta * longDelta) > radius) {
-        //     i--;
-        //   }
-        //   else {
-        //       randomCoords[i] = [locationContext.latitude + latDelta, locationContext.longitude + longDelta];
-        //       console.log("Coords " + i + ": " + randomCoords[i]);
-        //   }
         const randomCoords = Array();
         // findCoordinates();
         fixedRadius = radius * 1609.34;
