@@ -1,10 +1,11 @@
-import { ViroAnimations, ViroARScene, ViroARSceneNavigator, ViroBox, ViroMaterials } from '@viro-community/react-viro';
+import { Viro3DObject, ViroAnimations, ViroARScene, ViroARSceneNavigator, ViroBox, ViroMaterials } from '@viro-community/react-viro';
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Alert } from 'react-native';
 
 
 const ARVisionScene = () => {
   const [text, setText] = useState('Initializing AR...');
+  const [ignoreDrag, setIgnoreDrag] = useState(false);
 
   function onInitialized(state, reason) {
     console.log('guncelleme', state, reason);
@@ -22,27 +23,61 @@ const ARVisionScene = () => {
   //   console.log("We just Clicked the image!");
   // }
   
-
+  const initialPosition = [0, -0.5, -1];
+  const objectScale = [10, 10, 10];
   return (
     <ViroARScene >
     {/* <ViroARScene onTrackingUpdated={onInitialized}> */}
-        <ViroBox position={[0, -.5, -1]}
+        {/* <ViroBox */}
+        <Viro3DObject
+        source={require("../res/geocaching_capsules_2_Blender.obj")}
+        resources={[
+          require("../res/geocaching_capsules_2_Blender.mtl")
+        ]}
+        height={1}
+        width={1}
+        type="OBJ"
+          position={initialPosition}
           animation={{name: "rotate", run: true, loop: true}}
-          scale={[.3, .3, .1]} 
+          // scale={[.3, .3, .1]} 
+          scale={objectScale}
           materials={["grid"]} 
-          onClick={(position, source) => console.log('Click', position, source)}
+          // materials={["geocaching_capsules_2_Blender.mtl"]} 
+          // onClick={(position, source) => console.log('Click', position, source)}
           dragType="FixedDistance"
           dragPlane={{
-            planePoint: [0, -1, 0],
-            planeNormal: [0, 1, 0],
-            maxDistance: 500
+            planeNormal: [0, -0.25, -1],
+            planePoint: initialPosition,
+            maxDistance: 5
           }}
+          ignoreEventHandling={ignoreDrag}
           onDrag={(dragToPos, source) => {    
-            console.log('Drag', dragToPos, source);
+            console.log('Drag', dragToPos[1], source);
+            {
+              if(source == 1) {
+                if(dragToPos[1] - initialPosition[1] >= 0 && !ignoreDrag) {
+                  setIgnoreDrag(true);
+                  Alert.alert(
+                    "Congratulations!",
+                    "Open Metamask to Claim?",
+                    [
+                      {
+                        text: "No",
+                        onPress: () => console.log("Nah, I'm good")
+                      },
+                      {
+                        text: "Yes",
+                        onPress: () => console.log("Give me goodies!")
+                      }
+                    ]
+                  );
+                }
+              }}
+            }
             // dragtoPos[0]: x position    
             // dragtoPos[1]: y position    
             // dragtoPos[2]: z position
-          }}
+          }
 
           />
           

@@ -2,6 +2,10 @@ import React, {useState, useContext, useEffect} from 'react';
 import { RecyclerViewBackedScrollViewComponent, Text, View, Button } from 'react-native';
 import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid  } from "react-native";
 import { LocationContext } from '../App';
+// import * as Location from 'expo-location';
+import Geolocation from 'react-native-geolocation-service';
+import { useNavigation } from '@react-navigation/native';
+import randomLocation from 'random-location';
 
 
 const styles = StyleSheet.create({
@@ -18,6 +22,9 @@ export default function NewCacheForm() {
     const [name, onChangeName] = useState("Default Name");
     const [radius, onChangeRadius] = useState(1);
     const [numItems, onChangeNumItems] = useState(5);
+    let fixedRadius = 0;
+
+    const navigation = useNavigation();
     // const [currentPosition, setCurrentPosition] = useState();
     const locationContext = useContext(LocationContext)
 
@@ -28,24 +35,32 @@ export default function NewCacheForm() {
         //generate numItems coordinate pairs within radius
         // const currentPosition =  await findCoordinates;
         console.log("currentPosition: " + JSON.stringify(locationContext));
-        var randomCoords = [];
-        for(var i = 0; i < numItems; i++) {
-          //generate rannum * radius for delta lat and delta long
+        // var randomCoords = [];
+        // for(var i = 0; i < numItems; i++) {
+        //   //generate rannum * radius for delta lat and delta long
 
-          var latDelta = (Math.random() - 0.5) * radius * (1 / 60); //1 / 60 of a degree = 1 mile
-          var longDelta = (Math.random() - 0.5) * radius * (1 / 60);
-          console.log("latd: " + latDelta)
-          //ensure hypotenuse is less than radius, otherwise generate again
-          if(Math.sqrt(latDelta * latDelta + longDelta * longDelta) > radius) {
-            i--;
-          }
-          else {
-              randomCoords[i] = [locationContext.latitude + latDelta, locationContext.longitude + longDelta];
-              console.log("Coords " + i + ": " + randomCoords[i]);
-          }
+        //   var latDelta = (Math.random() - 0.5) * radius * (1 / 60); //1 / 60 of a degree = 1 mile
+        //   var longDelta = (Math.random() - 0.5) * radius * (1 / 60);
+        //   console.log("latd: " + latDelta)
+        //   //ensure hypotenuse is less than radius, otherwise generate again
+        //   if(Math.sqrt(latDelta * latDelta + longDelta * longDelta) > radius) {
+        //     i--;
+        //   }
+        //   else {
+        //       randomCoords[i] = [locationContext.latitude + latDelta, locationContext.longitude + longDelta];
+        //       console.log("Coords " + i + ": " + randomCoords[i]);
+        //   }
+        const randomCoords = Array();
+        // findCoordinates();
+        fixedRadius = radius * 1609.34;
+        for (let i = 0; i < numItems; i++)
+        {
+          let coord = randomLocation.randomCirclePoint(locationContext, fixedRadius);
+          randomCoords.push(coord);        
         }
+
         return randomCoords;
-    }
+    };
 
     const submitHandler = async () => {
       console.log("name: " + name);
@@ -54,10 +69,15 @@ export default function NewCacheForm() {
       const birthdate = Date.now();
       console.log("Birthday: " + birthdate);
       const itemLocations = generateItemLocations();
-
-
-    }
-
+      fixedRadius = radius * 1609.34;
+      console.log("fixedRadius: " + fixedRadius);
+      navigation.navigate("CacheMap", {
+        cacheName: {name},
+        numberOfItems: {numItems},
+        cacheRadius: {fixedRadius},
+        cacheLocations: {itemLocations}
+      });
+    };
 
     return (
       <SafeAreaView>
