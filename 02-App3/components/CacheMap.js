@@ -84,7 +84,7 @@ export default function CacheMap() {
     cacheName = route.params.cacheName.name;
     cacheRadius = route.params.cacheRadius.fixedRadius;
     numberOfPoints = route.params.numberOfItems.numItems;
-    locations = route.params.cacheLocations.itemLocations._3;
+    locations = route.params.cacheLocations.itemLocations;
     renderComponent = true;
     renderArea = true;
   }

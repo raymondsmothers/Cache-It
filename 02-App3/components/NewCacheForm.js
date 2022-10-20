@@ -6,6 +6,7 @@ import { LocationContext } from '../App';
 import Geolocation from 'react-native-geolocation-service';
 import { useNavigation } from '@react-navigation/native';
 import randomLocation from 'random-location';
+import { json } from 'express';
 
 
 const styles = StyleSheet.create({
@@ -25,16 +26,14 @@ export default function NewCacheForm() {
     let fixedRadius = 0;
 
     const navigation = useNavigation();
-    // const [currentPosition, setCurrentPosition] = useState();
     const locationContext = useContext(LocationContext)
 
 
 
 
-    const generateItemLocations = async () => {
+    const generateItemLocations = () => {
         //generate numItems coordinate pairs within radius
-        // const currentPosition =  await findCoordinates;
-        console.log("currentPosition: " + JSON.stringify(locationContext));
+        console.log("locationContext: " + JSON.stringify(locationContext));
         const randomCoords = Array();
         // findCoordinates();
         fixedRadius = radius * 1609.34;
@@ -44,18 +43,22 @@ export default function NewCacheForm() {
           randomCoords.push(coord);        
         }
 
+        for (let i = 0; i < numItems; i++) {
+          console.log("randomLocaiton[" + i + "]....." + JSON.stringify(randomCoords[i]));
+        }
+
         return randomCoords;
     };
 
     const submitHandler = async () => {
+      fixedRadius = radius * 1609.34;
+
+      console.log("fixedRadius: " + fixedRadius);
       console.log("name: " + name);
       console.log("numItems: " + numItems);
       console.log("radius: " + radius);
-      const birthdate = Date.now();
-      console.log("Birthday: " + birthdate);
+
       const itemLocations = generateItemLocations();
-      fixedRadius = radius * 1609.34;
-      console.log("fixedRadius: " + fixedRadius);
       navigation.navigate("CacheMap", {
         cacheName: {name},
         numberOfItems: {numItems},
