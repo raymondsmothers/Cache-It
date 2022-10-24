@@ -38,13 +38,14 @@ function HomeTab () {
     <Tab.Screen
       name="CacheMap"
       component={CacheMap}
-      options={{
-        headerRight: () => <ConnectWalletButton />,
-      }}
+      
     />
     <Tab.Screen name="NewCacheForm" component={NewCacheForm} />
     <Tab.Screen name="Seek" component={SeekScreen} />
-    <Tab.Screen name="Settings" component={SettingsScreen} />
+    <Tab.Screen name="Settings" component={SettingsScreen} 
+    options={{
+      headerRight: () => <ConnectWalletButton />,
+    }}/>
     
   </Tab.Navigator>
   )
