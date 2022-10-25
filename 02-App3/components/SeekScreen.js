@@ -10,20 +10,27 @@ import Animated, {
   withTiming,
   interpolate,
 } from "react-native-reanimated";
+import { useRoute } from '@react-navigation/native'
 import { LocationContext } from '../App';
 
 
 
 
 export default function SeekScreen() {
-    const [nearestItemCoords, setNearestItemCoords] = useState([])
-    const locationContext = useContext(LocationContext)
+    const [nearestItemCoords, setNearestItemCoords] = useState([]);
+    const locationContext = useContext(LocationContext);
 
     //Distance in degrees to nearest item
-    const [distanceToNearestItem, setDistancetoNearestItem] = useState(undefined)
+    const [distanceToNearestItem, setDistancetoNearestItem] = useState(undefined);
     //sets pulse duration, 1 is strongest, 20 is weakest
-    const [pulseStrength, setPulseStrength] = useState(20)
+    const [pulseStrength, setPulseStrength] = useState(20);
 
+    const route = useRoute();
+    // if(route.params) {
+    //   console.log("route coordinate....." + JSON.stringify(route.params.coord.marker));
+    //   console.log("route latitude......." + route.params.coord.marker.latitude);
+    //   console.log("route longitude......." + route.params.coord.marker.longitude);
+    // }
 
     const Ring = ({ delay, duration }) => {
       const ring = useSharedValue(0);
@@ -55,15 +62,15 @@ export default function SeekScreen() {
 
     const getItemCoords = () => {
         var coords = []
-        coords.push({"latitude":38.6519000,"longitude":-90.293400})
-        coords.push({"latitude":38.6490389,"longitude": -90.3035856})
-        coords.push({"latitude":38.6485423,"longitude": -90.3056161})
-        coords.push({"latitude":38.6485022,"longitude": -90.3136965})
-        coords.push({"latitude":39.0889472,"longitude": -77.0768896})
-        coords.push({"latitude":39.1168605,"longitude": -77.2045929})
-        coords.push({"latitude":39.1140253,"longitude": -77.2006334})
-        // coords.push({"latitude":39.1141380,"longitude": -77.1991250})
-
+        if(route.params) {
+          coords.push({"latitude":route.params.coord.marker.latitude, "longitude":route.params.coord.marker.longitude});
+        }
+        else {
+          coords.push({"latitude":38.6519000,"longitude":-90.293400});
+        }
+        // coords.push({"latitude":38.6490389,"longitude": -90.3035856})
+        // coords.push({"latitude":38.6485423,"longitude": -90.3056161})
+        // coords.push({"latitude":38.6485022,"longitude": -90.3136965})
         // coords.push({"latitude":38.6519515,"longitude":-90.2934257})
         // coords.push({"latitude":38.6519594,"longitude":-90.2934463})
         return coords
