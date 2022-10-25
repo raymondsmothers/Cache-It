@@ -39,11 +39,32 @@ const ARVisionScene = () => {
             maxDistance: 500
           }}
           onDrag={(dragToPos, source) => {    
-            console.log('Drag', dragToPos, source);
+            console.log('Drag', dragToPos[1], source);
+            {
+              if(source == 1) {
+                if(dragToPos[1] - initialPosition[1] >= 0 && !ignoreDrag) {
+                  setIgnoreDrag(true);
+                  Alert.alert(
+                    "Congratulations!",
+                    "Open Metamask to Claim?",
+                    [
+                      {
+                        text: "No",
+                        onPress: () => console.log("Nah, I'm good")
+                      },
+                      {
+                        text: "Yes",
+                        onPress: () => console.log("Give me goodies!")
+                      }
+                    ]
+                  );
+                }
+              }}
+            }
             // dragtoPos[0]: x position    
             // dragtoPos[1]: y position    
             // dragtoPos[2]: z position
-          }}
+          }
 
           />  
                 {/* <Viro3DObject

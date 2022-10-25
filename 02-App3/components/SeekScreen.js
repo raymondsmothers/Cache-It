@@ -59,6 +59,11 @@ export default function SeekScreen() {
         coords.push({"latitude":38.6490389,"longitude": -90.3035856})
         coords.push({"latitude":38.6485423,"longitude": -90.3056161})
         coords.push({"latitude":38.6485022,"longitude": -90.3136965})
+        coords.push({"latitude":39.0889472,"longitude": -77.0768896})
+        coords.push({"latitude":39.1168605,"longitude": -77.2045929})
+        coords.push({"latitude":39.1140253,"longitude": -77.2006334})
+        // coords.push({"latitude":39.1141380,"longitude": -77.1991250})
+
         // coords.push({"latitude":38.6519515,"longitude":-90.2934257})
         // coords.push({"latitude":38.6519594,"longitude":-90.2934463})
         return coords
@@ -140,7 +145,7 @@ export default function SeekScreen() {
 
     return (
         // (true) ? (
-        (distanceToNearestItem > 10 && distanceToNearestItem) ? (
+        (distanceToNearestItem > 20 && distanceToNearestItem) ? (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <Text style={styles.text}>Seek Screen </Text>
               <Text style={styles.text}> {"pulseStrength: \n" + pulseStrength}  </Text>
