@@ -36,7 +36,7 @@ export default function NewCacheForm() {
         console.log("locationContext: " + JSON.stringify(locationContext));
         const randomCoords = Array();
         // findCoordinates();
-        fixedRadius = radius * 1609.34;
+        fixedRadius = radius * 1; //* 1609.34;
         for (let i = 0; i < numItems; i++)
         {
           let coord = randomLocation.randomCirclePoint(locationContext, fixedRadius);
@@ -51,7 +51,7 @@ export default function NewCacheForm() {
     };
 
     const submitHandler = async () => {
-      fixedRadius = radius * 1609.34;
+      fixedRadius = radius * 1; //* 1609.34;
 
       console.log("fixedRadius: " + fixedRadius);
       console.log("name: " + name);
@@ -80,7 +80,7 @@ export default function NewCacheForm() {
           onChangeText={onChangeRadius}
           // value={radius}
           placeholder="Radius (Miles)"
-          keyboardType="numeric"
+          keyboardType="decimal-pad"
         />
         <TextInput
           style={styles.input}

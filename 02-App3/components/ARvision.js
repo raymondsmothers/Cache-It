@@ -31,7 +31,23 @@ const ARVisionScene = () => {
           animation={{name: "rotate", run: true, loop: true}}
           scale={[.3, .3, .1]} 
           materials={["grid"]} 
-          onClick={(position, source) => console.log('Click', position, source)}
+          // onClick={(position, source) => console.log('Click', position, source)}
+          onClick={(position, source) => {
+            Alert.alert(
+              "Congratulations!",
+              "Open Metamask to Claim?",
+              [
+                {
+                  text: "No",
+                  onPress: () => console.log("Nah, I'm good")
+                },
+                {
+                  text: "Yes",
+                  onPress: () => console.log("Give me goodies!")
+                }
+              ]
+            );
+          }}
           dragType="FixedDistance"
           dragPlane={{
             planePoint: [0, -1, 0],
@@ -59,12 +75,13 @@ const ARVisionScene = () => {
                     ]
                   );
                 }
-              }}
+              }
             }
+          }
             // dragtoPos[0]: x position    
             // dragtoPos[1]: y position    
             // dragtoPos[2]: z position
-          }
+          } //OnDrag
 
           />  
                 {/* <Viro3DObject
