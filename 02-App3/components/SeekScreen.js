@@ -64,7 +64,8 @@ export default function SeekScreen() {
           coords.push({"latitude":route.params.coord.marker.latitude, "longitude":route.params.coord.marker.longitude});
         }
         else {
-          coords.push({"latitude":38.6519000,"longitude":-90.293400});
+          // coords.push({"latitude":38.6519000,"longitude":-90.293400});
+          coords.push({"latitude":39.6519000,"longitude":-90.293400});
         }
         // coords.push({"latitude":38.6490389,"longitude": -90.3035856})
         // coords.push({"latitude":38.6485423,"longitude": -90.3056161})

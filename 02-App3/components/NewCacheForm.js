@@ -79,7 +79,7 @@ export default function NewCacheForm() {
           style={styles.input}
           onChangeText={onChangeRadius}
           // value={radius}
-          placeholder="Radius (Miles)"
+          placeholder="Radius (Meters)"
           keyboardType="decimal-pad"
         />
         <TextInput
