@@ -29,6 +29,8 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         uint256 yCoord;
     }
 
+    //should we make a list of active instances?
+
     // manifold creator contract address
     address public immutable creatorContract;
 

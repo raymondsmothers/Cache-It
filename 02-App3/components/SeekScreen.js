@@ -11,14 +11,12 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 import { useRoute } from '@react-navigation/native'
-import { LocationContext } from '../App';
 
 
 
 
 export default function SeekScreen() {
     const [nearestItemCoords, setNearestItemCoords] = useState([]);
-    const locationContext = useContext(LocationContext);
 
     //Distance in degrees to nearest item
     const [distanceToNearestItem, setDistancetoNearestItem] = useState(undefined);
@@ -111,24 +109,22 @@ export default function SeekScreen() {
         });
     }
 
-    //Immediately calculate initial shortest distance using location context
-    useEffect(() => {
-      calculateShortestDistance(locationContext)
-    }, [])
+
 
     //Every second check
     useEffect(() => {
+      findInitialCoordinates()
         // const interval = setInterval( async () => {
-            findCoordinates()
+      updateCoordinates()
             // calculateShortestDistance()
         // }, 1000);
 
         // return () => clearInterval(interval); 
-      }, [])
+    }, [])
 
 
     // //Grabs Location
-    const findCoordinates = async () => {
+    const updateCoordinates = async () => {
         //May be able to use watchPosition here instead 
         const watcher = await Geolocation.watchPosition(
             (position) => {
@@ -146,47 +142,65 @@ export default function SeekScreen() {
               console.log(error.code, error.message);
             },
             //Will only update location if the user moves more than 3 meters
-            { interval: 1000, distanceFilter: 3, enableHighAccuracy: true, timeout: 150000, maximumAge: 0 }
+            { interval: 2000, distanceFilter: 3, enableHighAccuracy: true, timeout: 150000, maximumAge: 0 }
         );
   };
 
-    return (
-        // (true) ? (
-        (distanceToNearestItem > 20 && distanceToNearestItem) ? (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={styles.text}>Seek Screen </Text>
-              <Text style={styles.text}> {"pulseStrength: \n" + pulseStrength}  </Text>
-              {/* <Text style={styles.text}> {"Closest Coordinate: \n" + JSON.stringify(nearestItemCoords, null, 2)}  </Text> */}
-              {/* <View style={styles.container}> */}
-              {/* <Pulse color={'#bbb'} numPulses={Math.ceil(Math.min(10 / distanceToNearestItem, 10))} /> */}
-              {/* </View> */}
-              {/* <AnimatedRingExample pulseRate={Math.ceil(Math.min(10 / distanceToNearestItem, 10))}></AnimatedRingExample> */}
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                }}
-              >
-                <Ring duration={1000 * pulseStrength} delay={0} />
-                <Ring duration={1000 * pulseStrength} delay={500 * pulseStrength} />
-                <Ring duration={1000 * pulseStrength} delay={250 * pulseStrength} />
-                <Ring duration={1000 * pulseStrength} delay={750 * pulseStrength} />
-              </View>
-              <Text style={styles.text}> {"Distance: \n" + distanceToNearestItem + " Meters"}  </Text>
-          </View>
-        ) : (
-            //Maybe we show AR Vision when they are within 0.01, then only allow dragging of ar object when they are within 0.001? So they can move closer to a visible AR object?
+  const findInitialCoordinates = async () => {
+    await Geolocation.getCurrentPosition(
+        (position) => {
+          const crd = position.coords;
+      // console.log(position);
+          calculateShortestDistance({
+            latitude: crd.latitude,
+            longitude: crd.longitude,
+            latitudeDelta: global.latDelta,
+            longitudeDelta: global.longDelta,
+          });
+        },
+        (error) => {
+          // See error code charts below.
+          console.log(error.code, error.message);
+        },
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 100000 }
+    );
+};
 
-            <ARvision></ARvision>
+    return (
+        (distanceToNearestItem) ? (
+          (distanceToNearestItem > 10) ? (
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={styles.text}> {"pulseStrength: \n" + pulseStrength}  </Text>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Ring duration={1000 * pulseStrength} delay={0} />
+                  <Ring duration={1000 * pulseStrength} delay={500 * pulseStrength} />
+                  <Ring duration={1000 * pulseStrength} delay={250 * pulseStrength} />
+                  <Ring duration={1000 * pulseStrength} delay={750 * pulseStrength} />
+                </View>
+                <Text style={styles.text}> {"Distance: \n" + distanceToNearestItem.toFixed(2) + " Meters"}  </Text>
+            </View>
+          ) : (
+              //Maybe we show AR Vision when they are within 0.01, then only allow dragging of ar object when they are within 0.001? So they can move closer to a visible AR object?
+              <ARvision></ARvision>
+          )
+        ) : (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={styles.text}>Grabbing Location...</Text>
+        </View>
         )
     );
   }
 
   const styles = StyleSheet.create({
     text: {
-      fontSize: 20,
+      fontSize: 30,
       textAlign: 'center',
       padding: 20
     },
