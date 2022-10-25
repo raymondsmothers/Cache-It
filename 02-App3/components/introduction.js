@@ -18,21 +18,27 @@ const styles = StyleSheet.create({
 function Intropage1 () {
   return (
     <View style={{ flex: 2}}>
-          <Text>Step1</Text>
+          <Text>Looking for target Geo Cache on the map</Text>
+          <Text>Get close to the target geo cache</Text>
+          <Text>Open the AR when close enough to the target</Text>
+          <Text>Try to find target through AR lens</Text>
+          
           </View>
   )
 }
 function Intropage2 () {
   return (
     <View style={{ flex: 2}}>
-          <Text>Step2</Text>
+          <Text>In NewCacheForm, set up the default value for new geocache</Text>
+          <Text>Connect to the extrenal website</Text>
+          
           </View>
   )
 }
 function Intropage3 () {
   return (
     <View style={{ flex: 2}}>
-          <Text>Step3</Text>
+          <Text>Press the button on the setting page to check your wallet</Text>
           </View>
   )
 }
@@ -59,9 +65,9 @@ export default function IntroductionPage() {
               
       // </View>
       <introtab.Navigator>
-        <introtab.Screen name="Step 1" component={Intropage1} />
-        <introtab.Screen name="Step 2" component={Intropage2} />
-        <introtab.Screen name="Step 3" component={Intropage3} />
+        <introtab.Screen name="How to Find " component={Intropage1} />
+        <introtab.Screen name="How to Mint" component={Intropage2} />
+        <introtab.Screen name="How to Connect" component={Intropage3} />
         <introtab.Screen name="Step 4" component={Intropage4} />
       </introtab.Navigator>
       
