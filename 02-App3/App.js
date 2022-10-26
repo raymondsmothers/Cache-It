@@ -24,7 +24,14 @@ LogBox.ignoreLogs(["Require cycle: node_modules\react-native-crypto\index.js -> 
 console.disableYellowBox = true;
 
 const Tab = createBottomTabNavigator();
-export const LocationContext = React.createContext({}) ;
+export const LocationContext = React.createContext({});
+
+export const CacheMetadataContext = React.createContext({
+  cacheMetadata: {},
+  setCacheMetadata: () => {},
+});
+
+
 const Stack = createNativeStackNavigator();
 
 function HomeTab () {
@@ -56,7 +63,11 @@ function HomeTab () {
 export default function App() {
     const [currentPosition, setCurrentPosition] = useState();
     const [hasLocationPermission, setHasLocationPermission] = useState(false)
+    const [cacheMetadata, setCacheMetadata] = useState()
 
+    //This state hook gets passed down to consumers of the context, to allow them to update the state of the context 
+    cacheMetadataContextValue = { cacheMetadata, setCacheMetadata }
+    
     useEffect(() => {
         if (hasLocationPermission) {
           findCoordinates()
@@ -127,13 +138,14 @@ export default function App() {
         asyncStorage: AsyncStorage,
       }}>
       <LocationContext.Provider value={currentPosition}>
-
-      <NavigationContainer>
-      <Stack.Navigator >
-        <Stack.Screen options={{headerShown: false}} name="Home" component={HomeTab} />
-        <Stack.Screen name = "Introduction" component={IntroductionPage}/>
-      </Stack.Navigator>
-      </NavigationContainer>
+      <CacheMetadataContext.Provider value={cacheMetadataContextValue}>
+        <NavigationContainer>
+        <Stack.Navigator >
+          <Stack.Screen options={{headerShown: false}} name="Home" component={HomeTab} />
+          <Stack.Screen name = "Introduction" component={IntroductionPage}/>
+        </Stack.Navigator>
+        </NavigationContainer>
+      </CacheMetadataContext.Provider>
       </LocationContext.Provider>
 
     </WalletConnectProvider>

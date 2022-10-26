@@ -2,7 +2,7 @@ import React, {useContext, useEffect} from 'react';
 import { View, StyleSheet } from 'react-native';
 import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
-import { LocationContext } from '../App';
+import { CacheMetadataContext, LocationContext } from '../App';
 import '../global';
 import {
   withWalletConnect,
@@ -17,6 +17,8 @@ export default function CacheMap() {
     const mapRef = React.createRef();
 
     const locationContext = useContext(LocationContext)
+    const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
+
     const connector = useWalletConnect();
     const route = useRoute();
 
@@ -62,32 +64,36 @@ export default function CacheMap() {
     }
   }, [locationContext])
 
+  // useEffect(() => {
+  //   if (connector.accounts) {
+  //     console.log('Connector info: ', connector.accounts[0]);
+  //   }
+  // }, [connector]);
+
   useEffect(() => {
-    if (connector.accounts) {
-      console.log('Connector info: ', connector.accounts[0]);
-    }
-  }, [connector]);
+      console.log("metadata: " + JSON.stringify(cacheMetadata, null, 2))
+  }, [cacheMetadata])
   
-  useEffect(() => {
-    console.log("renderArea: " + renderArea);
-    console.log("renderComponent: " + renderComponent);
-  }, [renderArea, renderComponent]);
+  // useEffect(() => {
+  //   console.log("renderArea: " + renderArea);
+  //   console.log("renderComponent: " + renderComponent);
+  // }, [renderArea, renderComponent]);
 
 
-  let renderComponent = false;
-  let renderArea = false;
-  let cacheName = "";
-  let cacheRadius = "";
-  let numberOfPoints = "";
-  let locations = "";
-  if (route.params) {
-    cacheName = route.params.cacheName.name;
-    cacheRadius = route.params.cacheRadius.fixedRadius;
-    numberOfPoints = route.params.numberOfItems.numItems;
-    locations = route.params.cacheLocations.itemLocations;
-    renderComponent = true;
-    renderArea = true;
-  }
+  // let renderComponent = false;
+  // let renderArea = false;
+  // let cacheName = "";
+  // let cacheRadius = "";
+  // let numberOfPoints = "";
+  // let locations = "";
+  // if (route.params) {
+  //   cacheName = route.params.cacheName.name;
+  //   cacheRadius = route.params.cacheRadius.fixedRadius;
+  //   numberOfPoints = route.params.numberOfItems.numItems;
+  //   locations = route.params.cacheLocations.itemLocations;
+  //   renderComponent = true;
+  //   renderArea = true;
+  // }
 
   const styles = StyleSheet.create({
       container: {
@@ -134,12 +140,12 @@ export default function CacheMap() {
         }
         >
           <NewCacheOverlay
-            render={renderComponent}
-            cacheName={cacheName}
-            radius={cacheRadius}
+            render={cacheMetadata != undefined}
+            cacheName={cacheMetadata?.name}
+            radius={cacheMetadata?.radius}
             center={{latitude: locationContext?.latitude, longitude: locationContext?.longitude}}
-            numberOfPoints={numberOfPoints}
-            coordinates={locations}
+            numberOfPoints={cacheMetadata?.numberOfPoints}
+            coordinates={cacheMetadata?.geolocations}
           />
         </MapView>
 

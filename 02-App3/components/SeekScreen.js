@@ -2,6 +2,8 @@ import React, {useContext, useState, useEffect} from 'react';
 import { Text, StyleSheet, View } from 'react-native';
 import ARvision from './ARvision';
 import Geolocation from 'react-native-geolocation-service';
+import { CacheMetadataContext, LocationContext } from '../App';
+
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -16,8 +18,13 @@ import { useRoute } from '@react-navigation/native'
 
 
 export default function SeekScreen() {
-    const [nearestItemCoords, setNearestItemCoords] = useState([]);
+   const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
 
+    //Coordinates of the nearest geocache item
+    const [nearestItemCoords, setNearestItemCoords] = useState([]);
+    //Bool of if the user has succesfully come within proximity of geocache item to trigger AR vision
+      // this is to stop the bug of the SeekScreen flipping too quickly back and forth AR Vision of pulse indicator and causing app to crash
+    const [hasTriggeredARVision, setHasTriggeredARVision] = useState(false)
     //Distance in degrees to nearest item
     const [distanceToNearestItem, setDistancetoNearestItem] = useState(undefined);
     //sets pulse duration, 1 is strongest, 20 is weakest
@@ -58,6 +65,23 @@ export default function SeekScreen() {
       return <Animated.View style={[styles.ring, ringStyle]} />;
     };
 
+    //Every second check
+    useEffect(() => {
+      findInitialCoordinates()
+        // const interval = setInterval( async () => {
+      updateCoordinates()
+            // calculateShortestDistance()
+        // }, 1000);
+
+        // return () => clearInterval(interval); 
+    }, [])
+
+    useEffect(() => {
+      if(!cacheMetadata) {
+
+      }
+    }, [cacheMetadata])
+
     const getItemCoords = () => {
         var coords = []
         if(route.params) {
@@ -66,6 +90,9 @@ export default function SeekScreen() {
         else {
           // coords.push({"latitude":38.6519000,"longitude":-90.293400});
           coords.push({"latitude":39.6519000,"longitude":-90.293400});
+          coords.push({"latitude":38.6483634,"longitude":-90.3118004});
+          coords.push({"latitude":38.6480908,"longitude":-90.3118779});
+            coords.push({"latitude":38.6486215,"longitude":-90.3112989});
         }
         // coords.push({"latitude":38.6490389,"longitude": -90.3035856})
         // coords.push({"latitude":38.6485423,"longitude": -90.3056161})
@@ -78,11 +105,14 @@ export default function SeekScreen() {
 
     const calculateShortestDistance = async (currentPosition) => {
         //get coords
-        const coords = getItemCoords()
+        console.log("metadata in seek: " + JSON.stringify(cacheMetadata, null, 2))
+
+        const coords = cacheMetadata?.geolocations
+        // const coords = getItemCoords()
         //reset during every check
         var shortestHyp = 1000000
         var shortestHypCoords = {}
-        await coords.forEach(crd => {
+        await coords?.forEach(crd => {
             //for each coords
             //calculate hypotenuse
             const latDelta = Math.abs(currentPosition?.latitude - crd.latitude)
@@ -106,25 +136,19 @@ export default function SeekScreen() {
                 
                 setNearestItemCoords(shortestHypCoords)
                 setDistancetoNearestItem(shortestHypInMeters)
+                setHasTriggeredARVision(shortestHypInMeters <= 10)
+
             }
         });
     }
 
 
 
-    //Every second check
-    useEffect(() => {
-      findInitialCoordinates()
-        // const interval = setInterval( async () => {
-      updateCoordinates()
-            // calculateShortestDistance()
-        // }, 1000);
 
-        // return () => clearInterval(interval); 
-    }, [])
 
 
     // //Grabs Location
+    // TODO we really should have a useContext hook that updates the LocationContext across the whole app, can change later
     const updateCoordinates = async () => {
         //May be able to use watchPosition here instead 
         const watcher = await Geolocation.watchPosition(
@@ -143,7 +167,7 @@ export default function SeekScreen() {
               console.log(error.code, error.message);
             },
             //Will only update location if the user moves more than 3 meters
-            { interval: 2000, distanceFilter: 3, enableHighAccuracy: true, timeout: 150000, maximumAge: 0 }
+            { interval: 1000, distanceFilter: 3, enableHighAccuracy: true, timeout: 150000, maximumAge: 0 }
         );
   };
 
@@ -168,36 +192,43 @@ export default function SeekScreen() {
 };
 
     return (
-        (distanceToNearestItem) ? (
-          (distanceToNearestItem > 10) ? (
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={styles.text}> {"pulseStrength: \n" + pulseStrength}  </Text>
-                <View
-                  style={{
-                    flex: 1,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                  }}
-                >
-                  <Ring duration={1000 * pulseStrength} delay={0} />
-                  <Ring duration={1000 * pulseStrength} delay={500 * pulseStrength} />
-                  <Ring duration={1000 * pulseStrength} delay={250 * pulseStrength} />
-                  <Ring duration={1000 * pulseStrength} delay={750 * pulseStrength} />
-                </View>
-                <Text style={styles.text}> {"Distance: \n" + distanceToNearestItem.toFixed(2) + " Meters"}  </Text>
-            </View>
+        (cacheMetadata) ? (
+          (distanceToNearestItem) ? (
+            (distanceToNearestItem > 10 && !hasTriggeredARVision) ? (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                  <Text style={styles.text}> {"Searching \"" + cacheMetadata.name + "\""}  </Text>
+
+                  <Text style={styles.text}> {"Pulse Strength: \n" + pulseStrength}  </Text>
+                  <View
+                    style={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Ring duration={1000 * pulseStrength} delay={0} />
+                    <Ring duration={1000 * pulseStrength} delay={500 * pulseStrength} />
+                    <Ring duration={1000 * pulseStrength} delay={250 * pulseStrength} />
+                    <Ring duration={1000 * pulseStrength} delay={750 * pulseStrength} />
+                  </View>
+                  <Text style={styles.text}> {"Distance: \n" + distanceToNearestItem.toFixed(2) + " Meters"}  </Text>
+              </View>
+            ) : (
+                //Maybe we show AR Vision when they are within 0.01, then only allow dragging of ar object when they are within 0.001? So they can move closer to a visible AR object?
+                <ARvision></ARvision>
+            )
           ) : (
-              //Maybe we show AR Vision when they are within 0.01, then only allow dragging of ar object when they are within 0.001? So they can move closer to a visible AR object?
-              <ARvision></ARvision>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={styles.text}>Grabbing Location...</Text>
+          </View>
           )
-        ) : (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={styles.text}>Grabbing Location...</Text>
+      ) : (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={styles.text}>Please select a geocache to use Seek!</Text>
         </View>
-        )
-    );
-  }
+      )
+  )}
 
   const styles = StyleSheet.create({
     text: {

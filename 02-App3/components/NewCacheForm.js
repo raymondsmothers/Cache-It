@@ -1,7 +1,7 @@
 import React, {useState, useContext, useEffect} from 'react';
 import { RecyclerViewBackedScrollViewComponent, Text, View, Button } from 'react-native';
 import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid  } from "react-native";
-import { LocationContext } from '../App';
+import { CacheMetadataContext, LocationContext } from '../App';
 // import * as Location from 'expo-location';
 import Geolocation from 'react-native-geolocation-service';
 import { useNavigation } from '@react-navigation/native';
@@ -20,13 +20,14 @@ const styles = StyleSheet.create({
 
 
 export default function NewCacheForm() {
+    const navigation = useNavigation();
+    const locationContext = useContext(LocationContext)
     const [name, onChangeName] = useState("Default Name");
     const [radius, onChangeRadius] = useState(1);
     const [numItems, onChangeNumItems] = useState(5);
+    const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
     let fixedRadius = 0;
 
-    const navigation = useNavigation();
-    const locationContext = useContext(LocationContext)
 
 
 
@@ -59,12 +60,18 @@ export default function NewCacheForm() {
       console.log("radius: " + radius);
 
       const itemLocations = generateItemLocations();
-      navigation.navigate("CacheMap", {
-        cacheName: {name},
-        numberOfItems: {numItems},
-        cacheRadius: {fixedRadius},
-        cacheLocations: {itemLocations}
-      });
+      // navigation.navigate("CacheMap", {
+      //   cacheName: {name},
+      //   numberOfItems: {numItems},
+      //   cacheRadius: {fixedRadius},
+      //   cacheLocations: {itemLocations}
+      // });
+      setCacheMetadata({
+        "name": name,
+        "numberOfItems": numItems,
+        "radius": fixedRadius,
+        "geolocations": itemLocations
+      })
     };
 
     return (
