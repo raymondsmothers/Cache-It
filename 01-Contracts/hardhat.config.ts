@@ -43,6 +43,11 @@ let config: HardhatUserConfig = {
     },
 
     hardhat: {},
+
+    goerli: {
+      url: process.env.GOERLI_ALCHEMY_URL,
+      accounts: [process.env.DEV_SEED || ''],
+    },
   },
 
   etherscan: {
