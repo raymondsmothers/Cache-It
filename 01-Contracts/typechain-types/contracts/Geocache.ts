@@ -34,8 +34,11 @@ export declare namespace Geocache {
     dateCreated: PromiseOrValue<string>;
     numItems: PromiseOrValue<BigNumberish>;
     isActive: PromiseOrValue<boolean>;
-    xCoord: PromiseOrValue<BigNumberish>;
-    yCoord: PromiseOrValue<BigNumberish>;
+    epicenterXCoord: PromiseOrValue<BigNumberish>;
+    epicenterYCoord: PromiseOrValue<BigNumberish>;
+    itemGeolocations: PromiseOrValue<string>[];
+    name: PromiseOrValue<string>;
+    radius: PromiseOrValue<BigNumberish>;
   };
 
   export type GeocacheInstanceStructOutput = [
@@ -45,6 +48,9 @@ export declare namespace Geocache {
     BigNumber,
     boolean,
     BigNumber,
+    BigNumber,
+    string[],
+    string,
     BigNumber
   ] & {
     creator: string;
@@ -52,8 +58,11 @@ export declare namespace Geocache {
     dateCreated: string;
     numItems: BigNumber;
     isActive: boolean;
-    xCoord: BigNumber;
-    yCoord: BigNumber;
+    epicenterXCoord: BigNumber;
+    epicenterYCoord: BigNumber;
+    itemGeolocations: string[];
+    name: string;
+    radius: BigNumber;
   };
 }
 
@@ -67,7 +76,7 @@ export interface GeocacheInterface extends utils.Interface {
     "hasMintedTokenId(uint256,address)": FunctionFragment;
     "isAdmin(address)": FunctionFragment;
     "mintItemInGeocache(uint256,address)": FunctionFragment;
-    "newGeocache(uint256,string,string)": FunctionFragment;
+    "newGeocache(uint256,string,string,string[],uint256,uint256,uint256,string)": FunctionFragment;
     "numGeocaches()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -135,6 +144,11 @@ export interface GeocacheInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>[],
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
     ]
   ): string;
@@ -346,6 +360,11 @@ export interface Geocache extends BaseContract {
       _numItems: PromiseOrValue<BigNumberish>,
       _tokenURI: PromiseOrValue<string>,
       _dateCreated: PromiseOrValue<string>,
+      _itemGeolocations: PromiseOrValue<string>[],
+      _xCoord: PromiseOrValue<BigNumberish>,
+      _yCoord: PromiseOrValue<BigNumberish>,
+      _radius: PromiseOrValue<BigNumberish>,
+      _name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -371,14 +390,26 @@ export interface Geocache extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [string, string, string, BigNumber, boolean, BigNumber, BigNumber] & {
+      [
+        string,
+        string,
+        string,
+        BigNumber,
+        boolean,
+        BigNumber,
+        BigNumber,
+        string,
+        BigNumber
+      ] & {
         creator: string;
         tokenURI: string;
         dateCreated: string;
         numItems: BigNumber;
         isActive: boolean;
-        xCoord: BigNumber;
-        yCoord: BigNumber;
+        epicenterXCoord: BigNumber;
+        epicenterYCoord: BigNumber;
+        name: string;
+        radius: BigNumber;
       }
     >;
 
@@ -439,6 +470,11 @@ export interface Geocache extends BaseContract {
     _numItems: PromiseOrValue<BigNumberish>,
     _tokenURI: PromiseOrValue<string>,
     _dateCreated: PromiseOrValue<string>,
+    _itemGeolocations: PromiseOrValue<string>[],
+    _xCoord: PromiseOrValue<BigNumberish>,
+    _yCoord: PromiseOrValue<BigNumberish>,
+    _radius: PromiseOrValue<BigNumberish>,
+    _name: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -464,14 +500,26 @@ export interface Geocache extends BaseContract {
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
-    [string, string, string, BigNumber, boolean, BigNumber, BigNumber] & {
+    [
+      string,
+      string,
+      string,
+      BigNumber,
+      boolean,
+      BigNumber,
+      BigNumber,
+      string,
+      BigNumber
+    ] & {
       creator: string;
       tokenURI: string;
       dateCreated: string;
       numItems: BigNumber;
       isActive: boolean;
-      xCoord: BigNumber;
-      yCoord: BigNumber;
+      epicenterXCoord: BigNumber;
+      epicenterYCoord: BigNumber;
+      name: string;
+      radius: BigNumber;
     }
   >;
 
@@ -532,6 +580,11 @@ export interface Geocache extends BaseContract {
       _numItems: PromiseOrValue<BigNumberish>,
       _tokenURI: PromiseOrValue<string>,
       _dateCreated: PromiseOrValue<string>,
+      _itemGeolocations: PromiseOrValue<string>[],
+      _xCoord: PromiseOrValue<BigNumberish>,
+      _yCoord: PromiseOrValue<BigNumberish>,
+      _radius: PromiseOrValue<BigNumberish>,
+      _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -555,14 +608,26 @@ export interface Geocache extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [string, string, string, BigNumber, boolean, BigNumber, BigNumber] & {
+      [
+        string,
+        string,
+        string,
+        BigNumber,
+        boolean,
+        BigNumber,
+        BigNumber,
+        string,
+        BigNumber
+      ] & {
         creator: string;
         tokenURI: string;
         dateCreated: string;
         numItems: BigNumber;
         isActive: boolean;
-        xCoord: BigNumber;
-        yCoord: BigNumber;
+        epicenterXCoord: BigNumber;
+        epicenterYCoord: BigNumber;
+        name: string;
+        radius: BigNumber;
       }
     >;
 
@@ -651,6 +716,11 @@ export interface Geocache extends BaseContract {
       _numItems: PromiseOrValue<BigNumberish>,
       _tokenURI: PromiseOrValue<string>,
       _dateCreated: PromiseOrValue<string>,
+      _itemGeolocations: PromiseOrValue<string>[],
+      _xCoord: PromiseOrValue<BigNumberish>,
+      _yCoord: PromiseOrValue<BigNumberish>,
+      _radius: PromiseOrValue<BigNumberish>,
+      _name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -733,6 +803,11 @@ export interface Geocache extends BaseContract {
       _numItems: PromiseOrValue<BigNumberish>,
       _tokenURI: PromiseOrValue<string>,
       _dateCreated: PromiseOrValue<string>,
+      _itemGeolocations: PromiseOrValue<string>[],
+      _xCoord: PromiseOrValue<BigNumberish>,
+      _yCoord: PromiseOrValue<BigNumberish>,
+      _radius: PromiseOrValue<BigNumberish>,
+      _name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

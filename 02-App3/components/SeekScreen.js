@@ -94,11 +94,6 @@ export default function SeekScreen() {
           coords.push({"latitude":38.6480908,"longitude":-90.3118779});
             coords.push({"latitude":38.6486215,"longitude":-90.3112989});
         }
-        // coords.push({"latitude":38.6490389,"longitude": -90.3035856})
-        // coords.push({"latitude":38.6485423,"longitude": -90.3056161})
-        // coords.push({"latitude":38.6485022,"longitude": -90.3136965})
-        // coords.push({"latitude":38.6519515,"longitude":-90.2934257})
-        // coords.push({"latitude":38.6519594,"longitude":-90.2934463})
         return coords
     }
 
@@ -106,13 +101,11 @@ export default function SeekScreen() {
     const calculateShortestDistance = async (currentPosition) => {
         //get coords
         console.log("metadata in seek: " + JSON.stringify(cacheMetadata, null, 2))
-
-        const coords = cacheMetadata?.geolocations
         // const coords = getItemCoords()
         //reset during every check
         var shortestHyp = 1000000
         var shortestHypCoords = {}
-        await coords?.forEach(crd => {
+        await cacheMetadata?.geolocations.forEach(crd => {
             //for each coords
             //calculate hypotenuse
             const latDelta = Math.abs(currentPosition?.latitude - crd.latitude)
@@ -167,7 +160,7 @@ export default function SeekScreen() {
               console.log(error.code, error.message);
             },
             //Will only update location if the user moves more than 3 meters
-            { interval: 1000, distanceFilter: 3, enableHighAccuracy: true, timeout: 150000, maximumAge: 0 }
+            { interval: 1000, distanceFilter: 2, enableHighAccuracy: true, timeout: 150000, maximumAge: 0 }
         );
   };
 

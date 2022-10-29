@@ -16,10 +16,11 @@ const DEV_SEED: string = process.env.DEV_SEED || '';
 const ETHERSCAN_API_KEY: string = process.env.ETHERSCAN_API_KEY || '';
 const RINKEBY_ALCHEMY_URL: string = process.env.RINKEBY_ALCHEMY_URL || '';
 const GOERLI_ALCHEMY_URL: string = process.env.GOERLI_ALCHEMY_URL || '';
+const GOERLI_ALCHEMY_KEY: string = process.env.GOERLI_ALCHEMY_KEY || '';
 const MAINNET_ALCHEMY_URL: string = process.env.MAINNET_ALCHEMY_URL || '';
 const OPTIMISM_KOVAN_ALCHEMY_URL: string = process.env.OPTIMISM_KOVAN_ALCHEMY_URL || '';
 const COINMARKETCAP_API_KEY: string = process.env.COINMARKETCAP_API_KEY || '';
-
+const GOERLI_PRIVATE_KEY =  process.env.GOERLI_PRIVATE_KEY || '';
 // glob.sync('./tasks/*.ts').forEach((file: string) => {
 //   require(path.resolve(file))
 // })
@@ -41,7 +42,10 @@ let config: HardhatUserConfig = {
       url: 'http://127.0.0.1:8545',
       timeout: 0,
     },
-
+    goerli: {
+      url: `https://eth-goerli.alchemyapi.io/v2/${GOERLI_ALCHEMY_KEY}`,
+      accounts: [GOERLI_PRIVATE_KEY]
+    },
     hardhat: {},
   },
 

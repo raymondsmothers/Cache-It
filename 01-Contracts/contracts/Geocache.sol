@@ -25,8 +25,11 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         string dateCreated; // when geocache was created
         uint256 numItems; // # of items in the geocache
         bool isActive; // if all items have been found or not
-        uint256 xCoord;
-        uint256 yCoord;
+        uint256 epicenterXCoord;
+        uint256 epicenterYCoord;
+        string[] itemGeolocations;
+        string name;
+        uint256 radius;
     }
 
     //should we make a list of active instances?
@@ -90,7 +93,12 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
     function newGeocache(
         uint256 _numItems,
         string memory _tokenURI,
-        string memory _dateCreated
+        string memory _dateCreated,
+        string[] memory _itemGeolocations,
+        uint256 _xCoord,
+        uint256 _yCoord,
+        uint256 _radius,
+        string memory _name
     ) external {
         tokenIdToGeocache[numGeocaches] = GeocacheInstance(
             msg.sender,
@@ -98,8 +106,11 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
             _dateCreated,
             _numItems,
             true, 
-            0, // change x and y coord later, for now static
-            0
+            _xCoord, // change x and y coord later, for now static
+            _yCoord,
+            _itemGeolocations,
+            _name,
+            _radius
         );
         ++numGeocaches;
 
