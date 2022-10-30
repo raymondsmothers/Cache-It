@@ -1,36 +1,48 @@
 import React, {useState, useContext, useEffect} from 'react';
 import { RecyclerViewBackedScrollViewComponent, Text, View, Button } from 'react-native';
 import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid  } from "react-native";
-import { CacheMetadataContext, LocationContext } from '../App';
+import { CacheMetadataContext, LocationContext, WalletConnectProviderContext, GeocacheContractContext } from '../App';
 // import * as Location from 'expo-location';
 import Geolocation from 'react-native-geolocation-service';
 import { useNavigation } from '@react-navigation/native';
 import randomLocation from 'random-location';
 import { json } from 'express';
 
+// Web3 Imports
+// Pull in the shims (BEFORE importing ethers)
+import "@ethersproject/shims"
 
-const styles = StyleSheet.create({
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-});
+// Import the ethers library
+import { ethers } from "ethers";
+
+
 
 
 export default function NewCacheForm() {
     const navigation = useNavigation();
     const locationContext = useContext(LocationContext)
+    const provider = useContext(WalletConnectProviderContext)
+    const GeocacheContract = useContext(GeocacheContractContext)
     const [name, onChangeName] = useState("Default Name");
     const [radius, onChangeRadius] = useState(1);
     const [numItems, onChangeNumItems] = useState(5);
     const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
     let fixedRadius = 0;
 
+    useEffect(() => {
+      createGeocache()
+    })
+
+    const createGeocache = async () => {
+      const ethers_provider = new ethers.providers.Web3Provider(window.ethereum);
+
+      const signer = ethers_provider.getSigner();
+      const creator = await GeocacheContract.creatorContract();
+      console.log("Creator: " + creator)
+      console.log("Singer: " + signer)
 
 
-
+    }
 
     const generateItemLocations = () => {
         //generate numItems coordinate pairs within radius
@@ -106,3 +118,12 @@ export default function NewCacheForm() {
     );
   }
   
+
+  const styles = StyleSheet.create({
+    input: {
+      height: 40,
+      margin: 12,
+      borderWidth: 1,
+      padding: 10,
+    },
+  });

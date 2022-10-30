@@ -38,7 +38,7 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
     address public immutable creatorContract;
 
     // total number of geocaches created so far
-    uint256 public numGeocaches;
+    uint256 public numGeocaches = 0;
 
     // mapping between a tokenId and a geocache
     mapping(uint256 => GeocacheInstance) public tokenIdToGeocache;

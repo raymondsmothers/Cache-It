@@ -12,11 +12,15 @@ export default function ConnectWalletButton() {
     /**
      *  Connect!
      */
+
     return (
       <Button title="Connect Wallet" onPress={() => connector.connect()} />
     );
   }
-  return (
-    <Button title="Disconnect Wallet" onPress={() => connector.killSession()} />
-  );
+  else {
+    console.log("Account: " + connector.accounts[0])
+    return (
+      <Button title="Disconnect Wallet" onPress={() => connector.killSession()} />
+    );
+  }
 }

@@ -31,7 +31,7 @@ async function main() {
     // [owner, addr1, addr2, addr3, addr4] = await ethers.getSigners();
 
     // Deploying manifold creator contract (ERC1155Creator)
-    const Geocache1155Factory = new Geocache1155__factory(owner);
+    // const Geocache1155Factory = new Geocache1155__factory(owner);
     const Geocache1155Factory = await ethers.getContractFactory(
       "Geocache1155",
       owner
