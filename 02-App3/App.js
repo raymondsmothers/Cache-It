@@ -15,8 +15,9 @@ import ConnectWalletButton from './components/ConnectWalletButton';
 import IntroductionPage from './components/introduction';
 
 //Web3 imports
-import { WalletConnectProvider }  from '@walletconnect/react-native-dapp' ;
-// import WalletConnectProvider from "@walletconnect/web3-provider";
+import { withWalletConnect, useWalletConnect }  from '@walletconnect/react-native-dapp' ;
+// import { WalletConnectProvider as WalletConnectProviderWrapper }  from '@walletconnect/react-native-dapp' ;
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -40,7 +41,7 @@ export const CacheMetadataContext = React.createContext({
   cacheMetadata: {},
   setCacheMetadata: () => {},
 });
-export const WalletConnectProviderContext = React.createContext({});
+export const Web3ProviderContext = React.createContext({});
 export const GeocacheContractContext = React.createContext({});
 
 
@@ -72,56 +73,87 @@ function HomeTab () {
 
 
 
-export default function App() {
+function App() {
 
     const [currentPosition, setCurrentPosition] = useState();
     const [hasLocationPermission, setHasLocationPermission] = useState(false)
     const [cacheMetadata, setCacheMetadata] = useState()
+    // const [geocacheContract, setGeocacheContract] = useState({});
     //This state hook gets passed down to consumers of the context, to allow them to update the state of the context 
     cacheMetadataContextValue = { cacheMetadata, setCacheMetadata }
 
-    //  Create WalletConnect Provider
-    // const provider = new WalletConnectProvider({
-    //   infuraId:  process.env.GOERLI_INFURA_KEY,
-    // });
+    //  Create WalletConnect Provider for gettingSigner for state changing transactions
+    const connector = useWalletConnect();
+
+    const walletConnectProvider = new WalletConnectProvider({
+      infuraId: "1b9467bd46a7430faf4e825d24c63122", // Required
+      connector: connector,
+      qrcode: false,
+      chainId: 5,
+    });
+
+    // Create default Provider for signing read only transactions
+    const defaultProvider = new ethers.getDefaultProvider(
+      "goerli",
+      {
+        "alchemy": process.env.GOERLI_ALCHEMY_KEY,
+        "infura": "1b9467bd46a7430faf4e825d24c63122"
+      }
+    );
+
+    // globally available context
+    Web3ProviderContextValue = {
+      "walletConnect": walletConnectProvider,
+      "default": defaultProvider
+    }
+
+    //Construct globally available contract context
+    const GeocacheContract = new ethers.Contract(
+      CONTRACT_ADDRESSES.Geocache,
+      GeocacheJSON.abi,
+      defaultProvider
+    );
     // const provider = new ethers.providers.AlchemyProvider(
     //   "goerli",
     //   process.env.GOERLI_ALCHEMY_KEY
     // );
-    const provider = new ethers.getDefaultProvider(
-      "goerli",
-      {
-        "alchemy": process.env.GOERLI_ALCHEMY_KEY,
-        "infura": process.env.GOERLI_INFURA_KEY
-      }
-    );
-
-    //Construct Geocache Contruct
-    const GeocacheContract = new ethers.Contract(
-      CONTRACT_ADDRESSES.Geocache,
-      GeocacheJSON.abi,
-      provider
-    );
-
-    useEffect(async () => {
+    // const provider = new ethers.getDefaultProvider(
+    //   "goerli",
+    //   {
+    //     "alchemy": process.env.GOERLI_ALCHEMY_KEY,
+    //     "infura": process.env.GOERLI_INFURA_KEY
+    //   }
+    // );
 
 
-        // Subscribe to accounts change
-        provider.on("accountsChanged", (accounts) => {
-          console.log(accounts);
-        });
 
-        // Subscribe to chainId change
-        provider.on("chainChanged", (chainId) => {
-          console.log(chainId);
-        });
+    useEffect(() => {
 
-        // Subscribe to session disconnection
-        provider.on("disconnect", (code, reason) => {
-          console.log(code, reason);
-        });
-        //  Enable session (triggers QR Code modal)
-        // await provider.enable();
+        const setupProvider = async () => {
+          console.log("env: " + process.env.GOERLI_INFURA_KEY)
+
+          // Subscribe to accounts change
+          walletConnectProvider.on("accountsChanged", (accounts) => {
+            console.log(accounts);
+          });
+  
+          // Subscribe to chainId change
+          walletConnectProvider.on("chainChanged", (chainId) => {
+            console.log(chainId);
+          });
+  
+          // Subscribe to session disconnection
+          walletConnectProvider.on("disconnect", (code, reason) => {
+            console.log(code, reason);
+          });
+          //  Enable session (triggers QR Code modal)
+          await walletConnectProvider.enable();
+  
+
+          // setGeocacheContract(GeocacheContract)
+        }
+        setupProvider()
+       
     }, [])
 
    
@@ -148,7 +180,7 @@ export default function App() {
             }
           )
           if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            console.log("You can use the location")
+            // console.log("You can use the location")
             setHasLocationPermission(true)
           } else {
             console.log("location permission denied")
@@ -181,22 +213,22 @@ export default function App() {
 
 
   return (
-    <WalletConnectProvider
-      bridge="https://bridge.walletconnect.org"
-      clientMeta={{
-        description: 'Connect with WalletConnect',
-        url: 'https://walletconnect.org',
-        icons: ['https://walletconnect.org/walletconnect-logo.png'],
-        name: 'WalletConnect',
-      }}
-      redirectUrl={
-        Platform.OS === 'web' ? window.location.origin : 'yourappscheme://'
-      }
-      storageOptions={{
-        asyncStorage: AsyncStorage,
-      }}>
+    // <WalletConnectProvider
+      // bridge="https://bridge.walletconnect.org"
+      // clientMeta={{
+      //   description: 'Connect with WalletConnect',
+      //   url: 'https://walletconnect.org',
+      //   icons: ['https://walletconnect.org/walletconnect-logo.png'],
+      //   name: 'WalletConnect',
+      // }}
+      // redirectUrl={
+      //   Platform.OS === 'web' ? window.location.origin : 'yourappscheme://'
+      // }
+      // storageOptions={{
+      //   asyncStorage: AsyncStorage,
+      // }}>
       <LocationContext.Provider value={currentPosition}>
-      <WalletConnectProviderContext.Provider value={provider}>
+      <Web3ProviderContext.Provider value={Web3ProviderContextValue}>
       <CacheMetadataContext.Provider value={cacheMetadataContextValue}>
       <GeocacheContractContext.Provider value={GeocacheContract}>
         <NavigationContainer>
@@ -207,9 +239,23 @@ export default function App() {
         </NavigationContainer>
       </GeocacheContractContext.Provider>
       </CacheMetadataContext.Provider>
-      </WalletConnectProviderContext.Provider>
+      </Web3ProviderContext.Provider>
       </LocationContext.Provider>
 
-    </WalletConnectProvider>
+    // </WalletConnectProviderWrapper>
   );
 }
+
+export default withWalletConnect(App, {
+  bridge: "https://bridge.walletconnect.org",
+  clientMeta: {
+    description: 'Connect with WalletConnect',
+    url: 'https://walletconnect.org',
+    icons: ['https://walletconnect.org/walletconnect-logo.png'],
+    name: 'WalletConnect',
+  },
+  redirectUrl:  Platform.OS === 'web' ? window.location.origin : 'yourappscheme://',
+  storageOptions: {
+    asyncStorage: AsyncStorage,
+  }
+});

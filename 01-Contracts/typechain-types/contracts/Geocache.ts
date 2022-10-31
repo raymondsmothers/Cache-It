@@ -34,8 +34,8 @@ export declare namespace Geocache {
     dateCreated: PromiseOrValue<string>;
     numItems: PromiseOrValue<BigNumberish>;
     isActive: PromiseOrValue<boolean>;
-    epicenterXCoord: PromiseOrValue<BigNumberish>;
-    epicenterYCoord: PromiseOrValue<BigNumberish>;
+    epicenterLat: PromiseOrValue<string>;
+    epicenterLong: PromiseOrValue<string>;
     itemGeolocations: PromiseOrValue<string>[];
     name: PromiseOrValue<string>;
     radius: PromiseOrValue<BigNumberish>;
@@ -47,8 +47,8 @@ export declare namespace Geocache {
     string,
     BigNumber,
     boolean,
-    BigNumber,
-    BigNumber,
+    string,
+    string,
     string[],
     string,
     BigNumber
@@ -58,8 +58,8 @@ export declare namespace Geocache {
     dateCreated: string;
     numItems: BigNumber;
     isActive: boolean;
-    epicenterXCoord: BigNumber;
-    epicenterYCoord: BigNumber;
+    epicenterLat: string;
+    epicenterLong: string;
     itemGeolocations: string[];
     name: string;
     radius: BigNumber;
@@ -73,10 +73,11 @@ export interface GeocacheInterface extends utils.Interface {
     "geocacheToNumFound(uint256)": FunctionFragment;
     "getAdmins()": FunctionFragment;
     "getAllGeocaches()": FunctionFragment;
+    "getGeolocationsOfGeocache(uint256)": FunctionFragment;
     "hasMintedTokenId(uint256,address)": FunctionFragment;
     "isAdmin(address)": FunctionFragment;
     "mintItemInGeocache(uint256,address)": FunctionFragment;
-    "newGeocache(uint256,string,string,string[],uint256,uint256,uint256,string)": FunctionFragment;
+    "newGeocache(uint256,string,string,string[],string,string,uint256,string)": FunctionFragment;
     "numGeocaches()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -95,6 +96,7 @@ export interface GeocacheInterface extends utils.Interface {
       | "geocacheToNumFound"
       | "getAdmins"
       | "getAllGeocaches"
+      | "getGeolocationsOfGeocache"
       | "hasMintedTokenId"
       | "isAdmin"
       | "mintItemInGeocache"
@@ -128,6 +130,10 @@ export interface GeocacheInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getGeolocationsOfGeocache",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "hasMintedTokenId",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
@@ -146,8 +152,8 @@ export interface GeocacheInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>[],
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
     ]
@@ -201,6 +207,10 @@ export interface GeocacheInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "getAdmins", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getAllGeocaches",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getGeolocationsOfGeocache",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -339,6 +349,11 @@ export interface Geocache extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[Geocache.GeocacheInstanceStructOutput[]]>;
 
+    getGeolocationsOfGeocache(
+      geocacheIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
+
     hasMintedTokenId(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<string>,
@@ -361,8 +376,8 @@ export interface Geocache extends BaseContract {
       _tokenURI: PromiseOrValue<string>,
       _dateCreated: PromiseOrValue<string>,
       _itemGeolocations: PromiseOrValue<string>[],
-      _xCoord: PromiseOrValue<BigNumberish>,
-      _yCoord: PromiseOrValue<BigNumberish>,
+      _epicenterLat: PromiseOrValue<string>,
+      _epicenterLong: PromiseOrValue<string>,
       _radius: PromiseOrValue<BigNumberish>,
       _name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -396,8 +411,8 @@ export interface Geocache extends BaseContract {
         string,
         BigNumber,
         boolean,
-        BigNumber,
-        BigNumber,
+        string,
+        string,
         string,
         BigNumber
       ] & {
@@ -406,8 +421,8 @@ export interface Geocache extends BaseContract {
         dateCreated: string;
         numItems: BigNumber;
         isActive: boolean;
-        epicenterXCoord: BigNumber;
-        epicenterYCoord: BigNumber;
+        epicenterLat: string;
+        epicenterLong: string;
         name: string;
         radius: BigNumber;
       }
@@ -449,6 +464,11 @@ export interface Geocache extends BaseContract {
     overrides?: CallOverrides
   ): Promise<Geocache.GeocacheInstanceStructOutput[]>;
 
+  getGeolocationsOfGeocache(
+    geocacheIndex: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
   hasMintedTokenId(
     arg0: PromiseOrValue<BigNumberish>,
     arg1: PromiseOrValue<string>,
@@ -471,8 +491,8 @@ export interface Geocache extends BaseContract {
     _tokenURI: PromiseOrValue<string>,
     _dateCreated: PromiseOrValue<string>,
     _itemGeolocations: PromiseOrValue<string>[],
-    _xCoord: PromiseOrValue<BigNumberish>,
-    _yCoord: PromiseOrValue<BigNumberish>,
+    _epicenterLat: PromiseOrValue<string>,
+    _epicenterLong: PromiseOrValue<string>,
     _radius: PromiseOrValue<BigNumberish>,
     _name: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -506,8 +526,8 @@ export interface Geocache extends BaseContract {
       string,
       BigNumber,
       boolean,
-      BigNumber,
-      BigNumber,
+      string,
+      string,
       string,
       BigNumber
     ] & {
@@ -516,8 +536,8 @@ export interface Geocache extends BaseContract {
       dateCreated: string;
       numItems: BigNumber;
       isActive: boolean;
-      epicenterXCoord: BigNumber;
-      epicenterYCoord: BigNumber;
+      epicenterLat: string;
+      epicenterLong: string;
       name: string;
       radius: BigNumber;
     }
@@ -559,6 +579,11 @@ export interface Geocache extends BaseContract {
       overrides?: CallOverrides
     ): Promise<Geocache.GeocacheInstanceStructOutput[]>;
 
+    getGeolocationsOfGeocache(
+      geocacheIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
+
     hasMintedTokenId(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<string>,
@@ -581,8 +606,8 @@ export interface Geocache extends BaseContract {
       _tokenURI: PromiseOrValue<string>,
       _dateCreated: PromiseOrValue<string>,
       _itemGeolocations: PromiseOrValue<string>[],
-      _xCoord: PromiseOrValue<BigNumberish>,
-      _yCoord: PromiseOrValue<BigNumberish>,
+      _epicenterLat: PromiseOrValue<string>,
+      _epicenterLong: PromiseOrValue<string>,
       _radius: PromiseOrValue<BigNumberish>,
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -614,8 +639,8 @@ export interface Geocache extends BaseContract {
         string,
         BigNumber,
         boolean,
-        BigNumber,
-        BigNumber,
+        string,
+        string,
         string,
         BigNumber
       ] & {
@@ -624,8 +649,8 @@ export interface Geocache extends BaseContract {
         dateCreated: string;
         numItems: BigNumber;
         isActive: boolean;
-        epicenterXCoord: BigNumber;
-        epicenterYCoord: BigNumber;
+        epicenterLat: string;
+        epicenterLong: string;
         name: string;
         radius: BigNumber;
       }
@@ -695,6 +720,11 @@ export interface Geocache extends BaseContract {
 
     getAllGeocaches(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getGeolocationsOfGeocache(
+      geocacheIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     hasMintedTokenId(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<string>,
@@ -717,8 +747,8 @@ export interface Geocache extends BaseContract {
       _tokenURI: PromiseOrValue<string>,
       _dateCreated: PromiseOrValue<string>,
       _itemGeolocations: PromiseOrValue<string>[],
-      _xCoord: PromiseOrValue<BigNumberish>,
-      _yCoord: PromiseOrValue<BigNumberish>,
+      _epicenterLat: PromiseOrValue<string>,
+      _epicenterLong: PromiseOrValue<string>,
       _radius: PromiseOrValue<BigNumberish>,
       _name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -782,6 +812,11 @@ export interface Geocache extends BaseContract {
 
     getAllGeocaches(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getGeolocationsOfGeocache(
+      geocacheIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     hasMintedTokenId(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<string>,
@@ -804,8 +839,8 @@ export interface Geocache extends BaseContract {
       _tokenURI: PromiseOrValue<string>,
       _dateCreated: PromiseOrValue<string>,
       _itemGeolocations: PromiseOrValue<string>[],
-      _xCoord: PromiseOrValue<BigNumberish>,
-      _yCoord: PromiseOrValue<BigNumberish>,
+      _epicenterLat: PromiseOrValue<string>,
+      _epicenterLong: PromiseOrValue<string>,
       _radius: PromiseOrValue<BigNumberish>,
       _name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

@@ -25,8 +25,8 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         string dateCreated; // when geocache was created
         uint256 numItems; // # of items in the geocache
         bool isActive; // if all items have been found or not
-        uint256 epicenterXCoord;
-        uint256 epicenterYCoord;
+        string epicenterLat;
+        string epicenterLong;
         string[] itemGeolocations;
         string name;
         uint256 radius;
@@ -95,8 +95,8 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         string memory _tokenURI,
         string memory _dateCreated,
         string[] memory _itemGeolocations,
-        uint256 _xCoord,
-        uint256 _yCoord,
+        string memory _epicenterLat,
+        string memory _epicenterLong,
         uint256 _radius,
         string memory _name
     ) external {
@@ -106,8 +106,8 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
             _dateCreated,
             _numItems,
             true, 
-            _xCoord, // change x and y coord later, for now static
-            _yCoord,
+            _epicenterLat, // change x and y coord later, for now static
+            _epicenterLong,
             _itemGeolocations,
             _name,
             _radius
@@ -216,4 +216,17 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
 
         return geocaches;
     }
+
+    /**
+     * @dev returning all geocaches as an array of GeocacheInstance
+     */
+    function getGeolocationsOfGeocache(uint256 geocacheIndex)
+        external
+        view
+        returns(string[] memory)
+    {
+        return tokenIdToGeocache[geocacheIndex].itemGeolocations;
+    }
+
+
 }

@@ -2,7 +2,7 @@ import React, {useContext, useEffect} from 'react';
 import { View, StyleSheet } from 'react-native';
 import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
-import { CacheMetadataContext, LocationContext } from '../App';
+import { CacheMetadataContext, LocationContext, GeocacheContractContext } from '../App';
 import '../global';
 import {
   withWalletConnect,
@@ -15,6 +15,7 @@ import { useRoute } from '@react-navigation/native';
 export default function CacheMap() {
     // const [mapRef, setMapRef] = useState();
     const mapRef = React.createRef();
+    const GeocacheContract = useContext(GeocacheContractContext)
 
     const locationContext = useContext(LocationContext)
     const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
@@ -63,6 +64,21 @@ export default function CacheMap() {
       }, {duration: 2000});
     }
   }, [locationContext])
+
+
+  useEffect(() => {
+    // console.log("providers: " + providers.walletConnect)
+    // createGeocache()
+    // generateItemLocations()
+    const getData = async () => {
+      
+      var firstGeocache = await GeocacheContract.tokenIdToGeocache(1);
+      var firstGeocacheLocations = await GeocacheContract.getGeolocationsOfGeocache(1);
+      console.log("first geocache: " + JSON.stringify(firstGeocache, null, 2))
+      console.log("first geocache gelocaitons: " + firstGeocacheLocations)
+    }
+    getData()
+  })
 
   // useEffect(() => {
   //   if (connector.accounts) {
