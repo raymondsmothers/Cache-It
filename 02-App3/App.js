@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, {useEffect, useState, useContext} from 'react';
 import { PermissionsAndroid } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-
+import { LogBox } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {NavigationContainer, StackActions} from '@react-navigation/native';
 //Components imports
@@ -16,20 +16,17 @@ import IntroductionPage from './components/introduction';
 
 //Web3 imports
 import { withWalletConnect, useWalletConnect }  from '@walletconnect/react-native-dapp' ;
-// import { WalletConnectProvider as WalletConnectProviderWrapper }  from '@walletconnect/react-native-dapp' ;
 import WalletConnectProvider from "@walletconnect/web3-provider";
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import * as CONTRACT_ADDRESSES from './contract_info/contractAddressesGoerli';
 import  GeocacheJSON from './contract_info/goerliAbis/Geocache.json';
-
-import { LogBox } from 'react-native';
 // Pull in the shims (BEFORE importing ethers)
 import "@ethersproject/shims"
-
 // Import the ethers library
 import { ethers } from "ethers";
+
+
+
 // The following disables the warning messages for the 'Require cycle' issue
 // TODO: Fix this issue
 LogBox.ignoreLogs(["Require cycle: node_modules\react-native-crypto\index.js -> node_modules\react-native-randombytes\index.js -> node_modules\sjcl\sjcl.js -> node_modules\react-native-crypto\index.js"]);
@@ -84,15 +81,14 @@ function App() {
 
     //  Create WalletConnect Provider for gettingSigner for state changing transactions
     const connector = useWalletConnect();
-
     const walletConnectProvider = new WalletConnectProvider({
-      infuraId: "1b9467bd46a7430faf4e825d24c63122", // Required
+      infuraId: "1b9467bd46a7430faf4e825d24c63122", // Required //idk why process.env isn't working
       connector: connector,
       qrcode: false,
       chainId: 5,
     });
 
-    // Create default Provider for signing read only transactions
+    // Create default Provider for signing read only transactions (getters)
     const defaultProvider = new ethers.getDefaultProvider(
       "goerli",
       {
@@ -113,18 +109,6 @@ function App() {
       GeocacheJSON.abi,
       defaultProvider
     );
-    // const provider = new ethers.providers.AlchemyProvider(
-    //   "goerli",
-    //   process.env.GOERLI_ALCHEMY_KEY
-    // );
-    // const provider = new ethers.getDefaultProvider(
-    //   "goerli",
-    //   {
-    //     "alchemy": process.env.GOERLI_ALCHEMY_KEY,
-    //     "infura": process.env.GOERLI_INFURA_KEY
-    //   }
-    // );
-
 
 
     useEffect(() => {
@@ -213,20 +197,6 @@ function App() {
 
 
   return (
-    // <WalletConnectProvider
-      // bridge="https://bridge.walletconnect.org"
-      // clientMeta={{
-      //   description: 'Connect with WalletConnect',
-      //   url: 'https://walletconnect.org',
-      //   icons: ['https://walletconnect.org/walletconnect-logo.png'],
-      //   name: 'WalletConnect',
-      // }}
-      // redirectUrl={
-      //   Platform.OS === 'web' ? window.location.origin : 'yourappscheme://'
-      // }
-      // storageOptions={{
-      //   asyncStorage: AsyncStorage,
-      // }}>
       <LocationContext.Provider value={currentPosition}>
       <Web3ProviderContext.Provider value={Web3ProviderContextValue}>
       <CacheMetadataContext.Provider value={cacheMetadataContextValue}>
@@ -241,8 +211,6 @@ function App() {
       </CacheMetadataContext.Provider>
       </Web3ProviderContext.Provider>
       </LocationContext.Provider>
-
-    // </WalletConnectProviderWrapper>
   );
 }
 

@@ -12,8 +12,6 @@ import Animated, {
   withTiming,
   interpolate,
 } from "react-native-reanimated";
-import { useRoute } from '@react-navigation/native'
-
 
 
 
@@ -30,12 +28,6 @@ export default function SeekScreen() {
     //sets pulse duration, 1 is strongest, 20 is weakest
     const [pulseStrength, setPulseStrength] = useState(20);
 
-    const route = useRoute();
-    // if(route.params) {
-    //   console.log("route coordinate....." + JSON.stringify(route.params.coord.marker));
-    //   console.log("route latitude......." + route.params.coord.marker.latitude);
-    //   console.log("route longitude......." + route.params.coord.marker.longitude);
-    // }
 
     const Ring = ({ delay, duration }) => {
       const ring = useSharedValue(0);
@@ -84,23 +76,17 @@ export default function SeekScreen() {
 
     const getItemCoords = () => {
         var coords = []
-        if(route.params) {
-          coords.push({"latitude":route.params.coord.marker.latitude, "longitude":route.params.coord.marker.longitude});
-        }
-        else {
-          // coords.push({"latitude":38.6519000,"longitude":-90.293400});
-          coords.push({"latitude":39.6519000,"longitude":-90.293400});
-          coords.push({"latitude":38.6483634,"longitude":-90.3118004});
-          coords.push({"latitude":38.6480908,"longitude":-90.3118779});
-            coords.push({"latitude":38.6486215,"longitude":-90.3112989});
-        }
+        coords.push({"latitude":39.6519000,"longitude":-90.293400});
+        coords.push({"latitude":38.6483634,"longitude":-90.3118004});
+        coords.push({"latitude":38.6480908,"longitude":-90.3118779});
+        coords.push({"latitude":38.6486215,"longitude":-90.3112989});
         return coords
     }
 
 
     const calculateShortestDistance = async (currentPosition) => {
         //get coords
-        console.log("metadata in seek: " + JSON.stringify(cacheMetadata, null, 2))
+        // console.log("metadata in seek: " + JSON.stringify(cacheMetadata, null, 2))
         // const coords = getItemCoords()
         //reset during every check
         var shortestHyp = 1000000
@@ -119,7 +105,7 @@ export default function SeekScreen() {
                 //convert distance to meters
                 // 111 kms is ~ 1 arc of longitude or lat
                 const shortestHypInMeters = shortestHyp * 111 * 1000;
-                console.log("shortesthypinmetesr " + shortestHypInMeters)
+                // console.log("shortesthypinmetesr " + shortestHypInMeters)
                 //If user is within 50 meters, pulse we be at max
                 //If user is more than 1 km away, pulse will be at min 
                 // A change of 25 meters closer will increase the pulseStrength
@@ -160,7 +146,7 @@ export default function SeekScreen() {
               console.log(error.code, error.message);
             },
             //Will only update location if the user moves more than 3 meters
-            { interval: 1000, distanceFilter: 2, enableHighAccuracy: true, timeout: 150000, maximumAge: 0 }
+            { interval: 1500, distanceFilter: 2, enableHighAccuracy: true, timeout: 150000, maximumAge: 0 }
         );
   };
 
@@ -190,6 +176,8 @@ export default function SeekScreen() {
             (distanceToNearestItem > 10 && !hasTriggeredARVision) ? (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                   <Text style={styles.text}> {"Searching \"" + cacheMetadata.name + "\""}  </Text>
+                  <Text style={styles.subtitle}> {"Created by:  \"" + cacheMetadata.creator + "\""}  </Text>
+                  <Text style={styles.subtitle}> {"Created On:  \"" + cacheMetadata.date + "\""}  </Text>
 
                   <Text style={styles.text}> {"Pulse Strength: \n" + pulseStrength}  </Text>
                   <View
@@ -226,6 +214,11 @@ export default function SeekScreen() {
   const styles = StyleSheet.create({
     text: {
       fontSize: 30,
+      textAlign: 'center',
+      padding: 20
+    },
+    subtitle: {
+      fontSize: 20,
       textAlign: 'center',
       padding: 20
     },

@@ -2,23 +2,15 @@ import React, {useState, useContext, useEffect} from 'react';
 import { RecyclerViewBackedScrollViewComponent, Text, View, Button } from 'react-native';
 import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid  } from "react-native";
 import { CacheMetadataContext, LocationContext, Web3ProviderContext, GeocacheContractContext } from '../App';
-// import * as Location from 'expo-location';
-import Geolocation from 'react-native-geolocation-service';
-import { useNavigation } from '@react-navigation/native';
 import randomLocation from 'random-location';
-import { json } from 'express';
 
 // Web3 Imports
 // Pull in the shims (BEFORE importing ethers)
 import "@ethersproject/shims"
 // Import the ethers library
 import { ethers } from "ethers";
-import * as CONTRACT_ADDRESSES from '../contract_info/contractAddressesGoerli';
-import  GeocacheJSON from '../contract_info/goerliAbis/Geocache.json';
-
 
 export default function NewCacheForm() {
-    const navigation = useNavigation();
     const locationContext = useContext(LocationContext)
     const providers = useContext(Web3ProviderContext)
     const GeocacheContract = useContext(GeocacheContractContext)
@@ -29,19 +21,6 @@ export default function NewCacheForm() {
     const [numItems, onChangeNumItems] = useState(5);
     let fixedRadius = 0;
 
-    useEffect(() => {
-      // console.log("providers: " + providers.walletConnect)
-      // createGeocache()
-      // generateItemLocations()
-      const getData = async () => {
-        
-        var firstGeocache = await GeocacheContract.tokenIdToGeocache(1);
-        var firstGeocacheLocations = await GeocacheContract.getGeolocationsOfGeocache(1);
-        console.log("first geocache: " + JSON.stringify(firstGeocache, null, 2))
-        console.log("first geocache gelocaitons: " + firstGeocacheLocations)
-      }
-      getData()
-    })
 
     const createGeocacheSubmitHandler = async () => {
       console.log("create geocache")
@@ -50,18 +29,7 @@ export default function NewCacheForm() {
       const ethers_provider = new ethers.providers.Web3Provider(providers.walletConnect);
 
       const signer = await ethers_provider.getSigner();
-      console.log("Signer: " + signer)
-      // const GeocacheContract = new ethers.Contract(
-      //   CONTRACT_ADDRESSES.Geocache,
-      //   GeocacheJSON.abi,
-      //   signer
-      // );
-
       const geocacheContractWithSigner = await GeocacheContract.connect(signer);
-
-
-      var creator = await GeocacheContract.creatorContract();
-      console.log("Creator: " + creator)
 
 
 
@@ -93,9 +61,6 @@ export default function NewCacheForm() {
 
       console.log("done")
 
-
-
-
     }
 
     const generateItemLocations = () => {
@@ -123,29 +88,6 @@ export default function NewCacheForm() {
         return itemLocationsFormatted;
     };
 
-    const submitHandler = async () => {
-      fixedRadius = radius * 1; //* 1609.34;
-
-      console.log("fixedRadius: " + fixedRadius);
-      console.log("name: " + name);
-      console.log("numItems: " + numItems);
-      console.log("radius: " + radius);
-
-      const itemLocations = generateItemLocations();
-      // navigation.navigate("CacheMap", {
-      //   cacheName: {name},
-      //   numberOfItems: {numItems},
-      //   cacheRadius: {fixedRadius},
-      //   cacheLocations: {itemLocations}
-      // });
-      setCacheMetadata({
-        "name": name,
-        "numberOfItems": numItems,
-        "radius": fixedRadius,
-        "geolocations": itemLocations,
-
-      })
-    };
 
     return (
       <SafeAreaView>
