@@ -13,8 +13,10 @@ export default function CacheMap() {
   // const [mapRef, setMapRef] = useState();
   const mapRef = React.createRef();
   const GeocacheContract = useContext(GeocacheContractContext);
-  // TODO this is a hardcode state variable, we need to create a switch to allow users to select a geocache id, by name maybe
+  // TODO!! this is a hardcode state variable, we need to create a switch to allow users to select a geocache id, by name maybe
   const [selectedGeocache, setSelectedGeocache] = useState(0);
+  // array to hold active geocache IDs
+  const [activeGeocacheIds, setActiveGeocacheIds] = useState([]);
   const locationContext = useContext(LocationContext);
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
 
@@ -61,6 +63,17 @@ export default function CacheMap() {
       );
     }
   }, [locationContext]);
+
+  // Getting all the active geocaches IDs
+  // TODO: These are the IDs that the user should be able to select
+  useEffect(() => {
+    const getIDs = async () => {
+      const ids = await GeocacheContract.getAllActiveGeocacheIDs();
+      const formattedIds = ids.map((id, index) => Number(id));
+      setActiveGeocacheIds([...formattedIds]);
+    };
+    getIDs();
+  }, []);
 
   useEffect(() => {
     const getData = async () => {

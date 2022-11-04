@@ -57,7 +57,7 @@ const ARVisionScene = () => {
       })
       .then(res => {
         console.log('Success: ' + JSON.stringify(res, null, 2));
-        console.log('Item minted for user ', userAddress, ' check openSea!');
+        alert(`Successfully minted item for user ${userAddress}`);
       })
       .catch(error => {
         alert('Error minting item: ' + error.message);
