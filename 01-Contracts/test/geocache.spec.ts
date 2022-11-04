@@ -132,6 +132,10 @@ describe('Geocache Project', async () => {
     });
 
     it('Lets a user change geocache token URI');
-    it('Correctly gets all active geocache IDs');
+
+    it('Correctly gets all active geocache IDs', async () => {
+      const activeGeocaches = await GeocacheInstance.connect(owner).getAllActiveGeocacheIDs();
+      await expect(activeGeocaches.length).to.equal(2);
+    });
   });
 });

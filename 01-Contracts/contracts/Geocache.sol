@@ -40,7 +40,7 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
     // total number of geocaches created so far
     uint256 public numGeocaches;
 
-    // keeping track of number of active geocaches (save gas)
+    // active geocaches
     uint256 public numActiveGeocaches;
 
     // mapping between a tokenId and a geocache
@@ -54,7 +54,7 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
 
     constructor(address _creatorContract) {
         creatorContract = _creatorContract;
-    }
+    }    
 
     // Interfaces for project
     function supportsInterface(bytes4 interfaceId)
@@ -213,7 +213,7 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         GeocacheInstance[] memory geocaches = new GeocacheInstance[](
             numGeocaches
         );
-        uint256[] memory ids;
+        uint256[] memory ids = new uint256[](numActiveGeocaches);
 
         uint256 counter;
         for (uint256 i; i < numGeocaches; i++) {
@@ -236,6 +236,5 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
     {
         return tokenIdToGeocache[geocacheIndex].itemGeolocations;
     }
-
 
 }
