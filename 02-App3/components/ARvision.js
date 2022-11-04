@@ -8,10 +8,13 @@ import {
 } from '@viro-community/react-viro';
 import React, {useState} from 'react';
 import {StyleSheet, View, Alert} from 'react-native';
+import {Web3ProviderContext, GeocacheContractContext} from '../App';
 
-const ARVisionScene = () => {
+const ARVisionScene = ({signer}) => {
   const [text, setText] = useState('Initializing AR...');
   const [ignoreDrag, setIgnoreDrag] = useState(false);
+  const providers = useContext(Web3ProviderContext);
+  const GeocacheContract = useContext(GeocacheContractContext);
 
   function onInitialized(state, reason) {
     console.log('guncelleme', state, reason);
@@ -28,6 +31,31 @@ const ARVisionScene = () => {
   // _onClick(source) {
   //   console.log("We just Clicked the image!");
   // }
+
+  // Minting an item in collection for the user
+  const mintItemInGeocache = async () => {
+    await providers.walletConnect.enable();
+    const ethers_provider = new ethers.providers.Web3Provider(
+      providers.walletConnect,
+    );
+    const userSigner = await ethers_provider.getSigner();
+    const userAddress = userSigner.address;
+    console.log("User's address is ", userAddress);
+
+    // Calling the contract function as contract owner
+    const geocacheContractWithSigner = await GeocacheContract.connect(signer);
+    const mintItemInGeocacheTxn = await geocacheContractWithSigner
+      .mintItemInGeocache(userAddress)
+      .then(res => {
+        console.log('Success: ' + JSON.stringify(res, null, 2));
+      })
+      .catch(error => {
+        alert('Error minting item: ' + error.message);
+        console.log('Error: ' + error.message);
+      });
+
+    console.log('Item minted for user ', userAddress, ' check openSea!');
+  };
 
   const initialPosition = [0, -0.5, -1];
   const objectScale = [10, 10, 10];
@@ -48,7 +76,7 @@ const ARVisionScene = () => {
             },
             {
               text: 'Yes',
-              onPress: () => console.log('Give me goodies!'),
+              onPress: () => mintItemInGeocache(),
             },
           ]);
         }}

@@ -99,6 +99,32 @@ export default function CacheMap() {
     getData();
   }, []);
 
+  // (For testing) Getting all geocache properties
+  useEffect(() => {
+    async function getItems() {
+      console.log('Getting all geocacheItems..........................');
+      // var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(
+      //   selectedGeocache,
+      // );
+      var allGeocaches = await GeocacheContract.getAllGeocaches();
+      const formattedGeocaches = allGeocaches.map(geocache => ({
+        //creator, name, itemlocations
+        creator: geocache[0],
+        geocacheName: geocache[8],
+        itemLocations: geocache[7],
+      }));
+      console.log(
+        '~~~~~~~~~~~~~~~~~~~~ ALL GEOCACHES ~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+      );
+      for (let i = 0; i < formattedGeocaches.length; i++) {
+        console.log(`${i} geocache ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`);
+        console.log(formattedGeocaches[i]);
+        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+      }
+    }
+    getItems();
+  }, []);
+
   // useEffect(() => {
   //   if (connector.accounts) {
   //     console.log('Connector info: ', connector.accounts[0]);

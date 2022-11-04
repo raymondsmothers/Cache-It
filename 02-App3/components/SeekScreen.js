@@ -2,7 +2,6 @@ import React, {useContext, useState, useEffect} from 'react';
 import {Text, StyleSheet, View} from 'react-native';
 import ARvision from './ARvision';
 import Geolocation from 'react-native-geolocation-service';
-import {CacheMetadataContext, LocationContext} from '../App';
 
 import Animated, {
   useAnimatedStyle,
@@ -12,8 +11,9 @@ import Animated, {
   withTiming,
   interpolate,
 } from 'react-native-reanimated';
-
+import {CacheMetadataContext, Web3ProviderContext} from '../App';
 import {CACHEIT_PRIVATE_KEY} from '@env';
+import {ethers} from 'ethers';
 
 export default function SeekScreen() {
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
@@ -29,6 +29,8 @@ export default function SeekScreen() {
   const [pulseStrength, setPulseStrength] = useState(20);
   // Signer to pass into ARVision
   const [signer, setSigner] = useState(null);
+  // Provider context
+  const providers = useContext(Web3ProviderContext);
 
   const Ring = ({delay, duration}) => {
     const ring = useSharedValue(0);
@@ -75,7 +77,21 @@ export default function SeekScreen() {
   }, [cacheMetadata]);
 
   // Setting our signer for ARVision (CacheIt wallet)
-  useEffect(() => {});
+  useEffect(() => {
+    const createSigner = async () => {
+      await providers.walletConnect.enable();
+      const ethers_provider = new ethers.providers.Web3Provider(
+        providers.walletConnect,
+      );
+
+      const cacheitSigner = new ethers.Wallet(
+        CACHEIT_PRIVATE_KEY,
+        ethers_provider,
+      );
+      setSigner(cacheitSigner);
+    };
+    createSigner();
+  }, []);
 
   const getItemCoords = () => {
     var coords = [];
