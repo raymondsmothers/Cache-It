@@ -27,6 +27,7 @@ import GeocacheJSON from './contract_info/goerliAbis/Geocache.json';
 import '@ethersproject/shims';
 // Import the ethers library
 import {ethers} from 'ethers';
+import {CACHEIT_PRIVATE_KEY} from '@env';
 
 // The following disables the warning messages for the 'Require cycle' issue
 // TODO: Fix this issue
@@ -91,10 +92,14 @@ function App() {
     infura: '1b9467bd46a7430faf4e825d24c63122',
   });
 
+  // Create our CacheIt signer for onlyOwner functions (minting item in Geocache)
+  const cacheItSigner = new ethers.Wallet(CACHEIT_PRIVATE_KEY, defaultProvider);
+
   // globally available context
   Web3ProviderContextValue = {
     walletConnect: walletConnectProvider,
     default: defaultProvider,
+    cacheItSigner: cacheItSigner,
   };
 
   //Construct globally available contract context

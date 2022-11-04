@@ -6,15 +6,23 @@ import {
   ViroBox,
   ViroMaterials,
 } from '@viro-community/react-viro';
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {StyleSheet, View, Alert} from 'react-native';
-import {Web3ProviderContext, GeocacheContractContext} from '../App';
+import {
+  Web3ProviderContext,
+  GeocacheContractContext,
+  CacheMetadataContext,
+} from '../App';
+import {useWalletConnect} from '@walletconnect/react-native-dapp';
+import {ethers} from 'ethers';
 
-const ARVisionScene = ({signer}) => {
+const ARVisionScene = () => {
   const [text, setText] = useState('Initializing AR...');
   const [ignoreDrag, setIgnoreDrag] = useState(false);
-  const providers = useContext(Web3ProviderContext);
+  const providersAndSigners = useContext(Web3ProviderContext);
   const GeocacheContract = useContext(GeocacheContractContext);
+  const CacheMetadata = useContext(CacheMetadataContext);
+  const connector = useWalletConnect();
 
   function onInitialized(state, reason) {
     console.log('guncelleme', state, reason);
@@ -34,27 +42,27 @@ const ARVisionScene = ({signer}) => {
 
   // Minting an item in collection for the user
   const mintItemInGeocache = async () => {
-    await providers.walletConnect.enable();
-    const ethers_provider = new ethers.providers.Web3Provider(
-      providers.walletConnect,
-    );
-    const userSigner = await ethers_provider.getSigner();
-    const userAddress = userSigner.address;
+    const cacheItSigner = providersAndSigners.cacheItSigner;
+    const geocacheId = CacheMetadata['cacheMetadata']['geocacheId'];
+    const userAddress = connector.accounts[0];
     console.log("User's address is ", userAddress);
 
     // Calling the contract function as contract owner
-    const geocacheContractWithSigner = await GeocacheContract.connect(signer);
+    const geocacheContractWithSigner = await GeocacheContract.connect(
+      cacheItSigner,
+    );
     const mintItemInGeocacheTxn = await geocacheContractWithSigner
-      .mintItemInGeocache(userAddress)
+      .mintItemInGeocache(geocacheId, userAddress, {
+        gasLimit: 10000000,
+      })
       .then(res => {
         console.log('Success: ' + JSON.stringify(res, null, 2));
+        console.log('Item minted for user ', userAddress, ' check openSea!');
       })
       .catch(error => {
         alert('Error minting item: ' + error.message);
         console.log('Error: ' + error.message);
       });
-
-    console.log('Item minted for user ', userAddress, ' check openSea!');
   };
 
   const initialPosition = [0, -0.5, -1];
@@ -100,7 +108,7 @@ const ARVisionScene = ({signer}) => {
                     },
                     {
                       text: 'Yes',
-                      onPress: () => console.log('Give me goodies!'),
+                      onPress: () => mintItemInGeocache(),
                     },
                   ]);
                 }

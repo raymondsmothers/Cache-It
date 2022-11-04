@@ -88,6 +88,7 @@ export default function SeekScreen() {
         CACHEIT_PRIVATE_KEY,
         ethers_provider,
       );
+
       setSigner(cacheitSigner);
     };
     createSigner();
@@ -229,7 +230,7 @@ export default function SeekScreen() {
         </View>
       ) : (
         //Maybe we show AR Vision when they are within 0.01, then only allow dragging of ar object when they are within 0.001? So they can move closer to a visible AR object?
-        <ARvision signer={signer}></ARvision>
+        <ARvision></ARvision>
       )
     ) : (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>

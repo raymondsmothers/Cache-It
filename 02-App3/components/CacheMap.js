@@ -14,7 +14,7 @@ export default function CacheMap() {
   const mapRef = React.createRef();
   const GeocacheContract = useContext(GeocacheContractContext);
   // TODO this is a hardcode state variable, we need to create a switch to allow users to select a geocache id, by name maybe
-  const [selectedGeocache, setSelectedGeocache] = useState(1);
+  const [selectedGeocache, setSelectedGeocache] = useState(0);
   const locationContext = useContext(LocationContext);
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
 
@@ -94,36 +94,13 @@ export default function CacheMap() {
         name: selectedGeocacheRawData[7],
         radius: parseInt(selectedGeocacheRawData[8]),
         geolocations: itemLocations,
+        geocacheId: selectedGeocache,
       });
     };
     getData();
   }, []);
 
-  // (For testing) Getting all geocache properties
-  useEffect(() => {
-    async function getItems() {
-      console.log('Getting all geocacheItems..........................');
-      // var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(
-      //   selectedGeocache,
-      // );
-      var allGeocaches = await GeocacheContract.getAllGeocaches();
-      const formattedGeocaches = allGeocaches.map(geocache => ({
-        //creator, name, itemlocations
-        creator: geocache[0],
-        geocacheName: geocache[8],
-        itemLocations: geocache[7],
-      }));
-      console.log(
-        '~~~~~~~~~~~~~~~~~~~~ ALL GEOCACHES ~~~~~~~~~~~~~~~~~~~~~~~~~~~',
-      );
-      for (let i = 0; i < formattedGeocaches.length; i++) {
-        console.log(`${i} geocache ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`);
-        console.log(formattedGeocaches[i]);
-        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-      }
-    }
-    getItems();
-  }, []);
+  const formatCoords = () => {};
 
   // useEffect(() => {
   //   if (connector.accounts) {
