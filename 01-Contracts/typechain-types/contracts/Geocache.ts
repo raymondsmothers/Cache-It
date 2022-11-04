@@ -260,11 +260,13 @@ export interface GeocacheInterface extends utils.Interface {
   events: {
     "AdminApproved(address,address)": EventFragment;
     "AdminRevoked(address,address)": EventFragment;
+    "GeocacheCreated(address,string,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminApproved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AdminRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GeocacheCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
@@ -289,6 +291,18 @@ export type AdminRevokedEvent = TypedEvent<
 >;
 
 export type AdminRevokedEventFilter = TypedEventFilter<AdminRevokedEvent>;
+
+export interface GeocacheCreatedEventObject {
+  creator: string;
+  name: string;
+  numItems: BigNumber;
+}
+export type GeocacheCreatedEvent = TypedEvent<
+  [string, string, BigNumber],
+  GeocacheCreatedEventObject
+>;
+
+export type GeocacheCreatedEventFilter = TypedEventFilter<GeocacheCreatedEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -692,6 +706,17 @@ export interface Geocache extends BaseContract {
       account?: PromiseOrValue<string> | null,
       sender?: PromiseOrValue<string> | null
     ): AdminRevokedEventFilter;
+
+    "GeocacheCreated(address,string,uint256)"(
+      creator?: null,
+      name?: null,
+      numItems?: null
+    ): GeocacheCreatedEventFilter;
+    GeocacheCreated(
+      creator?: null,
+      name?: null,
+      numItems?: null
+    ): GeocacheCreatedEventFilter;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,

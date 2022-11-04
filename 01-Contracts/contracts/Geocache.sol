@@ -32,7 +32,17 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         uint256 radius;
     }
 
+    event GeocacheCreated(
+        address creator,
+        string name,
+        uint256 numItems
+    );
+
+    //Should we make a mapping of creators to owned geocaches
+    
+
     //should we make a list of active instances?
+
 
     // manifold creator contract address
     address public immutable creatorContract;
@@ -43,7 +53,7 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
     // mapping between a tokenId and a geocache
     mapping(uint256 => GeocacheInstance) public tokenIdToGeocache;
 
-    // mapping the geocache id to number of items in a geocache -- maybe move this to metadata?
+    // mapping the geocache id to number of items in a geocache that have been minted -- maybe move this to metadata?
     mapping(uint256 => uint256) public geocacheToNumFound;
 
     // mapping to keep track of one mint per tokenId per address
@@ -52,6 +62,8 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
     constructor(address _creatorContract) {
         creatorContract = _creatorContract;
     }
+
+    //TODO create a function that auto sets geocache to inactive (delete method)
 
     // Interfaces for project
     function supportsInterface(bytes4 interfaceId)
@@ -129,6 +141,7 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
             amounts,
             uris
         );
+        emit GeocacheCreated(msg.sender, _name, _numItems);
     }
 
     /**

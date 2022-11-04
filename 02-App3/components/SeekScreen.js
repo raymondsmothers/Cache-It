@@ -111,7 +111,8 @@ export default function SeekScreen() {
                 // A change of 25 meters closer will increase the pulseStrength
                 // const newPulseStrength = Math.ceil(Math.min(1000 / shortestHypInMeters, 20))
                 const newPulseStrength = Math.ceil(Math.min(shortestHypInMeters / 25, 20))
-                setPulseStrength(newPulseStrength)
+                if(pulseStrength != newPulseStrength)
+                    setPulseStrength(newPulseStrength)
                 
                 setNearestItemCoords(shortestHypCoords)
                 setDistancetoNearestItem(shortestHypInMeters)
@@ -120,11 +121,6 @@ export default function SeekScreen() {
             }
         });
     }
-
-
-
-
-
 
     // //Grabs Location
     // TODO we really should have a useContext hook that updates the LocationContext across the whole app, can change later

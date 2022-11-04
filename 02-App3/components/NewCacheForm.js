@@ -9,21 +9,39 @@ import randomLocation from 'random-location';
 import "@ethersproject/shims"
 // Import the ethers library
 import { ethers } from "ethers";
+import { useWalletConnect } from '@walletconnect/react-native-dapp';
 
 export default function NewCacheForm() {
     const locationContext = useContext(LocationContext)
     const providers = useContext(Web3ProviderContext)
     const GeocacheContract = useContext(GeocacheContractContext)
-    const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
+    const connector = useWalletConnect();
 
+    const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
+    //Alert if transaction is delayed
+    const [isTransactionDelayed, setIsTransactionDelayed] = useState(false)
+    const [isDeployingGeocache, setIsDeployingGeocache] = useState(false)
+    const [hasDeployedGeocache, setHasDeployedGeocache] = useState(false)
     const [name, onChangeName] = useState("Default Name");
     const [radius, onChangeRadius] = useState(1);
     const [numItems, onChangeNumItems] = useState(5);
     let fixedRadius = 0;
 
+    useEffect(() => {
+      GeocacheContract.on("GeocacheCreated", geocacheCreatedCallback)
+    })
+
+    const geocacheCreatedCallback = (creatorAddress, geocacheName, numItems) => {
+      console.log("creatorAddress: " + creatorAddress)
+      if(creatorAddress == connector.accounts[0]) {
+        console.log("callback triggered")
+        setIsDeployingGeocache(false)
+        setHasDeployedGeocache(true)
+      }
+    }
 
     const createGeocacheSubmitHandler = async () => {
-      console.log("create geocache")
+      // console.log("create geocache")
       const itemLocations = generateItemLocations();
       await providers.walletConnect.enable();
       const ethers_provider = new ethers.providers.Web3Provider(providers.walletConnect);
@@ -47,11 +65,12 @@ export default function NewCacheForm() {
         radius,
         name,   
         {
-          gasLimit: 10000000,
+          gasLimit: 1000000,
         }
 
       )
       .then((res) => {
+        setIsDeployingGeocache(true)
         console.log("Success: " + JSON.stringify(res, null, 2))
       })
       .catch((error) => {
@@ -89,6 +108,7 @@ export default function NewCacheForm() {
     };
 
 
+
     return (
       <SafeAreaView>
         <TextInput
@@ -117,6 +137,16 @@ export default function NewCacheForm() {
           color="#841584"
           accessibilityLabel="Learn more about this purple button"
         />
+        {isDeployingGeocache && 
+        <Text>
+          Deploying ...
+        </Text>
+        }
+        {hasDeployedGeocache &&
+        <Text>
+          Finished Deploying!
+        </Text>
+        }
       </SafeAreaView>
     );
   }

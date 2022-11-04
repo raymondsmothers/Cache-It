@@ -40,10 +40,12 @@ async function main() {
     // const feeData = await provider.getFeeData();
     // console.log("feeData: " + JSON.stringify(feeData, null, 2))
 
-    Geocache1155Instance = await Geocache1155Factory.deploy({
-      gasLimit: 20000000,
-      // gasPrice: 7562687260
-    });
+    Geocache1155Instance = await Geocache1155Factory.deploy()
+
+    // Geocache1155Instance = await Geocache1155Factory.deploy({
+    //   gasLimit: 20000000,
+    //   // gasPrice: 7562687260
+    // });
     await Geocache1155Instance.deployed();
     textData += "exports.Geocache1155 = '" + Geocache1155Instance.address + "';\n";
 

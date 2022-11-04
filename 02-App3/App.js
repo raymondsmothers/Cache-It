@@ -28,6 +28,7 @@ import { ethers } from "ethers";
 
 
 // The following disables the warning messages for the 'Require cycle' issue
+
 // TODO: Fix this issue
 LogBox.ignoreLogs(["Require cycle: node_modules\react-native-crypto\index.js -> node_modules\react-native-randombytes\index.js -> node_modules\sjcl\sjcl.js -> node_modules\react-native-crypto\index.js"]);
 console.disableYellowBox = true;

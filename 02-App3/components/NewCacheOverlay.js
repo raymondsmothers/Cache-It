@@ -1,32 +1,34 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { View } from 'react-native';
 import { Circle, Marker } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native'
+import { CacheMetadataContext } from '../App';
 
 export default function NewCacheOverlay(props) {
     const defaultCircleColor = "#0000ff40";
-    const navigation = useNavigation();
+    // const navigation = useNavigation();
 
-    // console.log(props.render);
-    if(!props.render) {
+    const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
+    // console.log("cachemetadata: " + cacheMetadata);
+    if(cacheMetadata?.creator == undefined) {
         return <View></View>;
     }
 
-    console.log(JSON.stringify(props.coordinates));
+    console.log(JSON.stringify(cacheMetadata));
 
     return (
         <View>
             <Circle 
                 center={{
-                    latitude: props.center.latitude, 
-                    longitude: props.center.longitude
+                    latitude: cacheMetadata?.epicenterLat, 
+                    longitude: cacheMetadata?.epicenterLong
                 }}
                 fillColor={defaultCircleColor}
-                radius={props.radius}
+                radius={cacheMetadata?.radius}
             />
-            {props.coordinates.map((marker, index) => (
+            {cacheMetadata?.geolocations.map((marker, index) => (
                 <Marker
-                    title={props.cacheName}
+                    title={cacheMetadata?.name}
                     key={index}
                     coordinate={marker}
                     onPress={() => {

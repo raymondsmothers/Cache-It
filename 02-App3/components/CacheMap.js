@@ -1,16 +1,16 @@
 import React, {useContext, useEffect, useState} from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
 import { CacheMetadataContext, LocationContext, GeocacheContractContext } from '../App';
 import '../global';
 import NewCacheOverlay from './NewCacheOverlay';
-
+import SelectGeocache from './SelectGeocache';
 export default function CacheMap() {
     // const [mapRef, setMapRef] = useState();
     const mapRef = React.createRef();
     const GeocacheContract = useContext(GeocacheContractContext)
     // TODO this is a hardcode state variable, we need to create a switch to allow users to select a geocache id, by name maybe
-    const [selectedGeocache, setSelectedGeocache] = useState(1)
+    const [selectedGeocache, setSelectedGeocache] = useState(0)
     const locationContext = useContext(LocationContext)
     const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
 
@@ -71,18 +71,21 @@ export default function CacheMap() {
           }
           itemLocations.push(coord)
       })
-      setCacheMetadata({
-        "creator": selectedGeocacheRawData[0],
-        "imgUrl": selectedGeocacheRawData[1],
-        "date": selectedGeocacheRawData[2],
-        "numberOfItems": parseInt(selectedGeocacheRawData[3]),
-        "isActive": selectedGeocacheRawData[4],
-        "epicenterLat": selectedGeocacheRawData[5],
-        "epicenterLong": selectedGeocacheRawData[6],
-        "name": selectedGeocacheRawData[7],
-        "radius": parseInt(selectedGeocacheRawData[8]),
-        "geolocations": itemLocations,
-      })
+      // console.log("epicenterlat: " + selectedGeocacheRawData[5])
+      if(selectedGeocacheRawData[0] != "0x0000000000000000000000000000000000000000") {
+        setCacheMetadata({
+          "creator": selectedGeocacheRawData[0],
+          "imgUrl": selectedGeocacheRawData[1],
+          "date": selectedGeocacheRawData[2],
+          "numberOfItems": parseInt(selectedGeocacheRawData[3]),
+          "isActive": selectedGeocacheRawData[4],
+          "epicenterLat": parseFloat(selectedGeocacheRawData[5]),
+          "epicenterLong": parseFloat(selectedGeocacheRawData[6]),
+          "name": selectedGeocacheRawData[7],
+          "radius": parseInt(selectedGeocacheRawData[8]),
+          "geolocations": itemLocations,
+        })  
+      }
     }
     getData()
   }, [])
@@ -100,6 +103,7 @@ export default function CacheMap() {
 
   return (
     <View style={styles.container}>
+        {/* <Button></Button> */}
         <MapView
         ref={mapRef}
         showsBuildings={true}
@@ -123,16 +127,17 @@ export default function CacheMap() {
           undefined
         }
         >
+
           <NewCacheOverlay
-            render={cacheMetadata}
-            cacheName={cacheMetadata?.name}
-            radius={cacheMetadata?.radius}
-            center={{latitude: locationContext?.latitude, longitude: locationContext?.longitude}}
-            numberOfPoints={cacheMetadata?.numberOfPoints}
-            coordinates={cacheMetadata?.geolocations}
+            // render={cacheMetadata.creator != undefined}
+            // cacheName={cacheMetadata?.name}
+            // radius={cacheMetadata?.radius}
+            // center={{latitude: cacheMetadata?.epicenterLat, longitude: cacheMetadata?.epicenterLong}}
+            // numberOfPoints={cacheMetadata?.numberOfPoints}
+            // coordinates={cacheMetadata?.geolocations}
           />
         </MapView>
-
+        <SelectGeocache></SelectGeocache>
       </View>
   );
 }
@@ -148,9 +153,12 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   button: {
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderRadius: 20,
+    padding: 10,
+    marginLeft: 10,
+    marginTop: 10,
     position: "absolute",
-    width: "100%",
-    bottom: 0,
-    padding: 15,
+    zIndex: 2
   },
 });

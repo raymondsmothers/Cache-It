@@ -2141,6 +2141,11 @@
   dependencies:
     "merge-options" "^3.0.4"
 
+"@react-native-community/checkbox@^0.5.13":
+  "integrity" "sha512-FMDYudaUbodbDOBgD6wT7s5z2QSzzghq46og8fF1yNXAp56AIrmRHZAtQhvlfyCdzWDu1+lBqgOxgupRmkCAUA=="
+  "resolved" "https://registry.npmjs.org/@react-native-community/checkbox/-/checkbox-0.5.13.tgz"
+  "version" "0.5.13"
+
 "@react-native-community/cli-debugger-ui@^7.0.3":
   "integrity" "sha512-G4SA6jFI0j22o+j+kYP8/7sxzbCDqSp2QiHA/X5E0lsGEd2o9qN2zbIjiFr8b8k+VVAYSUONhoC0+uKuINvmkA=="
   "resolved" "https://registry.npmjs.org/@react-native-community/cli-debugger-ui/-/cli-debugger-ui-7.0.3.tgz"
