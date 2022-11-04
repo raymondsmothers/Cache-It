@@ -50,9 +50,27 @@ describe('Geocache Project', async () => {
     });
 
     it('Anyone can create a new geocache', async () => {
-      let txn = await GeocacheInstance.connect(owner).newGeocache(10, 'uri', String(Date.now()));
+      let txn = await GeocacheInstance.connect(owner).newGeocache(
+        3,
+        'uri',
+        String(Date.now()),
+        ['1', '2', '3'],
+        'epicenterlat',
+        'epicenterlong',
+        5,
+        'Test 1'
+      );
       await txn.wait();
-      txn = await GeocacheInstance.connect(addr1).newGeocache(20, 'uri 2', String(Date.now()));
+      txn = await GeocacheInstance.connect(addr1).newGeocache(
+        3,
+        'uri 2',
+        String(Date.now()),
+        ['1', '2', '3'],
+        'epicenterlat',
+        'epicenterlong',
+        5,
+        'Test 2'
+      );
       await txn.wait();
       // Updates # of geocaches
       expect(Number(await GeocacheInstance.numGeocaches())).to.equal(2);
@@ -72,7 +90,16 @@ describe('Geocache Project', async () => {
 
     it('Deactives the geocache after all of the items are found', async () => {
       // Making a geocache w three items (easy to see if inactive this way)
-      let txn = await GeocacheInstance.connect(owner).newGeocache(3, 'uri 3', String(Date.now()));
+      let txn = await GeocacheInstance.connect(owner).newGeocache(
+        3,
+        'uri 3',
+        String(Date.now()),
+        ['1', '2', '3'],
+        'epicenterlat',
+        'epicenterlong',
+        5,
+        'Test 3'
+      );
       await txn.wait();
       // Minting the # of times, shouldn't let people mint more
       expect((await GeocacheInstance.tokenIdToGeocache(2)).tokenURI).to.equal('uri 3');
@@ -105,6 +132,6 @@ describe('Geocache Project', async () => {
     });
 
     it('Lets a user change geocache token URI');
-    it('Correctly gets all geocaches');
+    it('Correctly gets all active geocache IDs');
   });
 });

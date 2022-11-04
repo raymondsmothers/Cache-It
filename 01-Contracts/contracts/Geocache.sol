@@ -38,7 +38,10 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
     address public immutable creatorContract;
 
     // total number of geocaches created so far
-    uint256 public numGeocaches = 0;
+    uint256 public numGeocaches;
+
+    // keeping track of number of active geocaches (save gas)
+    uint256 public numActiveGeocaches;
 
     // mapping between a tokenId and a geocache
     mapping(uint256 => GeocacheInstance) public tokenIdToGeocache;
@@ -113,6 +116,7 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
             _radius
         );
         ++numGeocaches;
+        ++numActiveGeocaches;
 
         // mint the first token of the Geocache to the creator
         address[] memory to = new address[](1);
@@ -156,6 +160,7 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         // If all of the items are found, deactivating the geocache
         if (geocacheToNumFound[_geocacheId] == geocache.numItems) {
             tokenIdToGeocache[_geocacheId].isActive = false;
+            --numActiveGeocaches;
         }
 
         _mint(_geocacheId, _user);
@@ -198,23 +203,27 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
     }
 
     /**
-     * @dev returning all geocaches as an array of GeocacheInstance
+     * @dev returning all active geocache IDs
      */
-    function getAllGeocaches()
+    function getAllActiveGeocacheIDs()
         external
         view
-        returns (GeocacheInstance[] memory)
+        returns (uint256[] memory)
     {
         GeocacheInstance[] memory geocaches = new GeocacheInstance[](
             numGeocaches
         );
+        uint256[] memory ids;
 
+        uint256 counter;
         for (uint256 i; i < numGeocaches; i++) {
             GeocacheInstance storage geocache = tokenIdToGeocache[i];
-            geocaches[i] = geocache;
+            if (geocache.isActive) {
+                ids[counter] = i;
+                counter++;
+            }
         }
-
-        return geocaches;
+        return ids;
     }
 
     /**
