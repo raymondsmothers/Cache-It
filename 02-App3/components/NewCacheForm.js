@@ -1,9 +1,9 @@
 import React, {useState, useContext, useEffect} from 'react';
 import { RecyclerViewBackedScrollViewComponent, Text, View, Button } from 'react-native';
-import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid  } from "react-native";
+import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid, ActivityIndicator  } from "react-native";
 import { CacheMetadataContext, LocationContext, Web3ProviderContext, GeocacheContractContext } from '../App';
 import randomLocation from 'random-location';
-
+const globalStyles = require("../styles")
 // Web3 Imports
 // Pull in the shims (BEFORE importing ethers)
 import "@ethersproject/shims"
@@ -135,17 +135,30 @@ export default function NewCacheForm() {
           onPress={() => {createGeocacheSubmitHandler()}}
           title="Submit"
           color="#841584"
+          disabled={!connector.connected}
           accessibilityLabel="Learn more about this purple button"
         />
+        {!connector.connected && 
+        <View style={globalStyles.textContainer}>
+          <Text style={globalStyles.centerText}>
+            Uh-Oh! Please connect your wallet to create a new Geocache.
+          </Text>
+          </View>}
         {isDeployingGeocache && 
-        <Text>
-          Deploying ...
-        </Text>
+        <View style={globalStyles.textContainer}>
+          <ActivityIndicator></ActivityIndicator>
+          <Text style={globalStyles.centerText}>
+            Deploying ...
+          </Text>
+        </View>
         }
         {hasDeployedGeocache &&
-        <Text>
-          Finished Deploying!
-        </Text>
+        <View style={globalStyles.textContainer}>
+
+          <Text style={globalStyles.centerText}>
+            Finished Deploying!
+          </Text> 
+        </View>
         }
       </SafeAreaView>
     );
@@ -159,4 +172,14 @@ export default function NewCacheForm() {
       borderWidth: 1,
       padding: 10,
     },
+    container: {
+      display: "flex",
+      justifyContent: "center",
+      margin: 10,
+      padding: 10,
+    },
+    text: {
+      textAlign: "center",
+      fontSize: 24
+    }
   });

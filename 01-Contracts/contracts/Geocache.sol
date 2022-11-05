@@ -37,6 +37,11 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         string name,
         uint256 numItems
     );
+    event GeocacheItemMinted(
+        address sender,
+        uint256 geocacheIndex,
+        uint256 itemIndex
+    );
 
     //Should we make a mapping of creators to owned geocaches
     
@@ -172,6 +177,7 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         }
 
         _mint(_geocacheId, _user);
+        emit GeocacheItemMinted(msg.sender, _geocacheId, geocacheToNumFound[_geocacheId]);
     }
 
     /**

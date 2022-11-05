@@ -3,7 +3,7 @@ import { Text, StyleSheet, View } from 'react-native';
 import ARvision from './ARvision';
 import Geolocation from 'react-native-geolocation-service';
 import { CacheMetadataContext, LocationContext } from '../App';
-
+const globalStyles = require("../styles");
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -13,10 +13,12 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 
+import { useWalletConnect } from '@walletconnect/react-native-dapp';
 
 
 export default function SeekScreen() {
    const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
+   const connector = useWalletConnect();
 
     //Coordinates of the nearest geocache item
     const [nearestItemCoords, setNearestItemCoords] = useState([]);
@@ -167,6 +169,7 @@ export default function SeekScreen() {
 };
 
     return (
+      (connector.connected) ? (
         (cacheMetadata) ? (
           (distanceToNearestItem) ? (
             (distanceToNearestItem > 10 && !hasTriggeredARVision) ? (
@@ -200,10 +203,17 @@ export default function SeekScreen() {
               <Text style={styles.text}>Grabbing Location...</Text>
           </View>
           )
+        ) : (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={styles.text}>Please select a geocache to use Seek!</Text>
+          </View>
+        )
       ) : (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={styles.text}>Please select a geocache to use Seek!</Text>
-        </View>
+        <View style={globalStyles.textContainer}>
+          <Text style={globalStyles.centerText}>
+            Uh-Oh! Please connect your wallet to search for Geocache items.
+          </Text>
+          </View>
       )
   )}
 
