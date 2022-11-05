@@ -6,7 +6,7 @@ import randomLocation from 'random-location';
 const globalStyles = require("../styles")
 // Web3 Imports
 // Pull in the shims (BEFORE importing ethers)
-import "@ethersproject/shims"
+import '@ethersproject/shims';
 // Import the ethers library
 import { ethers } from "ethers";
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
@@ -46,24 +46,23 @@ export default function NewCacheForm() {
       await providers.walletConnect.enable();
       const ethers_provider = new ethers.providers.Web3Provider(providers.walletConnect);
 
-      const signer = await ethers_provider.getSigner();
-      const geocacheContractWithSigner = await GeocacheContract.connect(signer);
+    const signer = await ethers_provider.getSigner();
+    const geocacheContractWithSigner = await GeocacheContract.connect(signer);
 
+    const date = new Date(Date.now()).toLocaleString();
+    // console.log("Date: " + date.toString)
 
-
-      const date = new Date(Date.now()).toLocaleString()
-      // console.log("Date: " + date.toString)
-
-      const createGeocacheTxn = await geocacheContractWithSigner.newGeocache(
+    const createGeocacheTxn = await geocacheContractWithSigner
+      .newGeocache(
         numItems,
-        "https://gateway.pinata.cloud/ipfs/QmXgkKXsTyW9QJCHWsgrt2BW7p5csfFE21eWtmbd5Gzbjr/",
+        'https://gateway.pinata.cloud/ipfs/QmXgkKXsTyW9QJCHWsgrt2BW7p5csfFE21eWtmbd5Gzbjr/',
         date.toString(),
         itemLocations,
         locationContext.latitude.toString(),
         locationContext.longitude.toString(),
         // 900393223,
         radius,
-        name,   
+        name,
         {
           gasLimit: 1000000,
         }
@@ -73,39 +72,40 @@ export default function NewCacheForm() {
         setIsDeployingGeocache(true)
         console.log("Success: " + JSON.stringify(res, null, 2))
       })
-      .catch((error) => {
-        alert("Create Cache error: " + error.message);
-        console.log("Error: " + error.message)
+      .catch(error => {
+        alert('Create Cache error: ' + error.message);
+        console.log('Error: ' + error.message);
       });
 
-      console.log("done")
+    console.log('done');
+  };
 
+  const generateItemLocations = () => {
+    //generate numItems coordinate pairs within radius
+    // console.log("locationContext: " + JSON.stringify(locationContext));
+    const randomCoords = Array();
+    // findCoordinates();
+    fixedRadius = radius * 1; //* 1609.34;
+    for (let i = 0; i < numItems; i++) {
+      let coord = randomLocation.randomCirclePoint(
+        locationContext,
+        fixedRadius,
+      );
+      randomCoords.push(coord);
     }
 
-    const generateItemLocations = () => {
-        //generate numItems coordinate pairs within radius
-        // console.log("locationContext: " + JSON.stringify(locationContext));
-        const randomCoords = Array();
-        // findCoordinates();
-        fixedRadius = radius * 1; //* 1609.34;
-        for (let i = 0; i < numItems; i++)
-        {
-          let coord = randomLocation.randomCirclePoint(locationContext, fixedRadius);
-          randomCoords.push(coord);        
-        }
-
-        //Formatting item locations to be a list of string tuples
-        var itemLocationsFormatted = [];
-        randomCoords.map((coord, index) => {
-          itemLocationsFormatted[index] = coord.latitude + "," + coord.longitude
-        })
-        // console.log(itemLocationsFormatted)
-        // for (let i = 0; i < numItems; i++) {
-        //   console.log("randomLocaiton[" + i + "]....." + JSON.stringify(randomCoords[i]));
-        // }
-        // console.log(itemLocationsFormatted)
-        return itemLocationsFormatted;
-    };
+    //Formatting item locations to be a list of string tuples
+    var itemLocationsFormatted = [];
+    randomCoords.map((coord, index) => {
+      itemLocationsFormatted[index] = coord.latitude + ',' + coord.longitude;
+    });
+    // console.log(itemLocationsFormatted)
+    // for (let i = 0; i < numItems; i++) {
+    //   console.log("randomLocaiton[" + i + "]....." + JSON.stringify(randomCoords[i]));
+    // }
+    // console.log(itemLocationsFormatted)
+    return itemLocationsFormatted;
+  };
 
 
 

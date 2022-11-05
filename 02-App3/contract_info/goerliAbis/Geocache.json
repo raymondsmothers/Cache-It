@@ -201,64 +201,12 @@
     },
     {
       "inputs": [],
-      "name": "getAllGeocaches",
+      "name": "getAllActiveGeocacheIDs",
       "outputs": [
         {
-          "components": [
-            {
-              "internalType": "address",
-              "name": "creator",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "tokenURI",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "dateCreated",
-              "type": "string"
-            },
-            {
-              "internalType": "uint256",
-              "name": "numItems",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bool",
-              "name": "isActive",
-              "type": "bool"
-            },
-            {
-              "internalType": "string",
-              "name": "epicenterLat",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "epicenterLong",
-              "type": "string"
-            },
-            {
-              "internalType": "string[]",
-              "name": "itemGeolocations",
-              "type": "string[]"
-            },
-            {
-              "internalType": "string",
-              "name": "name",
-              "type": "string"
-            },
-            {
-              "internalType": "uint256",
-              "name": "radius",
-              "type": "uint256"
-            }
-          ],
-          "internalType": "struct Geocache.GeocacheInstance[]",
+          "internalType": "uint256[]",
           "name": "",
-          "type": "tuple[]"
+          "type": "uint256[]"
         }
       ],
       "stateMutability": "view",
@@ -390,6 +338,19 @@
       "name": "newGeocache",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "numActiveGeocaches",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {

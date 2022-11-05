@@ -20,7 +20,10 @@ export default function ConnectWalletButton() {
   else {
     // console.log("Account: " + connector.accounts[0])
     return (
-      <Button title="Disconnect Wallet" onPress={() => connector.killSession()} />
+      <Button
+        title="Disconnect Wallet"
+        onPress={() => connector.killSession()}
+      />
     );
   }
 }

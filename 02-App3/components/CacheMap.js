@@ -14,36 +14,37 @@ export default function CacheMap() {
     const locationContext = useContext(LocationContext)
     const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
 
-    const mapStyle = [
-      {
-          featureType: "administrative.land_parcel",
-          stylers: [
-              {
-                  visibility: "off"
-              }
-          ]
-      },
-      {
-          featureType: "poi",
-          stylers: [
-              {
-                  visibility: "off"
-              }
-          ]
-      },
-      {
-          featureType: "administrative.neighborhood",
-          stylers: [
-              {
-                  visibility: "off"
-              }
-          ]
-      }
-  ]
+  const mapStyle = [
+    {
+      featureType: 'administrative.land_parcel',
+      stylers: [
+        {
+          visibility: 'off',
+        },
+      ],
+    },
+    {
+      featureType: 'poi',
+      stylers: [
+        {
+          visibility: 'off',
+        },
+      ],
+    },
+    {
+      featureType: 'administrative.neighborhood',
+      stylers: [
+        {
+          visibility: 'off',
+        },
+      ],
+    },
+  ];
 
   useEffect(() => {
-    if(locationContext) {
-        mapRef.current.setCamera({
+    if (locationContext) {
+      mapRef.current.setCamera(
+        {
           center: {
             latitude: locationContext?.latitude,
             longitude: locationContext?.longitude,
@@ -51,55 +52,68 @@ export default function CacheMap() {
             longitudeDelta: locationContext?.longitudeDelta,
           },
           zoom: 15,
-      }, {duration: 2000});
+        },
+        {duration: 2000},
+      );
     }
-  }, [locationContext])
+  }, [locationContext]);
 
+  // Getting all the active geocaches IDs
+  // TODO: These are the IDs that the user should be able to select
+  useEffect(() => {
+    const getIDs = async () => {
+      const ids = await GeocacheContract.getAllActiveGeocacheIDs();
+      const formattedIds = ids.map((id, index) => Number(id));
+      setActiveGeocacheIds([...formattedIds]);
+    };
+    getIDs();
+  }, []);
 
   useEffect(() => {
     const getData = async () => {
-      
-      var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(selectedGeocache);
-      var selectedGeocacheItemLocations = await GeocacheContract.getGeolocationsOfGeocache(selectedGeocache);
+      var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(
+        selectedGeocache,
+      );
+      var selectedGeocacheItemLocations =
+        await GeocacheContract.getGeolocationsOfGeocache(selectedGeocache);
       // console.log("selected geocahce: " + JSON.stringify(selectedGeocacheRawData, null, 2))
       // console.log("selected geocache gelocaitons: " + selectedGeocacheItemLocations)
       var itemLocations = [];
       selectedGeocacheItemLocations.map((coordsAsString, index) => {
-          var coord = {
-            "latitude": parseFloat(coordsAsString.substring(0, coordsAsString.indexOf(","))),
-            "longitude": parseFloat(coordsAsString.substring(coordsAsString.indexOf(",") + 1))
-          }
-          itemLocations.push(coord)
-      })
-      // console.log("epicenterlat: " + selectedGeocacheRawData[5])
-      if(selectedGeocacheRawData[0] != "0x0000000000000000000000000000000000000000") {
-        setCacheMetadata({
-          "creator": selectedGeocacheRawData[0],
-          "imgUrl": selectedGeocacheRawData[1],
-          "date": selectedGeocacheRawData[2],
-          "numberOfItems": parseInt(selectedGeocacheRawData[3]),
-          "isActive": selectedGeocacheRawData[4],
-          "epicenterLat": parseFloat(selectedGeocacheRawData[5]),
-          "epicenterLong": parseFloat(selectedGeocacheRawData[6]),
-          "name": selectedGeocacheRawData[7],
-          "radius": parseInt(selectedGeocacheRawData[8]),
-          "geolocations": itemLocations,
-        })  
-      }
-    }
-    getData()
-  }, [])
+        var coord = {
+          latitude: parseFloat(
+            coordsAsString.substring(0, coordsAsString.indexOf(',')),
+          ),
+          longitude: parseFloat(
+            coordsAsString.substring(coordsAsString.indexOf(',') + 1),
+          ),
+        };
+        itemLocations.push(coord);
+      });
+      setCacheMetadata({
+        creator: selectedGeocacheRawData[0],
+        imgUrl: selectedGeocacheRawData[1],
+        date: selectedGeocacheRawData[2],
+        numberOfItems: parseInt(selectedGeocacheRawData[3]),
+        isActive: selectedGeocacheRawData[4],
+        epicenterLat: selectedGeocacheRawData[5],
+        epicenterLong: selectedGeocacheRawData[6],
+        name: selectedGeocacheRawData[7],
+        radius: parseInt(selectedGeocacheRawData[8]),
+        geolocations: itemLocations,
+        geocacheId: selectedGeocache,
+      });
+    };
+    getData();
+  }, []);
+
+  const formatCoords = () => {};
 
   // useEffect(() => {
   //   if (connector.accounts) {
   //     console.log('Connector info: ', connector.accounts[0]);
   //   }
   // }, [connector]);
-
-
-
-
-
 
   return (
     <View style={styles.container}>
@@ -159,6 +173,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginTop: 10,
     position: "absolute",
-    zIndex: 2
+    zIndex: 2,
+    width: '100%',
+    bottom: 0,
+    padding: 15,
   },
 });
