@@ -1,4 +1,6 @@
 //native imports
+require('node-libs-react-native/globals');
+
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React, {useEffect, useState, useContext} from 'react';
 import {PermissionsAndroid} from 'react-native';

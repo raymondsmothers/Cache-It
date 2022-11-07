@@ -4,6 +4,7 @@ import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid, ActivityIndica
 import { CacheMetadataContext, LocationContext, Web3ProviderContext, GeocacheContractContext } from '../App';
 import randomLocation from 'random-location';
 const globalStyles = require("../styles")
+// import { URL, URLSearchParams } from 'react-native-url-polyfill';
 
 //Component Imports
 import MessageModal from './MessageModal';
@@ -13,6 +14,15 @@ import '@ethersproject/shims';
 // Import the ethers library
 import { ethers } from "ethers";
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
+//OPENAI
+// const { Configuration, OpenAIApi } = require("openai");
+import {OPENAI_SECRET_KEY} from '@env';
+// 
+// const configuration = new Configuration({
+//   apiKey: OPENAI_SECRET_KEY,
+// });
+
+
 
 export default function NewCacheForm() {
     const locationContext = useContext(LocationContext)
@@ -49,47 +59,80 @@ export default function NewCacheForm() {
       }
     }
 
-    const createGeocacheSubmitHandler = async () => {
-      // console.log("create geocache")
-      const itemLocations = generateItemLocations();
-      await providers.walletConnect.enable();
-      const ethers_provider = new ethers.providers.Web3Provider(providers.walletConnect);
+    // const generateGeocacheOriginStory = async () => {
+    //   const openai = new OpenAIApi(configuration);
+    //   const response = await openai.createCompletion({
+    //     model: "text-davinci-002",
+    //     prompt: "Say this is a test",
+    //     max_tokens: 6,
+    //     temperature: 0,
+    //   }).catch((e) => {
+    //     console.error("Error : " + e)
+    //   });
+    //   console.log("Response from openai: " + response)
+    // }
 
-    const signer = await ethers_provider.getSigner();
-    const geocacheContractWithSigner = await GeocacheContract.connect(signer);
+    const generateGeocacheOriginStory = async () => {
+      var response = fetch('https://api.openai.com/v1/completions', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + OPENAI_SECRET_KEY
+        },
+        body: JSON.stringify({
+          model: "text-davinci-002",
+          prompt: "Say this is a test",
+          max_tokens: 6,
+          temperature: 0,
+        }),
+        }).then((result) => {
+          console.log("result: " + JSON.stringify(result, null, 2))
+        });
+        console.log("response: " + JSON.stringify(response, null, 2) )
+    }
 
-    const date = new Date(Date.now()).toLocaleString();
-    // console.log("Date: " + date.toString)
+  //   const createGeocacheSubmitHandler = async () => {
+  //     // console.log("create geocache")
+  //     const itemLocations = generateItemLocations();
+  //     await providers.walletConnect.enable();
+  //     const ethers_provider = new ethers.providers.Web3Provider(providers.walletConnect);
 
-    const createGeocacheTxn = await geocacheContractWithSigner
-      .newGeocache(
-        numItems,
-        'https://gateway.pinata.cloud/ipfs/QmXgkKXsTyW9QJCHWsgrt2BW7p5csfFE21eWtmbd5Gzbjr/',
-        date.toString(),
-        itemLocations,
-        locationContext.latitude.toString(),
-        locationContext.longitude.toString(),
-        // 900393223,
-        radius,
-        name,
-        {
-          gasLimit: 1000000,
-        }
+  //   const signer = await ethers_provider.getSigner();
+  //   const geocacheContractWithSigner = await GeocacheContract.connect(signer);
 
-      )
-      .then((res) => {
-        setIsDeployingGeocache(true)
-        console.log("Success: " + JSON.stringify(res, null, 2))
-      })
-      .catch(error => {
-        // setHasThrownError(true)
-        setErrorMessage(error.message)
-        setIsDeployingGeocache(false)
-        console.log('Error: ' + error.message);
-      });
+  //   const date = new Date(Date.now()).toLocaleString();
+  //   // console.log("Date: " + date.toString)
 
-    // console.log('done');
-  };
+  //   const createGeocacheTxn = await geocacheContractWithSigner
+  //     .newGeocache(
+  //       numItems,
+  //       'https://gateway.pinata.cloud/ipfs/QmXgkKXsTyW9QJCHWsgrt2BW7p5csfFE21eWtmbd5Gzbjr/',
+  //       date.toString(),
+  //       itemLocations,
+  //       locationContext.latitude.toString(),
+  //       locationContext.longitude.toString(),
+  //       // 900393223,
+  //       radius,
+  //       name,
+  //       {
+  //         gasLimit: 1000000,
+  //       }
+
+  //     )
+  //     .then((res) => {
+  //       setIsDeployingGeocache(true)
+  //       console.log("Success: " + JSON.stringify(res, null, 2))
+  //     })
+  //     .catch(error => {
+  //       // setHasThrownError(true)
+  //       setErrorMessage(error.message)
+  //       setIsDeployingGeocache(false)
+  //       console.log('Error: ' + error.message);
+  //     });
+
+  //   // console.log('done');
+  // };
 
   const generateItemLocations = () => {
     //generate numItems coordinate pairs within radius
@@ -139,7 +182,8 @@ export default function NewCacheForm() {
           keyboardType="numeric"
         />
         <Button
-          onPress={() => {createGeocacheSubmitHandler()}}
+          onPress={() => {generateGeocacheOriginStory()}}
+          // onPress={() => {createGeocacheSubmitHandler ()}}
           title="Submit"
           color="#841584"
           disabled={!connector.connected}
