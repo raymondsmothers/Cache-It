@@ -14,9 +14,12 @@ import Animated, {
 import {CacheMetadataContext, Web3ProviderContext} from '../App';
 import {CACHEIT_PRIVATE_KEY} from '@env';
 import {ethers} from 'ethers';
+import { ConnectorEvents, useWalletConnect } from '@walletconnect/react-native-dapp';
+// import { useWalletConnect } from '@walletconnect/react-native-dapp';
 
 export default function SeekScreen() {
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
+  const connector = useWalletConnect();
 
   //Coordinates of the nearest geocache item
   const [nearestItemCoords, setNearestItemCoords] = useState([]);
@@ -28,7 +31,7 @@ export default function SeekScreen() {
   //sets pulse duration, 1 is strongest, 20 is weakest
   const [pulseStrength, setPulseStrength] = useState(20);
   // Signer to pass into ARVision
-  const [signer, setSigner] = useState(null);
+  // const [signer, setSigner] = useState(null);
   // Provider context
   const providers = useContext(Web3ProviderContext);
 
@@ -77,33 +80,33 @@ export default function SeekScreen() {
   }, [cacheMetadata]);
 
   // Setting our signer for ARVision (CacheIt wallet)
-  useEffect(() => {
-    const createSigner = async () => {
-      await providers.walletConnect.enable();
-      const ethers_provider = new ethers.providers.Web3Provider(
-        providers.walletConnect,
-      );
+  // useEffect(() => {
+  //   const createSigner = async () => {
+  //     await providers.walletConnect.enable();
+  //     const ethers_provider = new ethers.providers.Web3Provider(
+  //       providers.walletConnect,
+  //     );
 
-      const cacheitSigner = new ethers.Wallet(
-        //not the actual key
-        "8c900f09ea421767b2cdb2b44750c51b67d55ec086a7d5ae3bbcfa442dd00000",
-        // CACHEIT_PRIVATE_KEY,
-        ethers_provider,
-      );
+  //     const cacheitSigner = new ethers.Wallet(
+  //       //not the actual key
+  //       // "CACHEIT",
+  //       CACHEIT_PRIVATE_KEY,
+  //       ethers_provider,
+  //     );
 
-      setSigner(cacheitSigner);
-    };
-    createSigner();
-  }, []);
+  //     setSigner(cacheitSigner);
+  //   };
+  //   // createSigner();
+  // }, []);
 
-  const getItemCoords = () => {
-    var coords = [];
-    coords.push({latitude: 39.6519, longitude: -90.2934});
-    coords.push({latitude: 38.6483634, longitude: -90.3118004});
-    coords.push({latitude: 38.6480908, longitude: -90.3118779});
-    coords.push({latitude: 38.6486215, longitude: -90.3112989});
-    return coords;
-  };
+  // const getItemCoords = () => {
+  //   var coords = [];
+  //   coords.push({latitude: 39.6519, longitude: -90.2934});
+  //   coords.push({latitude: 38.6483634, longitude: -90.3118004});
+  //   coords.push({latitude: 38.6480908, longitude: -90.3118779});
+  //   coords.push({latitude: 38.6486215, longitude: -90.3112989});
+  //   return coords;
+  // };
 
   const calculateShortestDistance = async currentPosition => {
     //get coords
@@ -192,58 +195,65 @@ export default function SeekScreen() {
     );
   };
 
-  return cacheMetadata ? (
-    distanceToNearestItem ? (
-      distanceToNearestItem > 10 && !hasTriggeredARVision ? (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={styles.text}>
-            {' '}
-            {'Searching "' + cacheMetadata.name + '"'}{' '}
-          </Text>
-          <Text style={styles.subtitle}>
-            {' '}
-            {'Created by:  "' + cacheMetadata.creator + '"'}{' '}
-          </Text>
-          <Text style={styles.subtitle}>
-            {' '}
-            {'Created On:  "' + cacheMetadata.date + '"'}{' '}
-          </Text>
+  return connector.connected ? (
+    cacheMetadata ? (
+      distanceToNearestItem ? (
+        // true ? (
+        distanceToNearestItem > 10 && !hasTriggeredARVision ? (
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={styles.text}>
+              {' '}
+              {'Searching "' + cacheMetadata.name + '"'}{' '}
+            </Text>
+            <Text style={styles.subtitle}>
+              {' '}
+              {'Created by:  "' + cacheMetadata.creator + '"'}{' '}
+            </Text>
+            <Text style={styles.subtitle}>
+              {' '}
+              {'Created On:  "' + cacheMetadata.date + '"'}{' '}
+            </Text>
 
-          <Text style={styles.text}>
-            {' '}
-            {'Pulse Strength: \n' + pulseStrength}{' '}
-          </Text>
-          <View
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'column',
-            }}>
-            <Ring duration={1000 * pulseStrength} delay={0} />
-            <Ring duration={1000 * pulseStrength} delay={500 * pulseStrength} />
-            <Ring duration={1000 * pulseStrength} delay={250 * pulseStrength} />
-            <Ring duration={1000 * pulseStrength} delay={750 * pulseStrength} />
+            <Text style={styles.text}>
+              {' '}
+              {'Pulse Strength: \n' + pulseStrength}{' '}
+            </Text>
+            <View
+              style={{
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'column',
+              }}>
+              <Ring duration={1000 * pulseStrength} delay={0} />
+              <Ring duration={1000 * pulseStrength} delay={500 * pulseStrength} />
+              <Ring duration={1000 * pulseStrength} delay={250 * pulseStrength} />
+              <Ring duration={1000 * pulseStrength} delay={750 * pulseStrength} />
+            </View>
+            <Text style={styles.text}>
+              {' '}
+              {'Distance: \n' + distanceToNearestItem.toFixed(2) + ' Meters'}{' '}
+            </Text>
           </View>
-          <Text style={styles.text}>
-            {' '}
-            {'Distance: \n' + distanceToNearestItem.toFixed(2) + ' Meters'}{' '}
-          </Text>
-        </View>
+        ) : (
+          //Maybe we show AR Vision when they are within 0.01, then only allow dragging of ar object when they are within 0.001? So they can move closer to a visible AR object?
+          <ARvision></ARvision>
+        )
       ) : (
-        //Maybe we show AR Vision when they are within 0.01, then only allow dragging of ar object when they are within 0.001? So they can move closer to a visible AR object?
-        <ARvision></ARvision>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Text style={styles.text}>Grabbing Location...</Text>
+        </View>
       )
     ) : (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={styles.text}>Grabbing Location...</Text>
+        <Text style={styles.text}>Please select a geocache to use Seek!</Text>
       </View>
     )
   ) : (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text style={styles.text}>Please select a geocache to use Seek!</Text>
+      <Text style={styles.text}>Uh-Oh! Please connect wallet to search for items.</Text>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
