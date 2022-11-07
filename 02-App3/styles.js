@@ -19,5 +19,9 @@ module.exports = StyleSheet.create({
     centerText: {
       textAlign: "center",
       fontSize: 24
+    },
+    messageModal: {
+      position: "absolute",
+      left: 200
     }
   });

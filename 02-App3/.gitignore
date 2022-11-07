@@ -63,7 +63,7 @@ android/gradle.properties
 android/gradlew
 
 #IDEK
-java_pid6828.hprof
+java_pid*
 
 #Env variables
 .env

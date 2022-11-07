@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, {useContext, useEffect, useState} from 'react';
 import { View, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
@@ -10,9 +11,10 @@ export default function CacheMap() {
     const mapRef = React.createRef();
     const GeocacheContract = useContext(GeocacheContractContext)
     // TODO this is a hardcode state variable, we need to create a switch to allow users to select a geocache id, by name maybe
-    const [selectedGeocache, setSelectedGeocache] = useState(0)
+    const [selectedGeocache, setSelectedGeocache] = useState(2)
     const locationContext = useContext(LocationContext)
     const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
+    // const navigation = useNavigation()
 
   const mapStyle = [
     {
@@ -96,8 +98,8 @@ export default function CacheMap() {
         date: selectedGeocacheRawData[2],
         numberOfItems: parseInt(selectedGeocacheRawData[3]),
         isActive: selectedGeocacheRawData[4],
-        epicenterLat: selectedGeocacheRawData[5],
-        epicenterLong: selectedGeocacheRawData[6],
+        epicenterLat: parseFloat(selectedGeocacheRawData[5]),
+        epicenterLong: parseFloat(selectedGeocacheRawData[6]),
         name: selectedGeocacheRawData[7],
         radius: parseInt(selectedGeocacheRawData[8]),
         geolocations: itemLocations,

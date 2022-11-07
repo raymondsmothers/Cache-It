@@ -3,6 +3,7 @@ import {Text, StyleSheet, View} from 'react-native';
 import ARvision from './ARvision';
 import Geolocation from 'react-native-geolocation-service';
 const globalStyles = require("../styles");
+
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -16,6 +17,8 @@ import {CACHEIT_PRIVATE_KEY} from '@env';
 import {ethers} from 'ethers';
 import { ConnectorEvents, useWalletConnect } from '@walletconnect/react-native-dapp';
 // import { useWalletConnect } from '@walletconnect/react-native-dapp';
+import "../global";
+
 
 export default function SeekScreen() {
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
@@ -30,10 +33,8 @@ export default function SeekScreen() {
   const [distanceToNearestItem, setDistancetoNearestItem] = useState(undefined);
   //sets pulse duration, 1 is strongest, 20 is weakest
   const [pulseStrength, setPulseStrength] = useState(20);
-  // Signer to pass into ARVision
-  // const [signer, setSigner] = useState(null);
   // Provider context
-  const providers = useContext(Web3ProviderContext);
+  // const providers = useContext(Web3ProviderContext);
 
   const Ring = ({delay, duration}) => {
     const ring = useSharedValue(0);
@@ -67,6 +68,7 @@ export default function SeekScreen() {
   useEffect(() => {
     findInitialCoordinates();
     // const interval = setInterval( async () => {
+    // console.log("CAchemetadata: " + JSON.stringify(cacheMetadata, null, 2))
     updateCoordinates();
     // calculateShortestDistance()
     // }, 1000);
@@ -74,39 +76,7 @@ export default function SeekScreen() {
     // return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (!cacheMetadata) {
-    }
-  }, [cacheMetadata]);
 
-  // Setting our signer for ARVision (CacheIt wallet)
-  // useEffect(() => {
-  //   const createSigner = async () => {
-  //     await providers.walletConnect.enable();
-  //     const ethers_provider = new ethers.providers.Web3Provider(
-  //       providers.walletConnect,
-  //     );
-
-  //     const cacheitSigner = new ethers.Wallet(
-  //       //not the actual key
-  //       // "CACHEIT",
-  //       CACHEIT_PRIVATE_KEY,
-  //       ethers_provider,
-  //     );
-
-  //     setSigner(cacheitSigner);
-  //   };
-  //   // createSigner();
-  // }, []);
-
-  // const getItemCoords = () => {
-  //   var coords = [];
-  //   coords.push({latitude: 39.6519, longitude: -90.2934});
-  //   coords.push({latitude: 38.6483634, longitude: -90.3118004});
-  //   coords.push({latitude: 38.6480908, longitude: -90.3118779});
-  //   coords.push({latitude: 38.6486215, longitude: -90.3112989});
-  //   return coords;
-  // };
 
   const calculateShortestDistance = async currentPosition => {
     //get coords
@@ -196,9 +166,10 @@ export default function SeekScreen() {
   };
 
   return connector.connected ? (
-    cacheMetadata ? (
+    cacheMetadata?.imgUrl != "" ? (
+      // true ? (
       distanceToNearestItem ? (
-        // true ? (
+        // false ? (
         distanceToNearestItem > 10 && !hasTriggeredARVision ? (
           <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <Text style={styles.text}>
@@ -207,7 +178,7 @@ export default function SeekScreen() {
             </Text>
             <Text style={styles.subtitle}>
               {' '}
-              {'Created by:  "' + cacheMetadata.creator + '"'}{' '}
+              {'Created by:  "' + global.shortenAddress(cacheMetadata.creator) + '"'}{' '}
             </Text>
             <Text style={styles.subtitle}>
               {' '}
@@ -241,7 +212,7 @@ export default function SeekScreen() {
         )
       ) : (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={styles.text}>Grabbing Location...</Text>
+          <Text style={styles.text}>Finding Nearest Item...</Text>
         </View>
       )
     ) : (

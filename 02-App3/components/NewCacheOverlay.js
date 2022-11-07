@@ -6,12 +6,12 @@ import { CacheMetadataContext } from '../App';
 
 export default function NewCacheOverlay(props) {
     const defaultCircleColor = "#0000ff40";
-    // const navigation = useNavigation();
+    const navigation = useNavigation();
 
     const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
 
-    console.log(JSON.stringify(cacheMetadata));
-    if(true) {
+    // console.log(JSON.stringify(cacheMetadata));
+    if(cacheMetadata == undefined || cacheMetadata?.imgUrl == "") {
     // if(no geocache is selected) {
         console.log("no cache selected")
         return <View></View>;

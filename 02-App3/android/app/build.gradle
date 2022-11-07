@@ -123,16 +123,21 @@ def enableHermes = project.ext.react.get("enableHermes", false);
 android {
     ndkVersion rootProject.ext.ndkVersion
 
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdkVersion 31
+    // compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
         applicationId "com.myviroapp"
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        // targetSdkVersion rootProject.ext.targetSdkVersion
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
-          resValue "string", "build_config_package", "com.myviroapp"
+        //   resValue "string", "build_config_package", "com.myviroapp"
 
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
     }
     splits {
         abi {
@@ -223,12 +228,12 @@ task copyDownloadableDepsToLibs(type: Copy) {
     into 'libs'
 }
 
-project.ext.envConfigFiles = [
-  release: ".env.production",
-  dev: ".env.development",
-// Also you can different types of environments,
-  // for example staging.
-  stage: ".env.staging",
-];
+// project.ext.envConfigFiles = [
+//   release: ".env.production",
+//   dev: ".env.development",
+// // Also you can different types of environments,
+//   // for example staging.
+//   stage: ".env.staging",
+// ];
 
-apply from: project(":react-native-config").projectDir.getPath() + "/dotenv.gradle"; file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

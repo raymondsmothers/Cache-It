@@ -1,9 +1,12 @@
 import React, {useState, useContext, useEffect} from 'react';
 import { RecyclerViewBackedScrollViewComponent, Text, View, Button } from 'react-native';
-import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid, ActivityIndicator  } from "react-native";
+import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid, ActivityIndicator, Alert  } from "react-native";
 import { CacheMetadataContext, LocationContext, Web3ProviderContext, GeocacheContractContext } from '../App';
 import randomLocation from 'random-location';
 const globalStyles = require("../styles")
+
+//Component Imports
+import MessageModal from './MessageModal';
 // Web3 Imports
 // Pull in the shims (BEFORE importing ethers)
 import '@ethersproject/shims';
@@ -22,6 +25,8 @@ export default function NewCacheForm() {
     const [isTransactionDelayed, setIsTransactionDelayed] = useState(false)
     const [isDeployingGeocache, setIsDeployingGeocache] = useState(false)
     const [hasDeployedGeocache, setHasDeployedGeocache] = useState(false)
+    // const [hasThrownError, setHasThrownError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState(false)
     const [name, onChangeName] = useState("Default Name");
     const [radius, onChangeRadius] = useState(1);
     const [numItems, onChangeNumItems] = useState(5);
@@ -29,13 +34,16 @@ export default function NewCacheForm() {
 
     useEffect(() => {
       GeocacheContract.on("GeocacheCreated", geocacheCreatedCallback)
-      console.log("is connected: " + connector.connected)
     })
 
     const geocacheCreatedCallback = (creatorAddress, geocacheName, numItems) => {
-      console.log("creatorAddress: " + creatorAddress)
-      if(creatorAddress == connector.accounts[0]) {
-        console.log("callback triggered")
+      creatorAddress = creatorAddress.toLocaleLowerCase()
+      // console.log("creatorAddress in new cahce form callback: " + creatorAddress)
+      const connectedAddress = connector.accounts[0];
+      // console.log("connectorAddress in new cahce form callback: " + connectedAddress)
+      
+      if(creatorAddress == connectedAddress) {
+        console.log("callback triggered in new cacheform")
         setIsDeployingGeocache(false)
         setHasDeployedGeocache(true)
       }
@@ -74,11 +82,13 @@ export default function NewCacheForm() {
         console.log("Success: " + JSON.stringify(res, null, 2))
       })
       .catch(error => {
-        alert('Create Cache error: ' + error.message);
+        // setHasThrownError(true)
+        setErrorMessage(error.message)
+        setIsDeployingGeocache(false)
         console.log('Error: ' + error.message);
       });
 
-    console.log('done');
+    // console.log('done');
   };
 
   const generateItemLocations = () => {
@@ -100,11 +110,6 @@ export default function NewCacheForm() {
     randomCoords.map((coord, index) => {
       itemLocationsFormatted[index] = coord.latitude + ',' + coord.longitude;
     });
-    // console.log(itemLocationsFormatted)
-    // for (let i = 0; i < numItems; i++) {
-    //   console.log("randomLocaiton[" + i + "]....." + JSON.stringify(randomCoords[i]));
-    // }
-    // console.log(itemLocationsFormatted)
     return itemLocationsFormatted;
   };
 
@@ -157,11 +162,13 @@ export default function NewCacheForm() {
         }
         {hasDeployedGeocache &&
         <View style={globalStyles.textContainer}>
+          <MessageModal title={"Success!"} body={"Finished deploying."}></MessageModal>
 
-          <Text style={globalStyles.centerText}>
-            Finished Deploying!
-          </Text> 
         </View>
+        }
+        {/* {hasThrownError && */}
+        {errorMessage &&
+          <MessageModal title={"Error!"} body={errorMessage}></MessageModal>
         }
         </View>
       </SafeAreaView>
