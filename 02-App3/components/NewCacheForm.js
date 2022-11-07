@@ -29,6 +29,7 @@ export default function NewCacheForm() {
 
     useEffect(() => {
       GeocacheContract.on("GeocacheCreated", geocacheCreatedCallback)
+      console.log("is connected: " + connector.connected)
     })
 
     const geocacheCreatedCallback = (creatorAddress, geocacheName, numItems) => {
@@ -111,6 +112,7 @@ export default function NewCacheForm() {
 
     return (
       <SafeAreaView>
+      <View style={styles.container}>
         <TextInput
           style={styles.input}
           onChangeText={onChangeName}
@@ -140,10 +142,11 @@ export default function NewCacheForm() {
         />
         {!connector.connected && 
         <View style={globalStyles.textContainer}>
-          <Text style={globalStyles.centerText}>
-            Uh-Oh! Please connect your wallet to create a new Geocache.
-          </Text>
-          </View>}
+        <Text style={globalStyles.centerText}>
+          Uh-Oh! Please connect your wallet to create a new Geocache.
+        </Text>
+        </View>
+        }
         {isDeployingGeocache && 
         <View style={globalStyles.textContainer}>
           <ActivityIndicator></ActivityIndicator>
@@ -160,6 +163,7 @@ export default function NewCacheForm() {
           </Text> 
         </View>
         }
+        </View>
       </SafeAreaView>
     );
   }
@@ -175,8 +179,6 @@ export default function NewCacheForm() {
     container: {
       display: "flex",
       justifyContent: "center",
-      margin: 10,
-      padding: 10,
     },
     text: {
       textAlign: "center",

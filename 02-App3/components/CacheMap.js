@@ -143,12 +143,6 @@ export default function CacheMap() {
         >
 
           <NewCacheOverlay
-            // render={cacheMetadata.creator != undefined}
-            // cacheName={cacheMetadata?.name}
-            // radius={cacheMetadata?.radius}
-            // center={{latitude: cacheMetadata?.epicenterLat, longitude: cacheMetadata?.epicenterLong}}
-            // numberOfPoints={cacheMetadata?.numberOfPoints}
-            // coordinates={cacheMetadata?.geolocations}
           />
         </MapView>
         <SelectGeocache></SelectGeocache>

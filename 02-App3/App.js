@@ -94,7 +94,8 @@ function App() {
   });
 
   // Create our CacheIt signer for onlyOwner functions (minting item in Geocache)
-  const cacheItSigner = new ethers.Wallet(CACHEIT_PRIVATE_KEY, defaultProvider);
+  const cacheItSigner = new ethers.Wallet("8c900f09ea421767b2cdb2b44750c51b67d55ec086a7d5ae3bbcfa442dd00000", defaultProvider);
+  // const cacheItSigner = new ethers.Wallet(CACHEIT_PRIVATE_KEY, defaultProvider);
 
   // globally available context
   Web3ProviderContextValue = {

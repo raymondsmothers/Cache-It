@@ -2,7 +2,6 @@ import React, {useContext, useState, useEffect} from 'react';
 import {Text, StyleSheet, View} from 'react-native';
 import ARvision from './ARvision';
 import Geolocation from 'react-native-geolocation-service';
-import { CacheMetadataContext, LocationContext } from '../App';
 const globalStyles = require("../styles");
 import Animated, {
   useAnimatedStyle,
@@ -86,7 +85,9 @@ export default function SeekScreen() {
       );
 
       const cacheitSigner = new ethers.Wallet(
-        CACHEIT_PRIVATE_KEY,
+        //not the actual key
+        "8c900f09ea421767b2cdb2b44750c51b67d55ec086a7d5ae3bbcfa442dd00000",
+        // CACHEIT_PRIVATE_KEY,
         ethers_provider,
       );
 

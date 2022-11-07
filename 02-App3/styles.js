@@ -10,7 +10,7 @@ module.exports = StyleSheet.create({
     },
     textContainer: {
       display: "flex",
-      flex: 1,
+      // flex: 1,
       justifyContent: "center",
       alignItems: "center",
       margin: 10,

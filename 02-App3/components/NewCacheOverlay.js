@@ -9,35 +9,37 @@ export default function NewCacheOverlay(props) {
     // const navigation = useNavigation();
 
     const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
-    // console.log("cachemetadata: " + cacheMetadata);
-    if(cacheMetadata?.creator == undefined) {
-        return <View></View>;
-    }
 
     console.log(JSON.stringify(cacheMetadata));
-
-    return (
-        <View>
-            <Circle 
-                center={{
-                    latitude: cacheMetadata?.epicenterLat, 
-                    longitude: cacheMetadata?.epicenterLong
-                }}
-                fillColor={defaultCircleColor}
-                radius={cacheMetadata?.radius}
-            />
-            {cacheMetadata?.geolocations.map((marker, index) => (
-                <Marker
-                    title={cacheMetadata?.name}
-                    key={index}
-                    coordinate={marker}
-                    onPress={() => {
-                        navigation.navigate("Seek", {
-                            coord: {marker}
-                        })
-                    }}
-                />
-            ))}
-        </View>
-    );
+    if(true) {
+    // if(no geocache is selected) {
+        console.log("no cache selected")
+        return <View></View>;
+    }
+    else {
+      return (
+          <View>
+              <Circle 
+                  center={{
+                      latitude: cacheMetadata?.epicenterLat, 
+                      longitude: cacheMetadata?.epicenterLong
+                  }}
+                  fillColor={defaultCircleColor}
+                  radius={cacheMetadata?.radius}
+              />
+              {cacheMetadata?.geolocations.map((marker, index) => (
+                  <Marker
+                      title={cacheMetadata?.name}
+                      key={index}
+                      coordinate={marker}
+                      onPress={() => {
+                          navigation.navigate("Seek", {
+                              coord: {marker}
+                          })
+                      }}
+                  />
+              ))}
+          </View>
+      );
+    }
 }
