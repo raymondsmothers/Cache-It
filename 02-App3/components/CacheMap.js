@@ -62,14 +62,16 @@ export default function CacheMap() {
 
   // Getting all the active geocaches IDs
   // TODO: These are the IDs that the user should be able to select
-  useEffect(() => {
-    const getIDs = async () => {
-      const ids = await GeocacheContract.getAllActiveGeocacheIDs();
-      const formattedIds = ids.map((id, index) => Number(id));
-      setActiveGeocacheIds([...formattedIds]);
-    };
-    getIDs();
-  }, []);
+  // useEffect(() => {
+  //   console.log("CacheMap useef ")
+  //   const getIDs = async () => {
+  //     const ids = await GeocacheContract.getAllActiveGeocacheIDs();
+  //     console.log("ids: " + ids)
+  //     const formattedIds = ids.map((id, index) => Number(id));
+  //     setActiveGeocacheIds([...formattedIds]);
+  //   };
+  //   getIDs();
+  // }, []);
 
   useEffect(() => {
     const getData = async () => {
@@ -147,7 +149,7 @@ export default function CacheMap() {
           <NewCacheOverlay
           />
         </MapView>
-        <SelectGeocache></SelectGeocache>
+        <SelectGeocache style={{position: "absolute", bottom: 95}}></SelectGeocache>
       </View>
   );
 }
