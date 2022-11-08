@@ -59,41 +59,10 @@ export default function NewCacheForm() {
       }
     }
 
-    // const generateGeocacheOriginStory = async () => {
-    //   const openai = new OpenAIApi(configuration);
-    //   const response = await openai.createCompletion({
-    //     model: "text-davinci-002",
-    //     prompt: "Say this is a test",
-    //     max_tokens: 6,
-    //     temperature: 0,
-    //   }).catch((e) => {
-    //     console.error("Error : " + e)
-    //   });
-    //   console.log("Response from openai: " + response)
-    // }
+ 
 
     const generateGeocacheOriginStory = async () => {
-      // var response = await fetch('https://api.openai.com/v1/completions', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Accept': 'application/json',
-      //     'Content-Type': 'application/json',
-      //     'Authorization': 'Bearer ' + OPENAI_SECRET_KEY
-      //   },
-      //   body: JSON.stringify({
-      //     model: "text-davinci-002",
-      //     prompt: "tell me a joke",
-      //     max_tokens: 600,
-      //     temperature: 0.3,
-      //   }),
-      //   }).then((result) => {
-      //     console.log("result: " + JSON.stringify(result, null, 2))
-      //   }).then(data => console.log("data: " + data));
-      //   console.log("response: " + response)
-        // console.log("response: " + await response.JSON())
-        var url = "https://api.openai.com/v1/engines/davinci/completions";
-        // var url = "https://api.openai.com/v1/engines/text-curie-001/completions";
-        // var url = "https://api.openai.com/v1/completions";
+        var url = "https://api.openai.com/v1/completions";
         var bearer = 'Bearer ' + OPENAI_SECRET_KEY;
         fetch(url, {
             method: 'POST',
@@ -102,18 +71,14 @@ export default function NewCacheForm() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                // "model": "davinci",
-                "prompt": "Create an origin story for a geocache item that was found in STL.",
-                "max_tokens": 120,
-                "temperature": 1,
-                "top_p": 1,
-                "n": 1,
-                "stream": false,
-                "logprobs": null,
-                "stop": "\n"
-            })
-    
-    
+              "model": "text-davinci-002",
+              "prompt": "Write a mysterious, interesting origin story for a geocache item.",
+              "temperature": 0.7,
+              "max_tokens": 2263,
+              "top_p": 1,
+              "frequency_penalty": 0,
+              "presence_penalty": 0
+            })    
         }).then(response => {
             
             return response.json()
@@ -122,57 +87,60 @@ export default function NewCacheForm() {
             // console.log(data)
             // console.log(typeof data)
             // console.log(Object.keys(data))
-            // console.log(data['choices'][0].text)
-            console.log(JSON.stringify(data, null, 2))
+            console.log(data['choices'][0].text)
+            return data['choices'][0].text
+            // console.log(JSON.stringify(data, null, 2))
             
         })
-            .catch(error => {
-                console.log('Something bad happened ' + error)
-            });
+        .catch(error => {
+            console.log('Something bad happened ' + error)
+        });
     
     }
 
-  //   const createGeocacheSubmitHandler = async () => {
-  //     // console.log("create geocache")
-  //     const itemLocations = generateItemLocations();
-  //     await providers.walletConnect.enable();
-  //     const ethers_provider = new ethers.providers.Web3Provider(providers.walletConnect);
+    const createGeocacheSubmitHandler = async () => {
+      // console.log("create geocache")
+      const itemLocations = generateItemLocations();
+      await providers.walletConnect.enable();
+      const ethers_provider = new ethers.providers.Web3Provider(providers.walletConnect);
 
-  //   const signer = await ethers_provider.getSigner();
-  //   const geocacheContractWithSigner = await GeocacheContract.connect(signer);
+    const signer = await ethers_provider.getSigner();
+    const geocacheContractWithSigner = await GeocacheContract.connect(signer);
 
-  //   const date = new Date(Date.now()).toLocaleString();
-  //   // console.log("Date: " + date.toString)
+    const date = new Date(Date.now()).toLocaleString();
+    // console.log("Date: " + date.toString)
 
-  //   const createGeocacheTxn = await geocacheContractWithSigner
-  //     .newGeocache(
-  //       numItems,
-  //       'https://gateway.pinata.cloud/ipfs/QmXgkKXsTyW9QJCHWsgrt2BW7p5csfFE21eWtmbd5Gzbjr/',
-  //       date.toString(),
-  //       itemLocations,
-  //       locationContext.latitude.toString(),
-  //       locationContext.longitude.toString(),
-  //       // 900393223,
-  //       radius,
-  //       name,
-  //       {
-  //         gasLimit: 1000000,
-  //       }
+    const originStory = await generateGeocacheOriginStory()
+    const createGeocacheTxn = await geocacheContractWithSigner
+      .newGeocache(
+        numItems,
+        'https://gateway.pinata.cloud/ipfs/QmXgkKXsTyW9QJCHWsgrt2BW7p5csfFE21eWtmbd5Gzbjr/',
+        date.toString(),
+        itemLocations,
+        locationContext.latitude.toString(),
+        locationContext.longitude.toString(),
+        // 900393223,
+        radius,
+        name,
+        // originStory,
+        {
+          gasLimit: 1000000,
+        }
 
-  //     )
-  //     .then((res) => {
-  //       setIsDeployingGeocache(true)
-  //       console.log("Success: " + JSON.stringify(res, null, 2))
-  //     })
-  //     .catch(error => {
-  //       // setHasThrownError(true)
-  //       setErrorMessage(error.message)
-  //       setIsDeployingGeocache(false)
-  //       console.log('Error: ' + error.message);
-  //     });
+      )
+      .then((res) => {
+        setIsDeployingGeocache(true)
+        console.log("Success: " + JSON.stringify(res, null, 2))
+      })
+      .catch(error => {
+        // setHasThrownError(true)
+        setErrorMessage(error.message)
+        setIsDeployingGeocache(false)
+        console.log('Error: ' + error.message);
+      });
 
-  //   // console.log('done');
-  // };
+    // console.log('done');
+  };
 
   const generateItemLocations = () => {
     //generate numItems coordinate pairs within radius

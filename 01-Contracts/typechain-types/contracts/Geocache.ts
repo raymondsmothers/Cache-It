@@ -38,7 +38,7 @@ export interface GeocacheInterface extends utils.Interface {
     "hasMintedTokenId(uint256,address)": FunctionFragment;
     "isAdmin(address)": FunctionFragment;
     "mintItemInGeocache(uint256,address)": FunctionFragment;
-    "newGeocache(uint256,string,string,string[],string,string,uint256,string)": FunctionFragment;
+    "newGeocache(uint256,string,string,string[],string,string,uint256,string,string)": FunctionFragment;
     "numActiveGeocaches()": FunctionFragment;
     "numGeocaches()": FunctionFragment;
     "owner()": FunctionFragment;
@@ -118,6 +118,7 @@ export interface GeocacheInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<string>
     ]
   ): string;
@@ -378,6 +379,7 @@ export interface Geocache extends BaseContract {
       _epicenterLong: PromiseOrValue<string>,
       _radius: PromiseOrValue<BigNumberish>,
       _name: PromiseOrValue<string>,
+      _originStory: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -414,7 +416,8 @@ export interface Geocache extends BaseContract {
         string,
         string,
         string,
-        BigNumber
+        BigNumber,
+        string
       ] & {
         creator: string;
         tokenURI: string;
@@ -425,6 +428,7 @@ export interface Geocache extends BaseContract {
         epicenterLong: string;
         name: string;
         radius: BigNumber;
+        originStory: string;
       }
     >;
 
@@ -493,6 +497,7 @@ export interface Geocache extends BaseContract {
     _epicenterLong: PromiseOrValue<string>,
     _radius: PromiseOrValue<BigNumberish>,
     _name: PromiseOrValue<string>,
+    _originStory: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -529,7 +534,8 @@ export interface Geocache extends BaseContract {
       string,
       string,
       string,
-      BigNumber
+      BigNumber,
+      string
     ] & {
       creator: string;
       tokenURI: string;
@@ -540,6 +546,7 @@ export interface Geocache extends BaseContract {
       epicenterLong: string;
       name: string;
       radius: BigNumber;
+      originStory: string;
     }
   >;
 
@@ -608,6 +615,7 @@ export interface Geocache extends BaseContract {
       _epicenterLong: PromiseOrValue<string>,
       _radius: PromiseOrValue<BigNumberish>,
       _name: PromiseOrValue<string>,
+      _originStory: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -642,7 +650,8 @@ export interface Geocache extends BaseContract {
         string,
         string,
         string,
-        BigNumber
+        BigNumber,
+        string
       ] & {
         creator: string;
         tokenURI: string;
@@ -653,6 +662,7 @@ export interface Geocache extends BaseContract {
         epicenterLong: string;
         name: string;
         radius: BigNumber;
+        originStory: string;
       }
     >;
 
@@ -773,6 +783,7 @@ export interface Geocache extends BaseContract {
       _epicenterLong: PromiseOrValue<string>,
       _radius: PromiseOrValue<BigNumberish>,
       _name: PromiseOrValue<string>,
+      _originStory: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -869,6 +880,7 @@ export interface Geocache extends BaseContract {
       _epicenterLong: PromiseOrValue<string>,
       _radius: PromiseOrValue<BigNumberish>,
       _name: PromiseOrValue<string>,
+      _originStory: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

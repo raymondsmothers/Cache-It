@@ -30,6 +30,7 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         string[] itemGeolocations;
         string name;
         uint256 radius;
+        string originStory;
     }
 
     event GeocacheCreated(
@@ -118,7 +119,8 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         string memory _epicenterLat,
         string memory _epicenterLong,
         uint256 _radius,
-        string memory _name
+        string memory _name,
+        string memory _originStory
     ) external {
         tokenIdToGeocache[numGeocaches] = GeocacheInstance(
             msg.sender,
@@ -130,7 +132,8 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
             _epicenterLong,
             _itemGeolocations,
             _name,
-            _radius
+            _radius,
+            _originStory
         );
         ++numGeocaches;
         ++numActiveGeocaches;
