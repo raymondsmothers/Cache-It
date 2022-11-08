@@ -10,7 +10,7 @@ export default function SelectGeocache() {
   const [modalVisible, setModalVisible] = useState(false);
   const GeocacheContract = useContext(GeocacheContractContext)
   const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
-  const [activeGeocacheIds, setActiveGeocacheIds] = useState([0, 1, 2])
+  const [activeGeocacheIds, setActiveGeocacheIds] = useState([0, 1, 2, 3, 4, 5, 6])
   const [activeGeocacheNames, setActiveGeocacheNames] = useState([])
 
   // useEffect(() => {
@@ -31,7 +31,7 @@ export default function SelectGeocache() {
     const getIDs = async () => {
       const ids = await GeocacheContract.getAllActiveGeocacheIDs();
       const formattedIds = ids.map((id, index) => Number(id));
-      // console.log("ids: " + ids)
+      console.log("ids: " + ids)
       setActiveGeocacheIds([...formattedIds]);
     };
     // getIDs();

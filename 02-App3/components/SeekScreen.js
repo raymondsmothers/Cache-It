@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {Text, StyleSheet, View} from 'react-native';
+import {Text, StyleSheet, View, ActivityIndicator} from 'react-native';
 import ARvision from './ARvision';
 import Geolocation from 'react-native-geolocation-service';
 const globalStyles = require("../styles");
@@ -18,7 +18,14 @@ import {ethers} from 'ethers';
 import { ConnectorEvents, useWalletConnect } from '@walletconnect/react-native-dapp';
 // import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import "../global";
-
+const DISTANCE_THRESHOLD = 1
+//Component imports
+import  AnimatedRings from "./AnimatedRing"
+// export const PulseRateContext = React.createContext({});
+export const PulseRateContext = React.createContext({
+  pulseStrength: {},
+  setPulseStrength: () => {},
+});
 
 export default function SeekScreen() {
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
@@ -28,11 +35,14 @@ export default function SeekScreen() {
   const [nearestItemCoords, setNearestItemCoords] = useState([]);
   //Bool of if the user has succesfully come within proximity of geocache item to trigger AR vision
   // this is to stop the bug of the SeekScreen flipping too quickly back and forth AR Vision of pulse indicator and causing app to crash
-  const [hasTriggeredARVision, setHasTriggeredARVision] = useState(false);
+  const [hasTriggeredARVision, setHasTriggeredARVision] = useState();
   //Distance in degrees to nearest item
+  // I don't think you need to update this in state? it causes a rerender too frequently
   const [distanceToNearestItem, setDistancetoNearestItem] = useState(undefined);
   //sets pulse duration, 1 is strongest, 20 is weakest
   const [pulseStrength, setPulseStrength] = useState(20);
+  PulseRateContextValue = {pulseStrength, setPulseStrength};
+
   // Provider context
   // const providers = useContext(Web3ProviderContext);
 
@@ -76,6 +86,15 @@ export default function SeekScreen() {
     // return () => clearInterval(interval);
   }, []);
 
+  // var newPulseStrength = 4;
+  // setTimeout(() => {
+  //   console.log("new pulserate")
+  //   newPulseStrength = Math.ceil(Math.random() * 10 + 1);
+  //   // if(newPulseStrength != pulseStrength)
+  //     // setPulseStrength(13);
+  //     setDistancetoNearestItem(Math.random() * 100 + 1)
+  // }, 5000)
+
 
 
   const calculateShortestDistance = async currentPosition => {
@@ -98,22 +117,34 @@ export default function SeekScreen() {
 
         //convert distance to meters
         // 111 kms is ~ 1 arc of longitude or lat
-        const shortestHypInMeters = shortestHyp * 111 * 1000;
         // console.log("shortesthypinmetesr " + shortestHypInMeters)
         //If user is within 50 meters, pulse we be at max
         //If user is more than 1 km away, pulse will be at min
         // A change of 25 meters closer will increase the pulseStrength
         // const newPulseStrength = Math.ceil(Math.min(1000 / shortestHypInMeters, 20))
-        const newPulseStrength = Math.ceil(
-          Math.min(shortestHypInMeters / 25, 20),
-        );
-        setPulseStrength(newPulseStrength);
-
-        setNearestItemCoords(shortestHypCoords);
-        setDistancetoNearestItem(shortestHypInMeters);
-        setHasTriggeredARVision(shortestHypInMeters <= 10);
+        
       }
     });
+    const shortestHypInMeters = shortestHyp * 111 * 1000;
+    var newPulseStrength = Math.ceil(
+      Math.min(shortestHypInMeters / 25, 20),
+    );
+    // setTimeout(() => {
+    //   console.log("DELAYED")
+      
+    // }, 2000)
+    // newPulseStrength = 2
+    //Only update pulsestrength if it changes, to avoid rerendering circle2
+    if(newPulseStrength != pulseStrength)
+      setPulseStrength(newPulseStrength);
+
+    setNearestItemCoords(shortestHypCoords);
+    setDistancetoNearestItem(shortestHypInMeters);
+    // console.log("shortest hyp in meters: " + shortestHypInMeters)
+    console.log("HasTriggeredARVission1: " + shortestHypInMeters <= DISTANCE_THRESHOLD)
+    // console.log("HasTriggeredARVission2: " + hasTriggeredARVision)
+    if(shortestHypInMeters <= DISTANCE_THRESHOLD)
+        setHasTriggeredARVision(true);
   };
 
   // //Grabs Location
@@ -166,12 +197,20 @@ export default function SeekScreen() {
   };
 
   return connector.connected ? (
-    cacheMetadata?.imgUrl != "" ? (
+    cacheMetadata == undefined || cacheMetadata?.imgUrl == "" ? (
       // true ? (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <Text style={styles.text}>Please select a geocache to use Seek!</Text>
+      </View>
+
+    ) : (
       distanceToNearestItem ? (
         // false ? (
-        distanceToNearestItem > 10 && !hasTriggeredARVision ? (
-          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        distanceToNearestItem <= DISTANCE_THRESHOLD || hasTriggeredARVision ? (
+              //Maybe we show AR Vision when they are within 0.01, then only allow dragging of ar object when they are within 0.001? So they can move closer to a visible AR object?
+              <ARvision></ARvision>
+        ) : (
+          <View style={ {flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <Text style={styles.text}>
               {' '}
               {'Searching "' + cacheMetadata.name + '"'}{' '}
@@ -189,36 +228,35 @@ export default function SeekScreen() {
               {' '}
               {'Pulse Strength: \n' + pulseStrength}{' '}
             </Text>
-            <View
+            <PulseRateContext.Provider value={PulseRateContextValue}>
+
+                <AnimatedRings></AnimatedRings>
+            </PulseRateContext.Provider>
+            {/* <View
               style={{
                 flex: 1,
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexDirection: 'column',
-              }}>
+              }}> 
               <Ring duration={1000 * pulseStrength} delay={0} />
               <Ring duration={1000 * pulseStrength} delay={500 * pulseStrength} />
               <Ring duration={1000 * pulseStrength} delay={250 * pulseStrength} />
               <Ring duration={1000 * pulseStrength} delay={750 * pulseStrength} />
-            </View>
+
+
+            </View> */}
             <Text style={styles.text}>
               {' '}
               {'Distance: \n' + distanceToNearestItem.toFixed(2) + ' Meters'}{' '}
             </Text>
           </View>
-        ) : (
-          //Maybe we show AR Vision when they are within 0.01, then only allow dragging of ar object when they are within 0.001? So they can move closer to a visible AR object?
-          <ARvision></ARvision>
         )
       ) : (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <Text style={styles.text}>Finding Nearest Item...</Text>
         </View>
       )
-    ) : (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={styles.text}>Please select a geocache to use Seek!</Text>
-      </View>
     )
   ) : (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>

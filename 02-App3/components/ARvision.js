@@ -100,7 +100,7 @@ const ARVisionScene = () => {
         materials={['grid']}
         // onClick={(position, source) => console.log('Click', position, source)}
         onClick={(position, source) => {
-          Alert.alert('Congratulations!', 'Open Metamask to Claim?', [
+          Alert.alert('Congratulations!', 'Would you like to claim this item?', [
             {
               text: 'No',
               onPress: () => console.log("Nah, I'm good"),
@@ -124,7 +124,7 @@ const ARVisionScene = () => {
               if (source == 1) {
                 if (dragToPos[1] - initialPosition[1] >= 0 && !ignoreDrag) {
                   setIgnoreDrag(true);
-                  Alert.alert('Congratulations!', 'Claim Item?', [
+                  Alert.alert('Congratulations!', 'Would you like to claim this item?', [
                     {
                       text: 'No',
                       onPress: () => console.log("Nah, I'm good"),
@@ -169,7 +169,7 @@ export default () => {
         style={{flexGrow: 1, flex: 3}}
       />
       {isMintingItem && 
-        <MessageModal style={globalStyles.messageModal} title={"Minting"} body={"Please wait"}></MessageModal>
+        <MessageModal style={globalStyles.messageModal} title={"Minting"} isProgress={true} body={"Please wait"}></MessageModal>
       }
     </View>
     </MintingContext.Provider>

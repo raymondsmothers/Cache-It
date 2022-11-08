@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Alert, Modal, StyleSheet, Text, Pressable, View } from "react-native";
+import { Alert, Modal, StyleSheet, Text, Pressable, View, ActivityIndicator} from "react-native";
 
-export default function MessageModal({title, body}) {
+export default function MessageModal({title, isProgress=false, body}) {
   const [modalVisible, setModalVisible] = useState(true);
   return (
     // <View style={styles.centeredView}>
@@ -19,12 +19,16 @@ export default function MessageModal({title, body}) {
             <Text style={styles.modalText}>{title}</Text>
             <Text style={styles.modalText}>{body}</Text>
 
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}
-            >
-              <Text style={styles.textStyle}>Close</Text>
-            </Pressable>
+              {isProgress && (
+                <ActivityIndicator></ActivityIndicator>
+              )}
+              
+                <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>{"Close"}</Text>
+                </Pressable>
           </View>
         </View>
       </Modal>

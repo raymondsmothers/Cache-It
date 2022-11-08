@@ -91,8 +91,9 @@ function App() {
 
   // Create default Provider for signing read only transactions (getters)
   const defaultProvider = new ethers.getDefaultProvider('goerli', {
-    alchemy: process.env.GOERLI_ALCHEMY_KEY,
     infura: '1b9467bd46a7430faf4e825d24c63122',
+
+    alchemy: process.env.GOERLI_ALCHEMY_KEY,
   });
 
   // Create our CacheIt signer for onlyOwner functions (minting item in Geocache)
@@ -115,7 +116,7 @@ function App() {
 
   useEffect(() => {
     const setupProvider = async () => {
-      console.log('env: ' + process.env.GOERLI_INFURA_KEY);
+      // console.log('env: ' + process.env.GOERLI_INFURA_KEY);
 
       // Subscribe to accounts change
       walletConnectProvider.on('accountsChanged', accounts => {

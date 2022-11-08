@@ -30,7 +30,7 @@ export default function NewCacheForm() {
     const GeocacheContract = useContext(GeocacheContractContext)
     const connector = useWalletConnect();
 
-    const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
+    // const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
     //Alert if transaction is delayed
     const [isTransactionDelayed, setIsTransactionDelayed] = useState(false)
     const [isDeployingGeocache, setIsDeployingGeocache] = useState(false)
@@ -44,6 +44,7 @@ export default function NewCacheForm() {
 
     useEffect(() => {
       GeocacheContract.on("GeocacheCreated", geocacheCreatedCallback)
+
     })
 
     const geocacheCreatedCallback = (creatorAddress, geocacheName, numItems) => {
@@ -100,6 +101,8 @@ export default function NewCacheForm() {
 
     const createGeocacheSubmitHandler = async () => {
       // console.log("create geocache")
+
+      
       const itemLocations = generateItemLocations();
       await providers.walletConnect.enable();
       const ethers_provider = new ethers.providers.Web3Provider(providers.walletConnect);
@@ -122,6 +125,7 @@ export default function NewCacheForm() {
         // 900393223,
         radius,
         name,
+        //Wait to deploy new contracts to include randomly generated originStory
         // originStory,
         {
           gasLimit: 1000000,
@@ -130,6 +134,10 @@ export default function NewCacheForm() {
       )
       .then((res) => {
         setIsDeployingGeocache(true)
+        setTimeout(() => {
+          console.log("DELAYED")
+          setIsTransactionDelayed(true && isDeployingGeocache)
+        }, 1000)
         console.log("Success: " + JSON.stringify(res, null, 2))
       })
       .catch(error => {
@@ -190,8 +198,8 @@ export default function NewCacheForm() {
           keyboardType="numeric"
         />
         <Button
-          onPress={() => {generateGeocacheOriginStory()}}
-          // onPress={() => {createGeocacheSubmitHandler ()}}
+          // onPress={() => {generateGeocacheOriginStory()}}
+          onPress={() => {createGeocacheSubmitHandler ()}}
           title="Submit"
           color="#841584"
           disabled={!connector.connected}
@@ -204,14 +212,15 @@ export default function NewCacheForm() {
         </Text>
         </View>
         }
+        {/* {true &&  */}
         {isDeployingGeocache && 
+        // {isTransactionDelayed && 
         <View style={globalStyles.textContainer}>
-          <ActivityIndicator></ActivityIndicator>
-          <Text style={globalStyles.centerText}>
-            Deploying ...
-          </Text>
+          <MessageModal title={"Deploying your Geocache"} isProgress={true} body={"Please wait for this transaction to complete."}></MessageModal>
+          {isTransactionDelayed && <Text>Oops, ur transactions id elayes </Text>}
         </View>
         }
+        
         {hasDeployedGeocache &&
         <View style={globalStyles.textContainer}>
           <MessageModal title={"Success!"} body={"Finished deploying."}></MessageModal>

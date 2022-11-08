@@ -10,7 +10,7 @@ const {
   Geocache,
   Geocache__factory
  } = require('../typechain-types');
-//  require('dotenv').config();
+ require('dotenv').config();
  const fs = require("fs");
 
 
@@ -19,31 +19,24 @@ const { ethers } = require("hardhat");
 // import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
 async function main() {
-  console.log(process.env.GOERLI_ALCHEMY_KEY)
+  // console.log(process.env.GOERLI_ALCHEMY_KEY)
 
-      const provider = new ethers.getDefaultProvider('goerli', {
-        // alchemy: process.env.GOERLI_ALCHEMY_KEY,
-        infura: '1b9467bd46a7430faf4e825d24c63122',
-      });
-  console.log(process.env.GOERLI_ALCHEMY_KEY)
-
-
-      // const provider = new ethers.providers.AlchemyProvider(
-      //   "goerli",
-      //   process.env.GOERLI_ALCHEMY_KEY
-      // );
+      const provider = new ethers.providers.AlchemyProvider(
+        "goerli",
+        process.env.GOERLI_ALCHEMY_KEY
+      );
       let textData = "";
 
-      // const owner = new ethers.Wallet(process.env.CACHEIT_PRIVATE_KEY, provider);
+      const owner = new ethers.Wallet(process.env.GOERLI_PRIVATE_KEY, provider);
     //Signers
     // [owner, addr1, addr2, addr3, addr4] = await ethers.getSigners();
 
     // Deploying manifold creator contract (ERC1155Creator)
     // const Geocache1155Factory = new Geocache1155__factory(owner);
-    // const Geocache1155Factory = await ethers.getContractFactory(
-    //   "Geocache1155",
-    //   owner
-    // );
+    const Geocache1155Factory = await ethers.getContractFactory(
+      "Geocache1155",
+      owner
+    );
     console.log("constructed factory")
     // const feeData = await provider.getFeeData();
     // console.log("feeData: " + JSON.stringify(feeData, null, 2))
@@ -118,7 +111,7 @@ async function main() {
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main().catch((error) => {
-  console.log("Error: " + error);
+  console.error("Error: " + error);
   // console.error("Error: " + error.reason);
   // console.error(error.code);
   // console.error(error.error.body);
