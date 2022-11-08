@@ -26,7 +26,8 @@ const ARVisionScene = () => {
   const GeocacheContract = useContext(GeocacheContractContext);
   const CacheMetadata = useContext(CacheMetadataContext);
   const connector = useWalletConnect();
-  const { setIsMintingItem, setHasMintedItem } = useContext(MintingContext)
+  const { setIsMintingItem, setHasMintedItem, setErrorMessage } = useContext(MintingContext)
+  // const [ errorMessage, setErrorMessage ] = useState()
 
   // function onInitialized(state, reason) {
   //   console.log('guncelleme', state, reason);
@@ -82,8 +83,9 @@ const ARVisionScene = () => {
         // alert(`Successfully minted item for user ${userAddress}`);
       })
       .catch(error => {
-        alert('Error minting item: ' + error.message);
+        // alert('Error minting item: ' + error.message);
         console.log('Error: ' + error.message);
+        setErrorMessage(error?.error?.message)
         setIsMintingItem(false)
       });
   };
@@ -153,10 +155,12 @@ export default () => {
   
   const [isMintingItem, setIsMintingItem] = useState(false);
   const [hasMintedItem, setHasMintedItem] = useState(false);
+  const [errorMessage, setErrorMessage] = useState()
   //  available context in this file
   MintingContextValue = {
     setIsMintingItem: setIsMintingItem,
     setHasMintedItem: setHasMintedItem,
+    setErrorMessage: setErrorMessage
   };
   return (
     <MintingContext.Provider value={MintingContextValue}>
@@ -170,6 +174,9 @@ export default () => {
       />
       {isMintingItem && 
         <MessageModal style={globalStyles.messageModal} title={"Minting"} isProgress={true} body={"Please wait"}></MessageModal>
+      }
+      {errorMessage && 
+        <MessageModal style={globalStyles.messageModal} title={"Error"} body={errorMessage}></MessageModal>
       }
     </View>
     </MintingContext.Provider>
