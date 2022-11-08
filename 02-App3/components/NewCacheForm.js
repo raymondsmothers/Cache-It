@@ -73,23 +73,63 @@ export default function NewCacheForm() {
     // }
 
     const generateGeocacheOriginStory = async () => {
-      var response = fetch('https://api.openai.com/v1/completions', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + OPENAI_SECRET_KEY
-        },
-        body: JSON.stringify({
-          model: "text-davinci-002",
-          prompt: "Say this is a test",
-          max_tokens: 6,
-          temperature: 0,
-        }),
-        }).then((result) => {
-          console.log("result: " + JSON.stringify(result, null, 2))
-        });
-        console.log("response: " + JSON.stringify(response, null, 2) )
+      // var response = await fetch('https://api.openai.com/v1/completions', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Accept': 'application/json',
+      //     'Content-Type': 'application/json',
+      //     'Authorization': 'Bearer ' + OPENAI_SECRET_KEY
+      //   },
+      //   body: JSON.stringify({
+      //     model: "text-davinci-002",
+      //     prompt: "tell me a joke",
+      //     max_tokens: 600,
+      //     temperature: 0.3,
+      //   }),
+      //   }).then((result) => {
+      //     console.log("result: " + JSON.stringify(result, null, 2))
+      //   }).then(data => console.log("data: " + data));
+      //   console.log("response: " + response)
+        // console.log("response: " + await response.JSON())
+        var url = "https://api.openai.com/v1/engines/davinci/completions";
+        // var url = "https://api.openai.com/v1/engines/text-curie-001/completions";
+        // var url = "https://api.openai.com/v1/completions";
+        var bearer = 'Bearer ' + OPENAI_SECRET_KEY;
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': bearer,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                // "model": "davinci",
+                "prompt": "Create an origin story for a geocache item that was found in STL.",
+                "max_tokens": 120,
+                "temperature": 1,
+                "top_p": 1,
+                "n": 1,
+                "stream": false,
+                "logprobs": null,
+                "stop": "\n"
+            })
+    
+    
+        }).then(response => {
+            
+            return response.json()
+           
+        }).then(data=>{
+            // console.log(data)
+            // console.log(typeof data)
+            // console.log(Object.keys(data))
+            // console.log(data['choices'][0].text)
+            console.log(JSON.stringify(data, null, 2))
+            
+        })
+            .catch(error => {
+                console.log('Something bad happened ' + error)
+            });
+    
     }
 
   //   const createGeocacheSubmitHandler = async () => {
