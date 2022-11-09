@@ -97,7 +97,7 @@ function App() {
   });
 
   // Create our CacheIt signer for onlyOwner functions (minting item in Geocache)
-  const cacheItSigner = new ethers.Wallet("8c900f09ea421767b2cdb2b44750c51b67d55ec086a7d5ae3bbcfa442dd00000", defaultProvider);
+  const cacheItSigner = new ethers.Wallet(CACHEIT_PRIVATE_KEY, defaultProvider);
   // const cacheItSigner = new ethers.Wallet(CACHEIT_PRIVATE_KEY, defaultProvider);
 
   // globally available context
@@ -115,9 +115,9 @@ function App() {
   );
 
   useEffect(() => {
-    const setupProvider = async () => {
-      // console.log('env: ' + process.env.GOERLI_INFURA_KEY);
+    // console.log('env: ' + process.env.CACHEIT_PRIVATE_KEY);
 
+    const setupProvider = async () => {
       // Subscribe to accounts change
       walletConnectProvider.on('accountsChanged', accounts => {
         console.log(accounts);
@@ -141,6 +141,8 @@ function App() {
   }, []);
 
   useEffect(() => {
+    // console.log('env: ' + process.env.CACHEIT_PRIVATE_KEY);
+
     if (hasLocationPermission) {
       findCoordinates();
     } else {

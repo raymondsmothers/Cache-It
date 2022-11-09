@@ -1,20 +1,24 @@
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import React, {useContext, useEffect, useState} from 'react';
-import { View, StyleSheet, Button, TouchableOpacity } from 'react-native';
-import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
-import { CacheMetadataContext, LocationContext, GeocacheContractContext } from '../App';
+import {View, StyleSheet, Button, TouchableOpacity} from 'react-native';
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import {
+  CacheMetadataContext,
+  LocationContext,
+  GeocacheContractContext,
+} from '../App';
 import '../global';
 import NewCacheOverlay from './NewCacheOverlay';
 import SelectGeocache from './SelectGeocache';
 export default function CacheMap() {
-    // const [mapRef, setMapRef] = useState();
-    const mapRef = React.createRef();
-    const GeocacheContract = useContext(GeocacheContractContext)
-    // TODO this is a hardcode state variable, we need to create a switch to allow users to select a geocache id, by name maybe
-    const [selectedGeocache, setSelectedGeocache] = useState(1)
-    const locationContext = useContext(LocationContext)
-    const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
-    // const navigation = useNavigation()
+  // const [mapRef, setMapRef] = useState();
+  const mapRef = React.createRef();
+  const GeocacheContract = useContext(GeocacheContractContext);
+  // TODO this is a hardcode state variable, we need to create a switch to allow users to select a geocache id, by name maybe
+  const [selectedGeocache, setSelectedGeocache] = useState();
+  const locationContext = useContext(LocationContext);
+  const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
+  // const navigation = useNavigation()
 
   const mapStyle = [
     {
@@ -121,36 +125,31 @@ export default function CacheMap() {
 
   return (
     <View style={styles.container}>
-        {/* <Button></Button> */}
-        <MapView
+      {/* <Button></Button> */}
+      <MapView
         ref={mapRef}
         showsBuildings={true}
         showsPointsOfInterest={false}
         customMapStyle={mapStyle}
-
-       provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-       style={styles.map}
-       followsUserLocation={true}
-       showsUserLocation={true}
-       showsMyLocationButton={true}
-       region={
-          locationContext != undefined ?
-          {
-            latitude: locationContext.latitude,
-            longitude: locationContext.longitude,
-            latitudeDelta: locationContext.latitudeDelta,
-            longitudeDelta: locationContext.longitudeDelta
-          }  
-          :
-          undefined
-        }
-        >
-
-          <NewCacheOverlay
-          />
-        </MapView>
-        <SelectGeocache style={{position: "absolute", bottom: 95}}></SelectGeocache>
-      </View>
+        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+        style={styles.map}
+        followsUserLocation={true}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
+        region={
+          locationContext != undefined
+            ? {
+                latitude: locationContext.latitude,
+                longitude: locationContext.longitude,
+                latitudeDelta: locationContext.latitudeDelta,
+                longitudeDelta: locationContext.longitudeDelta,
+              }
+            : undefined
+        }>
+        <NewCacheOverlay />
+      </MapView>
+      <SelectGeocache style={{position: 'absolute', bottom: 95}} />
+    </View>
   );
 }
 
@@ -170,7 +169,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginLeft: 10,
     marginTop: 10,
-    position: "absolute",
+    position: 'absolute',
     zIndex: 2,
     width: '100%',
     bottom: 0,

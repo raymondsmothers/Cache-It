@@ -60,6 +60,25 @@ export default function NewCacheForm() {
       }
     }
 
+    const findInitialCoordinates = async () => {
+      await Geolocation.getCurrentPosition(
+        position => {
+          const crd = position.coords;
+          locationContext.setCurrentPosition({
+            latitude: crd.latitude,
+            longitude: crd.longitude,
+            // latitudeDelta: global.latDelta,
+            // longitudeDelta: global.longDelta,
+          });
+        },
+        error => {
+          // See error code charts below.
+          console.log(error.code, error.message);
+        },
+        {enableHighAccuracy: true, timeout: 20000, maximumAge: 100000},
+      );
+    };
+
  
 
     const generateGeocacheOriginStory = async () => {
@@ -101,8 +120,8 @@ export default function NewCacheForm() {
 
     const createGeocacheSubmitHandler = async () => {
       // console.log("create geocache")
-
-      
+      //update location
+      await findInitialCoordinates();
       const itemLocations = generateItemLocations();
       await providers.walletConnect.enable();
       const ethers_provider = new ethers.providers.Web3Provider(providers.walletConnect);
@@ -120,6 +139,7 @@ export default function NewCacheForm() {
         'https://gateway.pinata.cloud/ipfs/QmXgkKXsTyW9QJCHWsgrt2BW7p5csfFE21eWtmbd5Gzbjr/',
         date.toString(),
         itemLocations,
+        //TODO this context needs to be updated
         locationContext.latitude.toString(),
         locationContext.longitude.toString(),
         // 900393223,
@@ -190,6 +210,7 @@ export default function NewCacheForm() {
           placeholder="Radius (Meters)"
           keyboardType="decimal-pad"
         />
+        {/* TODO make it so a cache can only contain 10 items for now, so transaction doesn't run out of gas */}
         <TextInput
           style={styles.input}
           onChangeText={onChangeNumItems}

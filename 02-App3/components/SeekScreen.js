@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, useMemo, useEffect} from 'react';
 import {Text, StyleSheet, View, ActivityIndicator} from 'react-native';
 import ARvision from './ARvision';
 import Geolocation from 'react-native-geolocation-service';
@@ -18,7 +18,7 @@ import {ethers} from 'ethers';
 import { ConnectorEvents, useWalletConnect } from '@walletconnect/react-native-dapp';
 // import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import "../global";
-const DISTANCE_THRESHOLD = 1
+const DISTANCE_THRESHOLD = 40
 //Component imports
 import  AnimatedRings from "./AnimatedRing"
 // export const PulseRateContext = React.createContext({});
@@ -46,7 +46,8 @@ export default function SeekScreen() {
   // Provider context
   // const providers = useContext(Web3ProviderContext);
 
-  const Ring = ({delay, duration}) => {
+  const Ring = React.memo(({delay, duration}) => {
+  // const RingUnMemoed = ({delay, duration}) => {
     const ring = useSharedValue(0);
 
     const ringStyle = useAnimatedStyle(() => {
@@ -70,9 +71,18 @@ export default function SeekScreen() {
           false,
         ),
       );
-    }, []);
+    });
     return <Animated.View style={[styles.ring, ringStyle]} />;
-  };
+  },
+  (prevProps, nextProps) => {
+    prevProps.delay === nextProps.delay && prevProps.duration === nextProps.duration
+  }
+  );
+
+  // const Ring = React.memo(
+  //   RingUnMemoed, 
+  //   (prevProps, nextProps) => prevProps.delay === nextProps.delay
+  // );
 
   //Every second check
   useEffect(() => {
@@ -86,7 +96,7 @@ export default function SeekScreen() {
     // return () => clearInterval(interval);
   }, []);
 
-  // var newPulseStrength = 4;
+  // // var newPulseStrength = 4;
   // setTimeout(() => {
   //   console.log("new pulserate")
   //   newPulseStrength = Math.ceil(Math.random() * 10 + 1);
@@ -228,24 +238,26 @@ export default function SeekScreen() {
               {' '}
               {'Pulse Strength: \n' + pulseStrength}{' '}
             </Text>
-            <PulseRateContext.Provider value={PulseRateContextValue}>
+            {/* <PulseRateContext.Provider value={PulseRateContextValue}>
 
                 <AnimatedRings></AnimatedRings>
-            </PulseRateContext.Provider>
-            {/* <View
+            </PulseRateContext.Provider> */}
+            <View
               style={{
                 flex: 1,
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexDirection: 'column',
               }}> 
+                              {/* {useMemo(() => <Ring duration={1000 * pulseStrength} delay={0}/>, [pulseStrength]) } */}
+
               <Ring duration={1000 * pulseStrength} delay={0} />
               <Ring duration={1000 * pulseStrength} delay={500 * pulseStrength} />
               <Ring duration={1000 * pulseStrength} delay={250 * pulseStrength} />
               <Ring duration={1000 * pulseStrength} delay={750 * pulseStrength} />
 
 
-            </View> */}
+            </View>
             <Text style={styles.text}>
               {' '}
               {'Distance: \n' + distanceToNearestItem.toFixed(2) + ' Meters'}{' '}

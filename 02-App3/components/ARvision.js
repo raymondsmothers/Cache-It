@@ -16,7 +16,7 @@ import {
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
 import {ethers} from 'ethers';
 import MessageModal from './MessageModal';
-const globalStyles = require("../styles")
+const globalStyles = require('../styles');
 export const MintingContext = React.createContext({});
 
 const ARVisionScene = () => {
@@ -24,9 +24,11 @@ const ARVisionScene = () => {
   const [ignoreDrag, setIgnoreDrag] = useState(false);
   const providersAndSigners = useContext(Web3ProviderContext);
   const GeocacheContract = useContext(GeocacheContractContext);
-  const CacheMetadata = useContext(CacheMetadataContext);
+  const cacheMetadata = useContext(CacheMetadataContext);
   const connector = useWalletConnect();
-  const { setIsMintingItem, setHasMintedItem } = useContext(MintingContext)
+  const {setIsMintingItem, setHasMintedItem, setErrorMessage} =
+    useContext(MintingContext);
+  // const [ errorMessage, setErrorMessage ] = useState()
 
   // function onInitialized(state, reason) {
   //   console.log('guncelleme', state, reason);
@@ -41,21 +43,26 @@ const ARVisionScene = () => {
   // }
 
   useEffect(() => {
-    GeocacheContract.on("GeocacheItemMinted", geocacheItemMintedCallback)
-    // console.log("is connected: " + connector.connected)
-  })
+    GeocacheContract.on('GeocacheItemMinted', geocacheItemMintedCallback);
+    // console.log('priv: ' + providersAndSigners.cacheItSigner.address);
+  });
 
-  
-  const geocacheItemMintedCallback = (creatorAddress, geocacheId, geocacheItemId) => {
+  //This callback is wrong, the CAcheIt wallet is always sending the transaction
+  const geocacheItemMintedCallback = (
+    creatorAddress,
+    geocacheId,
+    geocacheItemId,
+  ) => {
     creatorAddress = creatorAddress.toLocaleLowerCase();
-    // console.log("creatorAddress: " + creatorAddress)
-    
-    if(creatorAddress == connector.accounts[0]) {
-      console.log("callback triggered")
-      setIsMintingItem(false)
-      setHasMintedItem(true)
+    console.log('creatorAddress: ' + creatorAddress);
+
+    // if (creatorAddress == connector.accounts[0]) {
+    if (geocacheId === cacheMetadata.geocacheId) {
+      console.log('callback triggered');
+      setIsMintingItem(false);
+      setHasMintedItem(true);
     }
-  }
+  };
 
   // _onClick(source) {
   //   console.log("We just Clicked the image!");
@@ -65,7 +72,7 @@ const ARVisionScene = () => {
   const mintItemInGeocache = async () => {
     setIsMintingItem(true);
     const cacheItSigner = providersAndSigners.cacheItSigner;
-    const geocacheId = CacheMetadata['cacheMetadata']['geocacheId'];
+    const geocacheId = CacheMetadata.cacheMetadata.geocacheId;
     const userAddress = connector.accounts[0];
     // console.log("User's address is ", userAddress);
 
@@ -82,9 +89,10 @@ const ARVisionScene = () => {
         // alert(`Successfully minted item for user ${userAddress}`);
       })
       .catch(error => {
-        alert('Error minting item: ' + error.message);
+        // alert('Error minting item: ' + error.message);
         console.log('Error: ' + error.message);
-        setIsMintingItem(false)
+        setErrorMessage(error?.error?.message);
+        setIsMintingItem(false);
       });
   };
 
@@ -100,16 +108,20 @@ const ARVisionScene = () => {
         materials={['grid']}
         // onClick={(position, source) => console.log('Click', position, source)}
         onClick={(position, source) => {
-          Alert.alert('Congratulations!', 'Would you like to claim this item?', [
-            {
-              text: 'No',
-              onPress: () => console.log("Nah, I'm good"),
-            },
-            {
-              text: 'Yes',
-              onPress: () => mintItemInGeocache(),
-            },
-          ]);
+          Alert.alert(
+            'Congratulations!',
+            'Would you like to claim this item?',
+            [
+              {
+                text: 'No',
+                onPress: () => console.log("Nah, I'm good"),
+              },
+              {
+                text: 'Yes',
+                onPress: () => mintItemInGeocache(),
+              },
+            ],
+          );
         }}
         dragType="FixedDistance"
         dragPlane={{
@@ -124,16 +136,20 @@ const ARVisionScene = () => {
               if (source == 1) {
                 if (dragToPos[1] - initialPosition[1] >= 0 && !ignoreDrag) {
                   setIgnoreDrag(true);
-                  Alert.alert('Congratulations!', 'Would you like to claim this item?', [
-                    {
-                      text: 'No',
-                      onPress: () => console.log("Nah, I'm good"),
-                    },
-                    {
-                      text: 'Yes',
-                      onPress: () => mintItemInGeocache(),
-                    },
-                  ]);
+                  Alert.alert(
+                    'Congratulations!',
+                    'Would you like to claim this item?',
+                    [
+                      {
+                        text: 'No',
+                        onPress: () => console.log("Nah, I'm good"),
+                      },
+                      {
+                        text: 'Yes',
+                        onPress: () => mintItemInGeocache(),
+                      },
+                    ],
+                  );
                 }
               }
             }
@@ -143,35 +159,46 @@ const ARVisionScene = () => {
           // dragtoPos[2]: z position
         } //OnDrag
       />
-    
     </ViroARScene>
   );
 };
 
 export default () => {
-
-  
   const [isMintingItem, setIsMintingItem] = useState(false);
   const [hasMintedItem, setHasMintedItem] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
   //  available context in this file
   MintingContextValue = {
     setIsMintingItem: setIsMintingItem,
     setHasMintedItem: setHasMintedItem,
+    setErrorMessage: setErrorMessage,
   };
   return (
     <MintingContext.Provider value={MintingContextValue}>
-    <View style={styles.f1}>
-      <ViroARSceneNavigator
-        autofocus={false}
-        initialScene={{
-          scene: ARVisionScene,
-        }}
-        style={{flexGrow: 1, flex: 3}}
-      />
-      {isMintingItem && 
-        <MessageModal style={globalStyles.messageModal} title={"Minting"} isProgress={true} body={"Please wait"}></MessageModal>
-      }
-    </View>
+      <View style={styles.f1}>
+        <ViroARSceneNavigator
+          autofocus={false}
+          initialScene={{
+            scene: ARVisionScene,
+          }}
+          style={{flexGrow: 1, flex: 3}}
+        />
+        {isMintingItem && (
+          <MessageModal
+            style={globalStyles.messageModal}
+            title={'Minting'}
+            isProgress={true}
+            body={'Please wait'}
+          />
+        )}
+        {errorMessage && (
+          <MessageModal
+            style={globalStyles.messageModal}
+            title={'Error'}
+            body={errorMessage}
+          />
+        )}
+      </View>
     </MintingContext.Provider>
   );
 };
