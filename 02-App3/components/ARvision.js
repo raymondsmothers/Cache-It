@@ -20,14 +20,15 @@ const globalStyles = require('../styles');
 export const MintingContext = React.createContext({});
 
 const ARVisionScene = () => {
-  const [text, setText] = useState('Initializing AR...');
+  // const [text, setText] = useState('Initializing AR...');
   const [ignoreDrag, setIgnoreDrag] = useState(false);
   const providersAndSigners = useContext(Web3ProviderContext);
   const GeocacheContract = useContext(GeocacheContractContext);
-  const cacheMetadata = useContext(CacheMetadataContext);
+  const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
   const connector = useWalletConnect();
-  const {setIsMintingItem, setHasMintedItem, setErrorMessage} =
+  const {setIsMintingItem, setHasMintedItem, hasMintedItem, setErrorMessage, setIsTransactionDelayed, setTransactionHash} =
     useContext(MintingContext);
+
   // const [ errorMessage, setErrorMessage ] = useState()
 
   // function onInitialized(state, reason) {
@@ -49,15 +50,15 @@ const ARVisionScene = () => {
 
   //This callback is wrong, the CAcheIt wallet is always sending the transaction
   const geocacheItemMintedCallback = (
-    creatorAddress,
+    receiverAddress,
     geocacheId,
     geocacheItemId,
   ) => {
-    creatorAddress = creatorAddress.toLocaleLowerCase();
-    console.log('creatorAddress: ' + creatorAddress);
+    receiverAddress = receiverAddress.toLocaleLowerCase();
+    // console.log('creatorAddress: ' + creatorAddress);
 
-    // if (creatorAddress == connector.accounts[0]) {
-    if (geocacheId === cacheMetadata.geocacheId) {
+    if (receiverAddress == connector.accounts[0]) {
+    // if (geocacheId === cacheMetadata.geocacheId) {
       console.log('callback triggered');
       setIsMintingItem(false);
       setHasMintedItem(true);
@@ -72,7 +73,7 @@ const ARVisionScene = () => {
   const mintItemInGeocache = async () => {
     setIsMintingItem(true);
     const cacheItSigner = providersAndSigners.cacheItSigner;
-    const geocacheId = CacheMetadata.cacheMetadata.geocacheId;
+    const geocacheId = cacheMetadata?.geocacheId;
     const userAddress = connector.accounts[0];
     // console.log("User's address is ", userAddress);
 
@@ -87,11 +88,16 @@ const ARVisionScene = () => {
       .then(res => {
         console.log('Success: ' + JSON.stringify(res, null, 2));
         // alert(`Successfully minted item for user ${userAddress}`);
+        setTransactionHash(res.hash)
+        setTimeout(() => {
+          // console.log("DELAYED")
+          setIsTransactionDelayed(true && !hasMintedItem)
+        }, 15000)
       })
       .catch(error => {
         // alert('Error minting item: ' + error.message);
-        console.log('Error: ' + error.message);
-        setErrorMessage(error?.error?.message);
+        console.log('Error in MintTXn: ' + error.message);
+        setErrorMessage(error?.message);
         setIsMintingItem(false);
       });
   };
@@ -129,35 +135,6 @@ const ARVisionScene = () => {
           planeNormal: [0, 1, 0],
           maxDistance: 500,
         }}
-        onDrag={
-          (dragToPos, source) => {
-            console.log('Drag', dragToPos[1], source);
-            {
-              if (source == 1) {
-                if (dragToPos[1] - initialPosition[1] >= 0 && !ignoreDrag) {
-                  setIgnoreDrag(true);
-                  Alert.alert(
-                    'Congratulations!',
-                    'Would you like to claim this item?',
-                    [
-                      {
-                        text: 'No',
-                        onPress: () => console.log("Nah, I'm good"),
-                      },
-                      {
-                        text: 'Yes',
-                        onPress: () => mintItemInGeocache(),
-                      },
-                    ],
-                  );
-                }
-              }
-            }
-          }
-          // dragtoPos[0]: x position
-          // dragtoPos[1]: y position
-          // dragtoPos[2]: z position
-        } //OnDrag
       />
     </ViroARScene>
   );
@@ -166,12 +143,17 @@ const ARVisionScene = () => {
 export default () => {
   const [isMintingItem, setIsMintingItem] = useState(false);
   const [hasMintedItem, setHasMintedItem] = useState(false);
+  const [transactionHash, setTransactionHash] = useState()
+  const [isTransactionDelayed, setIsTransactionDelayed] = useState(false)
   const [errorMessage, setErrorMessage] = useState();
   //  available context in this file
   MintingContextValue = {
     setIsMintingItem: setIsMintingItem,
     setHasMintedItem: setHasMintedItem,
     setErrorMessage: setErrorMessage,
+    setTransactionHash: setTransactionHash,
+    setIsTransactionDelayed: setIsTransactionDelayed,
+    hasMintedItem: hasMintedItem
   };
   return (
     <MintingContext.Provider value={MintingContextValue}>
@@ -188,6 +170,8 @@ export default () => {
             style={globalStyles.messageModal}
             title={'Minting'}
             isProgress={true}
+            isTransactionDelayed={isTransactionDelayed}
+            transactionHash={transactionHash}
             body={'Please wait'}
           />
         )}
@@ -198,6 +182,18 @@ export default () => {
             body={errorMessage}
           />
         )}
+        {
+          hasMintedItem && (
+            <MessageModal
+              style={globalStyles.messageModal}
+              title={'Success!'}
+              // isProgress={true}
+              isTransactionDelayed={false}
+              transactionHash={transactionHash}
+              body={'Nice! Your item has finished minting.'}
+            />
+          )
+        }
       </View>
     </MintingContext.Provider>
   );

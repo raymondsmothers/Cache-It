@@ -174,6 +174,7 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         GeocacheInstance memory geocache = tokenIdToGeocache[_geocacheId];
 
         // Require that the geocache is active
+        //TODO we need to add language to indicate revert error
         if (!geocache.isActive) revert NotActiveGeocache();
 
         geocacheToNumFound[_geocacheId]++;

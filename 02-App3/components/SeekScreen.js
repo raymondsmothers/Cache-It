@@ -215,8 +215,8 @@ export default function SeekScreen() {
 
     ) : (
       distanceToNearestItem ? (
-        // false ? (
-        distanceToNearestItem <= DISTANCE_THRESHOLD || hasTriggeredARVision ? (
+        true ? (
+        // distanceToNearestItem <= DISTANCE_THRESHOLD || hasTriggeredARVision ? (
               //Maybe we show AR Vision when they are within 0.01, then only allow dragging of ar object when they are within 0.001? So they can move closer to a visible AR object?
               <ARvision></ARvision>
         ) : (
@@ -238,18 +238,17 @@ export default function SeekScreen() {
               {' '}
               {'Pulse Strength: \n' + pulseStrength}{' '}
             </Text>
-            {/* <PulseRateContext.Provider value={PulseRateContextValue}>
+            <PulseRateContext.Provider value={PulseRateContextValue}>
 
                 <AnimatedRings></AnimatedRings>
-            </PulseRateContext.Provider> */}
-            <View
+            </PulseRateContext.Provider>
+            {/* <View
               style={{
                 flex: 1,
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexDirection: 'column',
               }}> 
-                              {/* {useMemo(() => <Ring duration={1000 * pulseStrength} delay={0}/>, [pulseStrength]) } */}
 
               <Ring duration={1000 * pulseStrength} delay={0} />
               <Ring duration={1000 * pulseStrength} delay={500 * pulseStrength} />
@@ -257,7 +256,7 @@ export default function SeekScreen() {
               <Ring duration={1000 * pulseStrength} delay={750 * pulseStrength} />
 
 
-            </View>
+            </View> */}
             <Text style={styles.text}>
               {' '}
               {'Distance: \n' + distanceToNearestItem.toFixed(2) + ' Meters'}{' '}

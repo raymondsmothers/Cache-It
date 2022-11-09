@@ -129,6 +129,7 @@ export default function NewCacheForm() {
     const createGeocacheSubmitHandler = async () => {
       // console.log("create geocache")
       //update location
+      setIsDeployingGeocache(false)
       await findInitialCoordinates();
       const itemLocations = generateItemLocations();
       await providers.walletConnect.enable();
@@ -163,9 +164,9 @@ export default function NewCacheForm() {
         setTransactionHash(res.hash)
         setIsDeployingGeocache(true)
         setTimeout(() => {
-          console.log("DELAYED")
+          // console.log("DELAYED")
           setIsTransactionDelayed(true && !hasDeployedGeocache)
-        }, 2000)
+        }, 15000)
         console.log("Success: " + JSON.stringify(res, null, 2))
       })
       .catch(error => {
