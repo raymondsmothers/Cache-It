@@ -47,6 +47,7 @@ export const CacheMetadataContext = React.createContext({
 });
 export const Web3ProviderContext = React.createContext({});
 export const GeocacheContractContext = React.createContext({});
+export const AllGeocacheDataContext = React.createContext({});
 
 const Stack = createNativeStackNavigator();
 
@@ -76,6 +77,9 @@ function App() {
   const [currentPosition, setCurrentPosition] = useState();
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
   const [cacheMetadata, setCacheMetadata] = useState();
+  const [activeGeocacheIds, setActiveGeocacheIds] = useState([]);
+  const [activeGeocacheNames, setActiveGeocacheNames] = useState([]);
+
   // const [geocacheContract, setGeocacheContract] = useState({});
   //This state hook gets passed down to consumers of the context, to allow them to update the state of the context
   cacheMetadataContextValue = {cacheMetadata, setCacheMetadata};
@@ -91,8 +95,7 @@ function App() {
 
   // Create default Provider for signing read only transactions (getters)
   const defaultProvider = new ethers.getDefaultProvider('goerli', {
-    infura: '1b9467bd46a7430faf4e825d24c63122',
-
+    infura: process.env.GOERLI_INFURA_KEY,
     alchemy: process.env.GOERLI_ALCHEMY_KEY,
   });
 
@@ -107,12 +110,52 @@ function App() {
     cacheItSigner: cacheItSigner,
   };
 
+  AllGeocacheDataContextValue = {
+    activeGeocacheIds: activeGeocacheIds,
+    setActiveGeocacheIds: setActiveGeocacheIds,
+    activeGeocacheNames: activeGeocacheNames,
+    setActiveGeocacheNames: setActiveGeocacheNames
+  }
+
+  LocationContextValue = {
+    currentPosition: currentPosition,
+    setCurrentPosition: setCurrentPosition
+  }
+
   //Construct globally available contract context
   const GeocacheContract = new ethers.Contract(
     CONTRACT_ADDRESSES.Geocache,
     GeocacheJSON.abi,
     defaultProvider,
   );
+
+  useEffect(() => {
+    // console.log("useEffect")
+    const getIDs = async () => {
+      const ids = await GeocacheContract.getAllActiveGeocacheIDs();
+      const formattedIds = ids.map((id, index) => Number(id));
+      // console.log('ids: ' + ids);
+      getGeocacheNames(ids);
+      setActiveGeocacheIds([...formattedIds]);
+    };
+    getIDs();
+  }, []);
+
+  //Make this into a useContext
+  // TODO this doesn't feel efficient
+  const getGeocacheNames = async (ids) => {
+        const geocacheNames = [];
+        ids.map(async (geocacheID, index) => {
+        // console.log('getting name for : ' + geocacheID);
+        const selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(
+          geocacheID,
+        );
+        // console.log("raw: " + selectedGeocacheRawData)
+        geocacheNames[geocacheID] = selectedGeocacheRawData[7];
+        // console.log("geonames: " + geocacheNames)
+        setActiveGeocacheNames(geocacheNames);
+      });
+  };
 
   useEffect(() => {
     // console.log('env: ' + process.env.CACHEIT_PRIVATE_KEY);
@@ -178,9 +221,7 @@ function App() {
         // console.log(position);
         setCurrentPosition({
           latitude: crd.latitude,
-          longitude: crd.longitude,
-          latitudeDelta: global.latDelta,
-          longitudeDelta: global.longDelta,
+          longitude: crd.longitude
         });
       },
       error => {
@@ -192,10 +233,11 @@ function App() {
   };
 
   return (
-    <LocationContext.Provider value={currentPosition}>
+    <LocationContext.Provider value={LocationContextValue}>
       <Web3ProviderContext.Provider value={Web3ProviderContextValue}>
         <CacheMetadataContext.Provider value={cacheMetadataContextValue}>
           <GeocacheContractContext.Provider value={GeocacheContract}>
+            <AllGeocacheDataContext.Provider value={AllGeocacheDataContextValue}>
             <NavigationContainer>
               <Stack.Navigator>
                 <Stack.Screen
@@ -209,6 +251,7 @@ function App() {
                 />
               </Stack.Navigator>
             </NavigationContainer>
+            </AllGeocacheDataContext.Provider>
           </GeocacheContractContext.Provider>
         </CacheMetadataContext.Provider>
       </Web3ProviderContext.Provider>

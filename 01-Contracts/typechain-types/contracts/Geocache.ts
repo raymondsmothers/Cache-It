@@ -279,7 +279,7 @@ export type GeocacheCreatedEvent = TypedEvent<
 export type GeocacheCreatedEventFilter = TypedEventFilter<GeocacheCreatedEvent>;
 
 export interface GeocacheItemMintedEventObject {
-  sender: string;
+  receiver: string;
   geocacheIndex: BigNumber;
   itemIndex: BigNumber;
 }
@@ -715,12 +715,12 @@ export interface Geocache extends BaseContract {
     ): GeocacheCreatedEventFilter;
 
     "GeocacheItemMinted(address,uint256,uint256)"(
-      sender?: null,
+      receiver?: null,
       geocacheIndex?: null,
       itemIndex?: null
     ): GeocacheItemMintedEventFilter;
     GeocacheItemMinted(
-      sender?: null,
+      receiver?: null,
       geocacheIndex?: null,
       itemIndex?: null
     ): GeocacheItemMintedEventFilter;

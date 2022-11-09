@@ -6,6 +6,7 @@ import {
   Button,
   Modal,
   TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 import {RadioButton} from 'react-native-paper';
 import {
@@ -13,6 +14,7 @@ import {
   LocationContext,
   Web3ProviderContext,
   GeocacheContractContext,
+  AllGeocacheDataContext
 } from '../App';
 const globalStyles = require('../styles');
 
@@ -20,52 +22,19 @@ export default function SelectGeocache() {
   const [modalVisible, setModalVisible] = useState(false);
   const GeocacheContract = useContext(GeocacheContractContext);
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
-  const [activeGeocacheIds, setActiveGeocacheIds] = useState([
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 11, 12, 13, 14,
-  ]);
-  const [activeGeocacheNames, setActiveGeocacheNames] = useState([]);
-
-  // useEffect(() => {
-  //   var numGeocaches;
-  //   const getData = async () => {
-  //       // numGeocaches = await GeocacheContract.numGeocaches();
-  //       // TODO get list of ACtive Geocaches from contract
-  //   }
-  //   getData()
-  //   // setActiveGeocaches([...Array(numGeocaches).keys()])
-  //   setActiveGeocaches([0,1,2,3])
-  //   // console.log("numGeocahce: " + [...Array(numGeocaches).keys()])
-  //   // console.log("numGeocahce: " + numGeocaches)
-  // }, [])
-
+  const [selectedGeocache, setSelectedGeocache] = useState();
+  const {activeGeocacheIds, setActiveGeocacheIds, activeGeocacheNames, setActiveGeocacheNames} = useContext(AllGeocacheDataContext)
+ 
   useEffect(() => {
-    // console.log("useEffect")
-    const getIDs = async () => {
-      const ids = await GeocacheContract.getAllActiveGeocacheIDs();
-      const formattedIds = ids.map((id, index) => Number(id));
-      console.log('ids: ' + ids);
-      setActiveGeocacheIds([...formattedIds]);
-    };
-    // getIDs();
-    getGeocacheNames();
-  }, []);
+    console.log("active names on selector: " + activeGeocacheNames)
+  }, [activeGeocacheNames])
 
-  //Make this into a useContext
-  const getGeocacheNames = async () => {
-    var geocacheNames = [];
-    activeGeocacheIds.map(async (geocacheID, index) => {
-      console.log('getting name for : ' + geocacheID);
-      var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(
-        geocacheID,
-      );
-      geocacheNames[geocacheID] = selectedGeocacheRawData[7];
-    });
-    console.log('geocacheNames: ' + geocacheNames);
-    setActiveGeocacheNames(geocacheNames);
-  };
+  const delay = ms => new Promise(res => setTimeout(res, ms));
 
   const getData = async id => {
     //get data on selected geocache
+    setSelectedGeocache(true);
+    // setSelectedGeocache(id);
     var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(id);
     var selectedGeocacheItemLocations =
       await GeocacheContract.getGeolocationsOfGeocache(id);
@@ -96,6 +65,8 @@ export default function SelectGeocache() {
       geolocations: itemLocations,
       geocacheId: id,
     });
+    setSelectedGeocache(false);
+    await delay(1000)
     setModalVisible(!modalVisible);
   };
 
@@ -108,6 +79,9 @@ export default function SelectGeocache() {
           onPress={() => {
             setModalVisible(true);
           }}
+          // disabled={activeGeocacheNames.length != activeGeocacheIds.length}
+          // disabled={!activeGeocacheNames.includes(undefined)}
+          // disabled={!activeGeocacheNames}
           title="Select Cache"
         />
 
@@ -126,25 +100,41 @@ export default function SelectGeocache() {
                 Choose a Geocache ID below to switch what Geocache you are
                 searching
               </Text>
+              {selectedGeocache &&
+                <ActivityIndicator></ActivityIndicator>
+              }
+              {/* return ( */}
+                    <RadioButton.Group >
+                    {/* <RadioButton.Group onValueChange={value => setValue(value)} value={value}> */}
 
-              {activeGeocacheIds.map((item, index) => {
-                return (
-                  <TouchableOpacity onPress={() => getData(index)}>
-                    <View style={styles.radioButtonContainer}>
-                      <RadioButton
+                   {activeGeocacheIds.map((id, index) => {
+                    return(
+                      <>
+                      <View style={styles.radioButtonContainer}>
+
+                      <RadioButton.Item
                         // style={styles.buttonContainer}
-                        key={item.label}
-                        label={index}
-                        onPress={() => getData(index)}>
+                        key={index}
+                        label={id + ' - "' + activeGeocacheNames[id] + '"'}
+                        onPress={() => getData(index)}
+                        // status={ id == cacheMetadata?.geocacheId ?  'checked' : 'unchecked'}
+                        status={ id == cacheMetadata?.geocacheId ?  'checked' : 'unchecked'}
+                        position={"trailing"}
+                        style={styles.radioButton}
+                        >
                         {/* <Text>"thes"</Text> */}
-                      </RadioButton>
-                      <Text>
-                        {item + ' - "' + activeGeocacheNames[item] + '"'}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
+                      </RadioButton.Item>
+                      {/* <Text>
+                        {id + ' - "' + activeGeocacheNames[id] + '"'}
+                      </Text> */}
+                      </View>
+                      </>
+                    )
+                   })}
+                   </RadioButton.Group>
+                    {/* </View> */}
+                {/* ); */}
+              {/* })} */}
 
               <Button
                 onPress={() => {
@@ -170,11 +160,15 @@ const styles = StyleSheet.create({
     zIndex: 3,
     marginBottom: 25,
   },
+  radioButton: {
+    // flex: 1
+  },
   radioButtonContainer: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
+    width: "100%"
   },
   button: {
     backgroundColor: 'rgba(255, 255, 255, 0.7)',

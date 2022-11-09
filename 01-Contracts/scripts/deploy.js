@@ -4,12 +4,12 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 // const hre = require("hardhat");
-const {
-  Geocache1155,
-  Geocache1155__factory,
-  Geocache,
-  Geocache__factory
- } = require('../typechain-types');
+// const {
+//   // Geocache1155,
+//   // Geocache1155__factory,
+//   // Geocache,
+//   Geocache__factory
+//  } = require('../typechain-types');
  require('dotenv').config();
  const fs = require("fs");
 
@@ -27,7 +27,7 @@ async function main() {
       );
       let textData = "";
 
-      const owner = new ethers.Wallet(process.env.GOERLI_PRIVATE_KEY, provider);
+      const owner = new ethers.Wallet(process.env.CACHEIT_PRIVATE_KEY, provider);
     //Signers
     // [owner, addr1, addr2, addr3, addr4] = await ethers.getSigners();
 
@@ -53,7 +53,11 @@ async function main() {
     console.log('Geocache1155 deployed to:', Geocache1155Instance.address);
 
     // Deploying Community Creations contract
-    const GeocacheFactory = new Geocache__factory(owner);
+    // const GeocacheFactory = new Geocache__factory(owner);
+    const GeocacheFactory = await ethers.getContractFactory(
+      "Geocache",
+      owner
+    );
     GeocacheInstance = await GeocacheFactory.deploy(Geocache1155Instance.address);
     await GeocacheInstance.deployed();
     textData += "exports.Geocache = '" + GeocacheInstance.address + "';\n";

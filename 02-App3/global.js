@@ -1,5 +1,5 @@
-global.latDelta = 0.01;
-global.longDelta = 0.01;
+global.latitudeDelta = 0.01;
+global.longitudeDelta = 0.01;
 
 // const ethers = require('ethers');
 

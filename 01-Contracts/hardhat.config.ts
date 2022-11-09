@@ -43,15 +43,15 @@ let config: HardhatUserConfig = {
       timeout: 0,
     },
     goerli: {
-      url: GOERLI_ALCHEMY_URL,
-      accounts: [GOERLI_PRIVATE_KEY],
+      url: "https://eth-goerli.g.alchemy.com/v2/" + process.env.GOERLI_ALCHEMY_URL,
+      accounts: [process.env.CACHEIT_PRIVATE_KEY],
     },
     hardhat: {},
 
-    goerli: {
-      url: process.env.GOERLI_ALCHEMY_URL,
-      accounts: [process.env.DEV_SEED || ''],
-    },
+    // goerli: {
+    //   url: process.env.GOERLI_ALCHEMY_URL,
+    //   accounts: [process.env.DEV_SEED || ''],
+    // },
   },
 
   etherscan: {

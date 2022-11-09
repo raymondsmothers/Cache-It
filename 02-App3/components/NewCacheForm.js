@@ -5,6 +5,7 @@ import { CacheMetadataContext, LocationContext, Web3ProviderContext, GeocacheCon
 import randomLocation from 'random-location';
 const globalStyles = require("../styles")
 // import { URL, URLSearchParams } from 'react-native-url-polyfill';
+import Geolocation from 'react-native-geolocation-service';
 
 //Component Imports
 import MessageModal from './MessageModal';
@@ -25,16 +26,15 @@ import {OPENAI_SECRET_KEY} from '@env';
 
 
 export default function NewCacheForm() {
-    const locationContext = useContext(LocationContext)
+    const {currentPosition, setCurrentPosition} = useContext(LocationContext)
     const providers = useContext(Web3ProviderContext)
     const GeocacheContract = useContext(GeocacheContractContext)
     const connector = useWalletConnect();
-
-    // const { cacheMetadata, setCacheMetadata } = useContext(CacheMetadataContext)
     //Alert if transaction is delayed
     const [isTransactionDelayed, setIsTransactionDelayed] = useState(false)
     const [isDeployingGeocache, setIsDeployingGeocache] = useState(false)
     const [hasDeployedGeocache, setHasDeployedGeocache] = useState(false)
+    const [transactionHash, setTransactionHash] = useState()
     // const [hasThrownError, setHasThrownError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(false)
     const [name, onChangeName] = useState("Default Name");
@@ -64,11 +64,9 @@ export default function NewCacheForm() {
       await Geolocation.getCurrentPosition(
         position => {
           const crd = position.coords;
-          locationContext.setCurrentPosition({
+          setCurrentPosition({
             latitude: crd.latitude,
             longitude: crd.longitude,
-            // latitudeDelta: global.latDelta,
-            // longitudeDelta: global.longDelta,
           });
         },
         error => {
@@ -118,6 +116,16 @@ export default function NewCacheForm() {
     
     }
 
+    
+    // const createGeocacheSubmitHandler = async () => {
+    //   // setTransactionHash(res.hash)
+    //   setIsDeployingGeocache(true)
+    //   setTimeout(() => {
+    //     console.log("DELAYED")
+    //     // setIsTransactionDelayed(true)
+    //     setIsTransactionDelayed(true && !hasDeployedGeocache)
+    //   }, 2000)
+    // }
     const createGeocacheSubmitHandler = async () => {
       // console.log("create geocache")
       //update location
@@ -140,24 +148,24 @@ export default function NewCacheForm() {
         date.toString(),
         itemLocations,
         //TODO this context needs to be updated
-        locationContext.latitude.toString(),
-        locationContext.longitude.toString(),
-        // 900393223,
+        currentPosition.latitude.toString(),
+        currentPosition.longitude.toString(),
         radius,
         name,
         //Wait to deploy new contracts to include randomly generated originStory
-        // originStory,
+        "ppo",
         {
           gasLimit: 1000000,
         }
 
       )
       .then((res) => {
+        setTransactionHash(res.hash)
         setIsDeployingGeocache(true)
         setTimeout(() => {
           console.log("DELAYED")
-          setIsTransactionDelayed(true && isDeployingGeocache)
-        }, 1000)
+          setIsTransactionDelayed(true && !hasDeployedGeocache)
+        }, 2000)
         console.log("Success: " + JSON.stringify(res, null, 2))
       })
       .catch(error => {
@@ -178,7 +186,7 @@ export default function NewCacheForm() {
     fixedRadius = radius * 1; //* 1609.34;
     for (let i = 0; i < numItems; i++) {
       let coord = randomLocation.randomCirclePoint(
-        locationContext,
+        currentPosition,
         fixedRadius,
       );
       randomCoords.push(coord);
@@ -220,7 +228,7 @@ export default function NewCacheForm() {
         />
         <Button
           // onPress={() => {generateGeocacheOriginStory()}}
-          onPress={() => {createGeocacheSubmitHandler ()}}
+          onPress={() => {createGeocacheSubmitHandler()}}
           title="Submit"
           color="#841584"
           disabled={!connector.connected}
@@ -237,8 +245,9 @@ export default function NewCacheForm() {
         {isDeployingGeocache && 
         // {isTransactionDelayed && 
         <View style={globalStyles.textContainer}>
-          <MessageModal title={"Deploying your Geocache"} isProgress={true} body={"Please wait for this transaction to complete."}></MessageModal>
-          {isTransactionDelayed && <Text>Oops, ur transactions id elayes </Text>}
+          <MessageModal title={"Deploying your Geocache"} isProgress={true} isTransactionDelayed={isTransactionDelayed} transactionHash={transactionHash} body={"Please wait for this transaction to complete."}>
+          </MessageModal>
+         
         </View>
         }
         

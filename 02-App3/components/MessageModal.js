@@ -1,8 +1,19 @@
 import React, { useState } from "react";
-import { Alert, Modal, StyleSheet, Text, Pressable, View, ActivityIndicator} from "react-native";
+import { Alert, Linking, Modal, StyleSheet, Text, Pressable, View, ActivityIndicator} from "react-native";
 
-export default function MessageModal({title, isProgress=false, body}) {
+export default function MessageModal({title, transactionHash, isTransactionDelayed, isProgress=false, body}) {
   const [modalVisible, setModalVisible] = useState(true);
+
+
+  const handleEtherscanClick = async (url) => {
+    Linking.canOpenURL(url).then(supported => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        console.log("Don't know how to open URI: " + url);
+      }
+    });
+  };
   return (
     // <View style={styles.centeredView}>
       <Modal
@@ -20,15 +31,30 @@ export default function MessageModal({title, isProgress=false, body}) {
             <Text style={styles.modalText}>{body}</Text>
 
               {isProgress && (
+                // <br>
                 <ActivityIndicator></ActivityIndicator>
+                // </br>
               )}
-              
+              {isTransactionDelayed && (
+                <Text style={[styles.modalText, {fontWeight:"bold"}]}>{"Uh-oh! This is taking much longer than usual. Please view your transaction on etherscan to verify the status."}</Text>
+              )}
+              <View style={styles.buttonContainer}>
+                {/*only show view on etherscan if a transaction hash is provided */}
+                {transactionHash &&
+                <Pressable
+                    style={[styles.button, styles.buttonOpen]}
+                    onPress={async () =>  await handleEtherscanClick("https://goerli.etherscan.io/tx/" + transactionHash)}
+                  >
+                <Text style={styles.textStyle}>{"View on Etherscan"}</Text>
+                </Pressable>
+                }
                 <Pressable
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => setModalVisible(!modalVisible)}
               >
                 <Text style={styles.textStyle}>{"Close"}</Text>
                 </Pressable>
+                </View>
           </View>
         </View>
       </Modal>
@@ -37,6 +63,11 @@ export default function MessageModal({title, isProgress=false, body}) {
 };
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    display: "flex",
+    padding: 10
+    // flexDirection: "row"
+  },
   centeredView: {
     flex: 1,
     justifyContent: "center",
@@ -59,6 +90,8 @@ const styles = StyleSheet.create({
     elevation: 5
   },
   button: {
+    // flex: 1,
+    margin: 10,
     borderRadius: 20,
     padding: 10,
     elevation: 2
@@ -67,7 +100,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F194FF",
   },
   buttonClose: {
-    backgroundColor: "#2196F3",
+    backgroundColor: "red",
   },
   textStyle: {
     color: "white",

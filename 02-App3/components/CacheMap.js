@@ -16,7 +16,8 @@ export default function CacheMap() {
   const GeocacheContract = useContext(GeocacheContractContext);
   // TODO this is a hardcode state variable, we need to create a switch to allow users to select a geocache id, by name maybe
   const [selectedGeocache, setSelectedGeocache] = useState();
-  const locationContext = useContext(LocationContext);
+  // const locationContext = useContext(LocationContext);
+  const  {currentPosition } = useContext(LocationContext);
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
   // const navigation = useNavigation()
 
@@ -48,21 +49,21 @@ export default function CacheMap() {
   ];
 
   useEffect(() => {
-    if (locationContext) {
+    if (currentPosition) {
       mapRef.current.setCamera(
         {
           center: {
-            latitude: locationContext?.latitude,
-            longitude: locationContext?.longitude,
-            latitudeDelta: locationContext?.latitudeDelta,
-            longitudeDelta: locationContext?.longitudeDelta,
+            latitude: currentPosition?.latitude,
+            longitude: currentPosition?.longitude,
+            latitudeDelta: global.latitudeDelta,
+            longitudeDelta: global.longitudeDelta,
           },
           zoom: 15,
         },
         {duration: 2000},
       );
     }
-  }, [locationContext]);
+  }, [currentPosition]);
 
   // Getting all the active geocaches IDs
   // TODO: These are the IDs that the user should be able to select
@@ -137,12 +138,12 @@ export default function CacheMap() {
         showsUserLocation={true}
         showsMyLocationButton={true}
         region={
-          locationContext != undefined
+          currentPosition != undefined
             ? {
-                latitude: locationContext.latitude,
-                longitude: locationContext.longitude,
-                latitudeDelta: locationContext.latitudeDelta,
-                longitudeDelta: locationContext.longitudeDelta,
+                latitude: currentPosition?.latitude,
+                longitude: currentPosition?.longitude,
+                latitudeDelta: global.latitudeDelta,
+                longitudeDelta: global.longitudeDelta,
               }
             : undefined
         }>

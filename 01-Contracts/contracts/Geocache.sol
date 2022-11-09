@@ -39,7 +39,7 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         uint256 numItems
     );
     event GeocacheItemMinted(
-        address sender,
+        address receiver,
         uint256 geocacheIndex,
         uint256 itemIndex
     );
@@ -185,7 +185,7 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         }
 
         _mint(_geocacheId, _user);
-        emit GeocacheItemMinted(msg.sender, _geocacheId, geocacheToNumFound[_geocacheId]);
+        emit GeocacheItemMinted(_user, _geocacheId, geocacheToNumFound[_geocacheId]);
     }
 
     /**
