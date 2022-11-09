@@ -91,13 +91,8 @@ const ARVisionScene = () => {
       .catch(error => {
         // alert('Error minting item: ' + error.message);
         console.log('Error: ' + error.message);
-<<<<<<< HEAD
         setErrorMessage(error?.error?.message);
         setIsMintingItem(false);
-=======
-        setErrorMessage(error?.error?.message)
-        setIsMintingItem(false)
->>>>>>> f9e63ce10ba64649373f6176950cae23062f7f6b
       });
   };
 
@@ -171,16 +166,11 @@ const ARVisionScene = () => {
 export default () => {
   const [isMintingItem, setIsMintingItem] = useState(false);
   const [hasMintedItem, setHasMintedItem] = useState(false);
-<<<<<<< HEAD
   const [errorMessage, setErrorMessage] = useState();
-=======
-  const [errorMessage, setErrorMessage] = useState()
->>>>>>> f9e63ce10ba64649373f6176950cae23062f7f6b
   //  available context in this file
   MintingContextValue = {
     setIsMintingItem: setIsMintingItem,
     setHasMintedItem: setHasMintedItem,
-<<<<<<< HEAD
     setErrorMessage: setErrorMessage,
   };
   return (
@@ -209,27 +199,6 @@ export default () => {
           />
         )}
       </View>
-=======
-    setErrorMessage: setErrorMessage
-  };
-  return (
-    <MintingContext.Provider value={MintingContextValue}>
-    <View style={styles.f1}>
-      <ViroARSceneNavigator
-        autofocus={false}
-        initialScene={{
-          scene: ARVisionScene,
-        }}
-        style={{flexGrow: 1, flex: 3}}
-      />
-      {isMintingItem && 
-        <MessageModal style={globalStyles.messageModal} title={"Minting"} isProgress={true} body={"Please wait"}></MessageModal>
-      }
-      {errorMessage && 
-        <MessageModal style={globalStyles.messageModal} title={"Error"} body={errorMessage}></MessageModal>
-      }
-    </View>
->>>>>>> f9e63ce10ba64649373f6176950cae23062f7f6b
     </MintingContext.Provider>
   );
 };
