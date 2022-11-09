@@ -1,56 +1,56 @@
-import React, {useContext, useEffect} from 'react';
-import { View, StyleSheet } from 'react-native';
-import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
-import Geolocation from 'react-native-geolocation-service';
-import { LocationContext } from '../App';
-import '../global';
+import {useNavigation} from '@react-navigation/native';
+import React, {useContext, useEffect, useState} from 'react';
+import {View, StyleSheet, Button, TouchableOpacity} from 'react-native';
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import {
-  withWalletConnect,
-  useWalletConnect,
-} from '@walletconnect/react-native-dapp';
+  CacheMetadataContext,
+  LocationContext,
+  GeocacheContractContext,
+} from '../App';
+import '../global';
 import NewCacheOverlay from './NewCacheOverlay';
-
-import { useRoute } from '@react-navigation/native';
-
+import SelectGeocache from './SelectGeocache';
 export default function CacheMap() {
-    // const [mapRef, setMapRef] = useState();
-    const mapRef = React.createRef();
+  // const [mapRef, setMapRef] = useState();
+  const mapRef = React.createRef();
+  const GeocacheContract = useContext(GeocacheContractContext);
+  // TODO this is a hardcode state variable, we need to create a switch to allow users to select a geocache id, by name maybe
+  const [selectedGeocache, setSelectedGeocache] = useState();
+  const locationContext = useContext(LocationContext);
+  const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
+  // const navigation = useNavigation()
 
-    const locationContext = useContext(LocationContext)
-    const connector = useWalletConnect();
-    const route = useRoute();
-
-
-    const mapStyle = [
-      {
-          featureType: "administrative.land_parcel",
-          stylers: [
-              {
-                  visibility: "off"
-              }
-          ]
-      },
-      {
-          featureType: "poi",
-          stylers: [
-              {
-                  visibility: "off"
-              }
-          ]
-      },
-      {
-          featureType: "administrative.neighborhood",
-          stylers: [
-              {
-                  visibility: "off"
-              }
-          ]
-      }
-  ]
+  const mapStyle = [
+    {
+      featureType: 'administrative.land_parcel',
+      stylers: [
+        {
+          visibility: 'off',
+        },
+      ],
+    },
+    {
+      featureType: 'poi',
+      stylers: [
+        {
+          visibility: 'off',
+        },
+      ],
+    },
+    {
+      featureType: 'administrative.neighborhood',
+      stylers: [
+        {
+          visibility: 'off',
+        },
+      ],
+    },
+  ];
 
   useEffect(() => {
-    if(locationContext) {
-        mapRef.current.setCamera({
+    if (locationContext) {
+      mapRef.current.setCamera(
+        {
           center: {
             latitude: locationContext?.latitude,
             longitude: locationContext?.longitude,
@@ -58,91 +58,121 @@ export default function CacheMap() {
             longitudeDelta: locationContext?.longitudeDelta,
           },
           zoom: 15,
-      }, {duration: 2000});
+        },
+        {duration: 2000},
+      );
     }
-  }, [locationContext])
+  }, [locationContext]);
+
+  // Getting all the active geocaches IDs
+  // TODO: These are the IDs that the user should be able to select
+  // useEffect(() => {
+  //   console.log("CacheMap useef ")
+  //   const getIDs = async () => {
+  //     const ids = await GeocacheContract.getAllActiveGeocacheIDs();
+  //     console.log("ids: " + ids)
+  //     const formattedIds = ids.map((id, index) => Number(id));
+  //     setActiveGeocacheIds([...formattedIds]);
+  //   };
+  //   getIDs();
+  // }, []);
 
   useEffect(() => {
-    if (connector.accounts) {
-      console.log('Connector info: ', connector.accounts[0]);
-    }
-  }, [connector]);
-  
-  useEffect(() => {
-    console.log("renderArea: " + renderArea);
-    console.log("renderComponent: " + renderComponent);
-  }, [renderArea, renderComponent]);
+    const getData = async () => {
+      var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(
+        selectedGeocache,
+      );
+      var selectedGeocacheItemLocations =
+        await GeocacheContract.getGeolocationsOfGeocache(selectedGeocache);
+      // console.log("selected geocahce: " + JSON.stringify(selectedGeocacheRawData, null, 2))
+      // console.log("selected geocache gelocaitons: " + selectedGeocacheItemLocations)
+      var itemLocations = [];
+      selectedGeocacheItemLocations.map((coordsAsString, index) => {
+        var coord = {
+          latitude: parseFloat(
+            coordsAsString.substring(0, coordsAsString.indexOf(',')),
+          ),
+          longitude: parseFloat(
+            coordsAsString.substring(coordsAsString.indexOf(',') + 1),
+          ),
+        };
+        itemLocations.push(coord);
+      });
+      setCacheMetadata({
+        creator: selectedGeocacheRawData[0],
+        imgUrl: selectedGeocacheRawData[1],
+        date: selectedGeocacheRawData[2],
+        numberOfItems: parseInt(selectedGeocacheRawData[3]),
+        isActive: selectedGeocacheRawData[4],
+        epicenterLat: parseFloat(selectedGeocacheRawData[5]),
+        epicenterLong: parseFloat(selectedGeocacheRawData[6]),
+        name: selectedGeocacheRawData[7],
+        radius: parseInt(selectedGeocacheRawData[8]),
+        geolocations: itemLocations,
+        geocacheId: selectedGeocache,
+      });
+    };
+    getData();
+  }, []);
 
+  const formatCoords = () => {};
 
-  let renderComponent = false;
-  let renderArea = false;
-  let cacheName = "";
-  let cacheRadius = "";
-  let numberOfPoints = "";
-  let locations = "";
-  if (route.params) {
-    cacheName = route.params.cacheName.name;
-    cacheRadius = route.params.cacheRadius.fixedRadius;
-    numberOfPoints = route.params.numberOfItems.numItems;
-    locations = route.params.cacheLocations.itemLocations;
-    renderComponent = true;
-    renderArea = true;
-  }
-
-  const styles = StyleSheet.create({
-      container: {
-        ...StyleSheet.absoluteFillObject,
-        width: 400,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-      },
-      map: {
-        ...StyleSheet.absoluteFillObject,
-      },
-      button: {
-        position: "absolute",
-        width: "100%",
-        bottom: 0,
-        padding: 15,
-      },
-  });
-
+  // useEffect(() => {
+  //   if (connector.accounts) {
+  //     console.log('Connector info: ', connector.accounts[0]);
+  //   }
+  // }, [connector]);
 
   return (
     <View style={styles.container}>
-        <MapView
+      {/* <Button></Button> */}
+      <MapView
         ref={mapRef}
         showsBuildings={true}
         showsPointsOfInterest={false}
         customMapStyle={mapStyle}
-
-       provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-       style={styles.map}
-       followsUserLocation={true}
-       showsUserLocation={true}
-       showsMyLocationButton={true}
-       region={
-          locationContext != undefined ?
-          {
-            latitude: locationContext.latitude,
-            longitude: locationContext.longitude,
-            latitudeDelta: locationContext.latitudeDelta,
-            longitudeDelta: locationContext.longitudeDelta
-          }  
-          :
-          undefined
-        }
-        >
-          <NewCacheOverlay
-            render={renderComponent}
-            cacheName={cacheName}
-            radius={cacheRadius}
-            center={{latitude: locationContext?.latitude, longitude: locationContext?.longitude}}
-            numberOfPoints={numberOfPoints}
-            coordinates={locations}
-          />
-        </MapView>
-
-      </View>
+        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+        style={styles.map}
+        followsUserLocation={true}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
+        region={
+          locationContext != undefined
+            ? {
+                latitude: locationContext.latitude,
+                longitude: locationContext.longitude,
+                latitudeDelta: locationContext.latitudeDelta,
+                longitudeDelta: locationContext.longitudeDelta,
+              }
+            : undefined
+        }>
+        <NewCacheOverlay />
+      </MapView>
+      <SelectGeocache style={{position: 'absolute', bottom: 95}} />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    width: 400,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  button: {
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderRadius: 20,
+    padding: 10,
+    marginLeft: 10,
+    marginTop: 10,
+    position: 'absolute',
+    zIndex: 2,
+    width: '100%',
+    bottom: 0,
+    padding: 15,
+  },
+});

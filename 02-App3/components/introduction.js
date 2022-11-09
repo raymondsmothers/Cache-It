@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { Text, View , Button, StyleSheet} from 'react-native';
+import {Text, View, Button, StyleSheet} from 'react-native';
 import ARvision from './ARvision';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
 const introtab = createMaterialTopTabNavigator();
-
 
 const styles = StyleSheet.create({
   container: {
@@ -15,64 +14,67 @@ const styles = StyleSheet.create({
   },
 });
 
-function Intropage1 () {
+function Intropage1() {
   return (
-    <View style={{ flex: 2}}>
-          <Text>Looking for target Geo Cache on the map</Text>
-          <Text>Get close to the target geo cache</Text>
-          <Text>Open the AR when close enough to the target</Text>
-          <Text>Try to find target through AR lens</Text>
-          
-          </View>
-  )
+    <View style={{flex: 2}}>
+      <Text>Looking for target Geo Cache on the map</Text>
+      <Text>Get close to the target geo cache</Text>
+      <Text>Open the AR when close enough to the target</Text>
+      <Text>Try to find target through AR lens</Text>
+    </View>
+  );
 }
-function Intropage2 () {
+function Intropage2() {
   return (
-    <View style={{ flex: 2}}>
-          <Text>In NewCacheForm, set up the default value for new geocache</Text>
-          <Text>Connect to the extrenal website</Text>
-          
-          </View>
-  )
+    <View style={{flex: 2}}>
+      <Text>In NewCacheForm, set up the default value for new geocache</Text>
+      <Text>Connect to the extrenal website</Text>
+    </View>
+  );
 }
-function Intropage3 () {
+function Intropage3() {
   return (
-    <View style={{ flex: 2}}>
-          <Text>Press the button on the setting page to check your wallet</Text>
-          </View>
-  )
+    <View style={{flex: 2}}>
+      <Text>Press the button on the setting page to check your wallet</Text>
+    </View>
+  );
 }
-function Intropage4 () {
+function Intropage4() {
   return (
-    <View style={{ flex: 2}}>
-          <Text>Step4</Text>
-          </View>
-  )
+    <View style={{flex: 2}}>
+      <Text>Step4</Text>
+    </View>
+  );
 }
 export default function IntroductionPage() {
-    return (
-      // <View style={[styles.container, {
-      //   flexDirection: "column"
-      // }]}>
-      //   <View style={{ flex: 2}}>
-      // <Text>Profile</Text>
-      // </View>
-      // <View style={{ flex: 2}}>
-      //     <Text>Settings</Text>
+  return (
+    // <View style={[styles.container, {
+    //   flexDirection: "column"
+    // }]}>
+    //   <View style={{ flex: 2}}>
+    // <Text>Profile</Text>
+    // </View>
+    // <View style={{ flex: 2}}>
+    //     <Text>Settings</Text>
 
-      // </View>
+    // </View>
 
-              
-      // </View>
-      <introtab.Navigator>
-        <introtab.Screen name="How to Find " component={Intropage1} />
-        <introtab.Screen name="How to Mint" component={Intropage2} />
-        <introtab.Screen name="How to Connect" component={Intropage3} />
-        <introtab.Screen name="Step 4" component={Intropage4} />
-      </introtab.Navigator>
-      
+    // </View>
+    <introtab.Navigator>
+      <introtab.Screen name="How to Find " component={Intropage1} />
+      <introtab.Screen name="How to Mint" component={Intropage2} />
+      <introtab.Screen name="How to Connect" component={Intropage3} />
+      <introtab.Screen name="Step 4" component={Intropage4} />
+    </introtab.Navigator>
 
+    // </View>
 
-    );
-  }
-
+    // </View>
+    // <introtab.Navigator>
+    //   <introtab.Screen name="Step 1" component={Intropage1} />
+    //   <introtab.Screen name="Step 2" component={Intropage2} />
+    //   <introtab.Screen name="Step 3" component={Intropage3} />
+    //   <introtab.Screen name="Step 4" component={Intropage4} />
+    // </introtab.Navigator>
+  );
+}

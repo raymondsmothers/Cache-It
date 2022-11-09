@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import React, {useEffect, useContext} from 'react';
+import {StyleSheet, View} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -7,12 +7,19 @@ import Animated, {
   withRepeat,
   withTiming,
   interpolate,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
+
+import {PulseRateContext} from './SeekScreen';
 
 
-const Ring = ({ delay, duration }) => {
+
+export default function AnimatedRings(params) {
+  const {pulseStrength, setPulseStrength} = useContext(PulseRateContext)
+  // console.log('pulserate in animated ring: ' + JSON.stringify(pulseStrength, null, 2));
+  const Ring = ({delay, duration}) => {
     const ring = useSharedValue(0);
-  
+    // const {pulseStrength, setPulseStrength} = useContext(PulseRateContext)
+    // console.log("Ring delay: " + delay)
     const ringStyle = useAnimatedStyle(() => {
       return {
         opacity: 0.8 - ring.value,
@@ -31,41 +38,47 @@ const Ring = ({ delay, duration }) => {
             duration: duration,
           }),
           -1,
-          false
-        )
+          false,
+        ),
       );
     }, []);
     return <Animated.View style={[styles.ring, ringStyle]} />;
-};
-
-export default function AnimatedRingExample(params) {
-    console.log("pulserate: " + JSON.stringify(params.pulseRate, null, 2))
+  };
+  
   return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-      }}
-    >
-    {/**this aniation isn't updated on a state update from seekscreen :/ */}
-      <Ring duration={40000 / params.pulseRate} delay={0} />
-      <Ring duration={40000 / params.pulseRate} delay={20000 / params.pulseRate} />
-      <Ring duration={40000 / params.pulseRate} delay={10000 / params.pulseRate} />
-      <Ring duration={40000 / params.pulseRate} delay={30000 / params.pulseRate} />
-    </View>
+    // <PulseRateContext.Consumer>
+    //   {
+    //     pulseStrength => 
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+        }}>
+        {/**this aniation isn't updated on a state update from seekscreen :/ */}
+        {/* <Ring duration={250 * pulseStrength} delay={0} /> */}
+        <Ring duration={1000 * pulseStrength} delay={0} />
+        <Ring duration={1000 * pulseStrength} delay={500 * pulseStrength} />
+        <Ring duration={1000 * pulseStrength} delay={250 * pulseStrength} />
+        <Ring duration={1000 * pulseStrength} delay={750 * pulseStrength} />
+        {/* <Ring duration={1000 * pulseStrengthContext.pulseStrength} delay={0} />
+        <Ring duration={1000 * pulseStrengthContext.pulseStrength} delay={500 * pulseStrengthContext.pulseStrength} />
+        <Ring duration={1000 * pulseStrengthContext.pulseStrength} delay={250 * pulseStrengthContext.pulseStrength} />
+        <Ring duration={1000 * pulseStrengthContext.pulseStrength} delay={750 * pulseStrengthContext.pulseStrength} /> */}
+      </View>
+    // }
+    // </PulseRateContext.Consumer>
   );
 }
 
 const styles = StyleSheet.create({
   ring: {
-    position: "absolute",
+    position: 'absolute',
     width: 80,
     height: 80,
     borderRadius: 40,
-    borderColor: "tomato",
+    borderColor: 'tomato',
     borderWidth: 10,
   },
 });
-

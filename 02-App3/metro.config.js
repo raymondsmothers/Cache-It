@@ -9,7 +9,8 @@
 
  module.exports = (async () => {
    const {
-     resolver: { assetExts }
+     resolver: { 
+      assetExts }
    } = await getDefaultConfig();
  
    return {
@@ -22,6 +23,7 @@
        }),
      },
      resolver: {
+      extraNodeModules: require('node-libs-react-native'),
        assetExts: [...assetExts, "obj", "mtl", "JPG", "vrx", "hdr", "gltf", "glb", "bin", "arobject", "gif"]
      }
    }

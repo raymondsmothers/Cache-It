@@ -25,11 +25,30 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         string dateCreated; // when geocache was created
         uint256 numItems; // # of items in the geocache
         bool isActive; // if all items have been found or not
-        uint256 xCoord;
-        uint256 yCoord;
+        string epicenterLat;
+        string epicenterLong;
+        string[] itemGeolocations;
+        string name;
+        uint256 radius;
+        string originStory;
     }
 
+    event GeocacheCreated(
+        address creator,
+        string name,
+        uint256 numItems
+    );
+    event GeocacheItemMinted(
+        address sender,
+        uint256 geocacheIndex,
+        uint256 itemIndex
+    );
+
+    //Should we make a mapping of creators to owned geocaches
+    
+
     //should we make a list of active instances?
+
 
     // manifold creator contract address
     address public immutable creatorContract;
@@ -37,10 +56,13 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
     // total number of geocaches created so far
     uint256 public numGeocaches;
 
+    // active geocaches
+    uint256 public numActiveGeocaches;
+
     // mapping between a tokenId and a geocache
     mapping(uint256 => GeocacheInstance) public tokenIdToGeocache;
 
-    // mapping the geocache id to number of items in a geocache -- maybe move this to metadata?
+    // mapping the geocache id to number of items in a geocache that have been minted -- maybe move this to metadata?
     mapping(uint256 => uint256) public geocacheToNumFound;
 
     // mapping to keep track of one mint per tokenId per address
@@ -48,7 +70,9 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
 
     constructor(address _creatorContract) {
         creatorContract = _creatorContract;
-    }
+    }    
+
+    //TODO create a function that auto sets geocache to inactive (delete method)
 
     // Interfaces for project
     function supportsInterface(bytes4 interfaceId)
@@ -90,7 +114,13 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
     function newGeocache(
         uint256 _numItems,
         string memory _tokenURI,
-        string memory _dateCreated
+        string memory _dateCreated,
+        string[] memory _itemGeolocations,
+        string memory _epicenterLat,
+        string memory _epicenterLong,
+        uint256 _radius,
+        string memory _name,
+        string memory _originStory
     ) external {
         tokenIdToGeocache[numGeocaches] = GeocacheInstance(
             msg.sender,
@@ -98,10 +128,15 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
             _dateCreated,
             _numItems,
             true, 
-            0, // change x and y coord later, for now static
-            0
+            _epicenterLat, // change x and y coord later, for now static
+            _epicenterLong,
+            _itemGeolocations,
+            _name,
+            _radius,
+            _originStory
         );
         ++numGeocaches;
+        ++numActiveGeocaches;
 
         // mint the first token of the Geocache to the creator
         address[] memory to = new address[](1);
@@ -118,6 +153,7 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
             amounts,
             uris
         );
+        emit GeocacheCreated(msg.sender, _name, _numItems);
     }
 
     /**
@@ -145,9 +181,11 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
         // If all of the items are found, deactivating the geocache
         if (geocacheToNumFound[_geocacheId] == geocache.numItems) {
             tokenIdToGeocache[_geocacheId].isActive = false;
+            --numActiveGeocaches;
         }
 
         _mint(_geocacheId, _user);
+        emit GeocacheItemMinted(msg.sender, _geocacheId, geocacheToNumFound[_geocacheId]);
     }
 
     /**
@@ -187,22 +225,38 @@ contract Geocache is AdminControl, ICreatorExtensionTokenURI {
     }
 
     /**
-     * @dev returning all geocaches as an array of GeocacheInstance
+     * @dev returning all active geocache IDs
      */
-    function getAllGeocaches()
+    function getAllActiveGeocacheIDs()
         external
         view
-        returns (GeocacheInstance[] memory)
+        returns (uint256[] memory)
     {
         GeocacheInstance[] memory geocaches = new GeocacheInstance[](
             numGeocaches
         );
+        uint256[] memory ids = new uint256[](numActiveGeocaches);
 
+        uint256 counter;
         for (uint256 i; i < numGeocaches; i++) {
             GeocacheInstance storage geocache = tokenIdToGeocache[i];
-            geocaches[i] = geocache;
+            if (geocache.isActive) {
+                ids[counter] = i;
+                counter++;
+            }
         }
-
-        return geocaches;
+        return ids;
     }
+
+    /**
+     * @dev returning all geocaches as an array of GeocacheInstance
+     */
+    function getGeolocationsOfGeocache(uint256 geocacheIndex)
+        external
+        view
+        returns(string[] memory)
+    {
+        return tokenIdToGeocache[geocacheIndex].itemGeolocations;
+    }
+
 }
