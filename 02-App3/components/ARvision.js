@@ -190,6 +190,8 @@ export default () => {
               // isProgress={true}
               isTransactionDelayed={false}
               transactionHash={transactionHash}
+              //TODO add open sea url
+              // openSeaURL={"https://testnets.opensea.io/" + connector.accounts[0]}
               body={'Nice! Your item has finished minting.'}
             />
           )
