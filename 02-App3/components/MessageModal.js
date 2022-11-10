@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Alert, Linking, Modal, StyleSheet, Text, Pressable, View, ActivityIndicator} from "react-native";
 
-export default function MessageModal({title, transactionHash, isTransactionDelayed, isProgress=false, body}) {
+export default function MessageModal({title, transactionHash, isTransactionDelayed, openSeaURL, isProgress=false, body}) {
   const [modalVisible, setModalVisible] = useState(true);
 
 
-  const handleEtherscanClick = async (url) => {
+  const handleURLClick = async (url) => {
     Linking.canOpenURL(url).then(supported => {
       if (supported) {
         Linking.openURL(url);
@@ -43,18 +43,26 @@ export default function MessageModal({title, transactionHash, isTransactionDelay
                 {transactionHash &&
                 <Pressable
                     style={[styles.button, styles.buttonOpen]}
-                    onPress={async () =>  await handleEtherscanClick("https://goerli.etherscan.io/tx/" + transactionHash)}
+                    onPress={async () =>  await handleURLClick("https://goerli.etherscan.io/tx/" + transactionHash)}
                   >
-                <Text style={styles.textStyle}>{"View on Etherscan"}</Text>
+                  <Text style={styles.textStyle}>{"View transaction on Etherscan"}</Text>
+                </Pressable>
+                }
+                {openSeaURL &&
+                <Pressable
+                    style={[styles.button, {backgroundColor: "blue"}]}
+                    onPress={async () =>  await handleURLClick(openSeaURL)}
+                  >
+                  <Text style={styles.textStyle}>{"View on OpenSea"}</Text>
                 </Pressable>
                 }
                 <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <Text style={styles.textStyle}>{"Close"}</Text>
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setModalVisible(!modalVisible)}
+                >
+                  <Text style={styles.textStyle}>{"Close "}</Text>
                 </Pressable>
-                </View>
+              </View>
           </View>
         </View>
       </Modal>

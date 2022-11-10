@@ -16,6 +16,7 @@ import {
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
 import {ethers} from 'ethers';
 import MessageModal from './MessageModal';
+import * as CONTRACT_ADDRESSES from '../contract_info/contractAddressesGoerli';
 const globalStyles = require('../styles');
 export const MintingContext = React.createContext({});
 
@@ -26,7 +27,7 @@ const ARVisionScene = () => {
   const GeocacheContract = useContext(GeocacheContractContext);
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
   const connector = useWalletConnect();
-  const {setIsMintingItem, setHasMintedItem, hasMintedItem, setErrorMessage, setIsTransactionDelayed, setTransactionHash} =
+  const {setIsMintingItem, setHasMintedItem, hasMintedItem, setErrorMessage, setIsTransactionDelayed, setTransactionHash, setNewGeocacheId} =
     useContext(MintingContext);
 
   // const [ errorMessage, setErrorMessage ] = useState()
@@ -59,9 +60,11 @@ const ARVisionScene = () => {
 
     if (receiverAddress == connector.accounts[0]) {
     // if (geocacheId === cacheMetadata.geocacheId) {
+      setNewGeocacheId(geocacheId)
       console.log('callback triggered');
       setIsMintingItem(false);
       setHasMintedItem(true);
+      setIsTransactionDelayed(false);
     }
   };
 
@@ -107,6 +110,8 @@ const ARVisionScene = () => {
   return (
     <ViroARScene>
       {/* <ViroARScene onTrackingUpdated={onInitialized}> */}
+      {/* {false && */}
+      {!hasMintedItem &&
       <ViroBox
         position={[0, -0.5, -1]}
         animation={{name: 'rotate', run: true, loop: true}}
@@ -135,7 +140,7 @@ const ARVisionScene = () => {
           planeNormal: [0, 1, 0],
           maxDistance: 500,
         }}
-      />
+      />}
     </ViroARScene>
   );
 };
@@ -145,6 +150,7 @@ export default () => {
   const [hasMintedItem, setHasMintedItem] = useState(false);
   const [transactionHash, setTransactionHash] = useState()
   const [isTransactionDelayed, setIsTransactionDelayed] = useState(false)
+  const [newGeocacheId, setNewGeocacheId] = useState()
   const [errorMessage, setErrorMessage] = useState();
   //  available context in this file
   MintingContextValue = {
@@ -153,6 +159,7 @@ export default () => {
     setErrorMessage: setErrorMessage,
     setTransactionHash: setTransactionHash,
     setIsTransactionDelayed: setIsTransactionDelayed,
+    setNewGeocacheId: setNewGeocacheId,
     hasMintedItem: hasMintedItem
   };
   return (
@@ -161,6 +168,7 @@ export default () => {
         <ViroARSceneNavigator
           autofocus={false}
           initialScene={{
+            // scene: () => {return(<></>)},
             scene: ARVisionScene,
           }}
           style={{flexGrow: 1, flex: 3}}
@@ -192,6 +200,7 @@ export default () => {
               transactionHash={transactionHash}
               //TODO add open sea url
               // openSeaURL={"https://testnets.opensea.io/" + connector.accounts[0]}
+              openSeaURL={"https://testnets.opensea.io/assets/goerli/" + CONTRACT_ADDRESSES.Geocache1155 + "/" + newGeocacheId}
               body={'Nice! Your item has finished minting.'}
             />
           )

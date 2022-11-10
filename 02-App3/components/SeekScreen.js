@@ -215,8 +215,8 @@ export default function SeekScreen() {
 
     ) : (
       distanceToNearestItem ? (
-        // true ? (
-        distanceToNearestItem <= DISTANCE_THRESHOLD || hasTriggeredARVision ? (
+        true ? (
+        // distanceToNearestItem <= DISTANCE_THRESHOLD || hasTriggeredARVision ? (
               //Maybe we show AR Vision when they are within 0.01, then only allow dragging of ar object when they are within 0.001? So they can move closer to a visible AR object?
               <ARvision></ARvision>
         ) : (

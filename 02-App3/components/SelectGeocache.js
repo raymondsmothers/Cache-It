@@ -22,7 +22,7 @@ export default function SelectGeocache() {
   const [modalVisible, setModalVisible] = useState(false);
   const GeocacheContract = useContext(GeocacheContractContext);
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
-  const [selectedGeocache, setSelectedGeocache] = useState();
+  const [isLoading, setIsLoading] = useState();
   const {activeGeocacheIds, setActiveGeocacheIds, activeGeocacheNames, setActiveGeocacheNames} = useContext(AllGeocacheDataContext)
  
   useEffect(() => {
@@ -33,12 +33,13 @@ export default function SelectGeocache() {
 
   const getData = async id => {
     //get data on selected geocache
-    setSelectedGeocache(true);
-    // setSelectedGeocache(id);
+    console.log("Getting data for id: " + id)
+    setIsLoading(true);
+    // setIsLoading(id);
     var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(id);
     var selectedGeocacheItemLocations =
       await GeocacheContract.getGeolocationsOfGeocache(id);
-    // console.log("selected geocahce: " + JSON.stringify(selectedGeocacheRawData, null, 2))
+    console.log("selected geocahce: " + JSON.stringify(selectedGeocacheRawData, null, 2))
     // console.log("selected geocache gelocaitons: " + selectedGeocacheItemLocations)
     var itemLocations = [];
     selectedGeocacheItemLocations.map((coordsAsString, index) => {
@@ -65,7 +66,7 @@ export default function SelectGeocache() {
       geolocations: itemLocations,
       geocacheId: id,
     });
-    setSelectedGeocache(false);
+    setIsLoading(false);
     await delay(1000)
     setModalVisible(!modalVisible);
   };
@@ -100,7 +101,7 @@ export default function SelectGeocache() {
                 Choose a Geocache ID below to switch what Geocache you are
                 searching
               </Text>
-              {selectedGeocache &&
+              {isLoading &&
                 <ActivityIndicator></ActivityIndicator>
               }
               {/* return ( */}
@@ -114,9 +115,9 @@ export default function SelectGeocache() {
 
                       <RadioButton.Item
                         // style={styles.buttonContainer}
-                        key={index}
+                        key={id}
                         label={id + ' - "' + activeGeocacheNames[id] + '"'}
-                        onPress={() => getData(index)}
+                        onPress={() => getData(id)}
                         // status={ id == cacheMetadata?.geocacheId ?  'checked' : 'unchecked'}
                         status={ id == cacheMetadata?.geocacheId ?  'checked' : 'unchecked'}
                         position={"trailing"}
