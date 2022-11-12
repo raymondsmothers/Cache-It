@@ -16,7 +16,7 @@ export default function ConnectWalletButton() {
      */
 
     return (
-      <Button title="Connect Wallet" onPress={() => connector.connect()} />
+      <Button title="Connect Wallet" onPress={() => connector.connect().catch((e) => {alert("OOPS! Error: " + e)})} />
     );
   }
   else {
@@ -25,7 +25,7 @@ export default function ConnectWalletButton() {
       <Button
         // title="Disconnect Wallet"
         title={"Disconnect " + global.shortenAddress(connector.accounts[0])}
-        onPress={() => connector.killSession()}
+        onPress={() => connector.killSession().catch((e) => {alert("OOPS! Error: " + e)})}
       />
     );
   }

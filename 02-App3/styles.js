@@ -18,10 +18,17 @@ module.exports = StyleSheet.create({
     },
     centerText: {
       textAlign: "center",
-      fontSize: 24
+      fontSize: 20,
+      padding: 10,
+    },
+    titleText: {
+      fontSize: 24,
+      padding: 10,
+      textAlign: "center",
+      fontWeight: "bold"
     },
     messageModal: {
       position: "absolute",
       left: 200
-    }
+    },
   });

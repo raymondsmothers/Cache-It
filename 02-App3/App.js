@@ -79,7 +79,7 @@ function App() {
   const [cacheMetadata, setCacheMetadata] = useState();
   const [activeGeocacheIds, setActiveGeocacheIds] = useState([]);
   const [activeGeocacheNames, setActiveGeocacheNames] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState();
   // const [geocacheContract, setGeocacheContract] = useState({});
   //This state hook gets passed down to consumers of the context, to allow them to update the state of the context
   cacheMetadataContextValue = {cacheMetadata, setCacheMetadata};
@@ -114,7 +114,8 @@ function App() {
     activeGeocacheIds: activeGeocacheIds,
     setActiveGeocacheIds: setActiveGeocacheIds,
     activeGeocacheNames: activeGeocacheNames,
-    setActiveGeocacheNames: setActiveGeocacheNames
+    setActiveGeocacheNames: setActiveGeocacheNames,
+    isLoadingContractData: isLoading
   }
 
   LocationContextValue = {
@@ -129,19 +130,36 @@ function App() {
     defaultProvider,
   );
 
+  const delay = ms => new Promise(res => setTimeout(res, ms));
+
+
 
   const getAllGeocacheData = async () => {
     if(!isLoading) {
       setIsLoading(true)
       const getIDs = async () => {
-        const ids = await GeocacheContract.getAllActiveGeocacheIDs();
+        const ids = await GeocacheContract.getAllActiveGeocacheIDs().catch((e) => {alert("OOPS! Error: " + e)});
         const formattedIds = ids.map((id, index) => Number(id));
         // console.log('ids: ' + ids);
-        getGeocacheNames(ids);
+        const names = await getGeocacheNames(ids)
+
+        // await getGeocacheNames(ids).then(() => {
+        //   console.log("data got")
+        //   setIsLoading(false)
+        // });
         setActiveGeocacheIds([...formattedIds]);
+        setActiveGeocacheNames(names);
+        delay(1000)
+        setIsLoading(false)
+        // return;
       };
-      getIDs();
-      setIsLoading(false)
+      await getIDs()
+      // await getIDs().then(() => {
+      //   console.log("data got")
+      //   setIsLoading(false)
+      // })
+      // console.log("after getIds")
+      // setIsLoading(false)
     }
     // return
   }
@@ -150,23 +168,29 @@ function App() {
     // conso  le.log("useEffect")
     //This event is firing many times
     GeocacheContract.once("GeocacheCreated", getAllGeocacheData)
+    
     getAllGeocacheData()
+    // getAllGeocacheData().then(() => {
+    //   console.log("data got")
+    //   setIsLoading(false)
+    // })
   }, []);
 
   //Make this into a useContext
   // TODO this doesn't feel efficient
   const getGeocacheNames = async (ids) => {
         const geocacheNames = [];
-        ids.map(async (geocacheID, index) => {
+        await ids.map(async (geocacheID, index) => {
         // console.log('getting name for : ' + geocacheID);
-        const selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(
-          geocacheID,
-        );
-        // console.log("raw: " + selectedGeocacheRawData)
-        geocacheNames[geocacheID] = selectedGeocacheRawData[7];
-        // console.log("geonames: " + geocacheNames)
-        setActiveGeocacheNames(geocacheNames);
+          const selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(
+            geocacheID,
+          );
+          // console.log("raw: " + selectedGeocacheRawData)
+          geocacheNames[geocacheID] = selectedGeocacheRawData[7];
+          // console.log("geonames: " + geocacheNames)
+          // setActiveGeocacheNames(geocacheNames);
       });
+      return geocacheNames
   };
 
   useEffect(() => {

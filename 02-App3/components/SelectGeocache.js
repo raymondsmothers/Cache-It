@@ -6,7 +6,8 @@ import {
   Button,
   Modal,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  ScrollView
 } from 'react-native';
 import {RadioButton} from 'react-native-paper';
 import {
@@ -16,30 +17,43 @@ import {
   GeocacheContractContext,
   AllGeocacheDataContext
 } from '../App';
+
+import { useWalletConnect } from '@walletconnect/react-native-dapp';
+
 const globalStyles = require('../styles');
 
 export default function SelectGeocache() {
   const [modalVisible, setModalVisible] = useState(false);
   const GeocacheContract = useContext(GeocacheContractContext);
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
-  const [isLoading, setIsLoading] = useState();
-  const {activeGeocacheIds, setActiveGeocacheIds, activeGeocacheNames, setActiveGeocacheNames} = useContext(AllGeocacheDataContext)
- 
+  const [isLoading, setIsLoading] = useState(false);
+  const {activeGeocacheIds, setActiveGeocacheIds, activeGeocacheNames, setActiveGeocacheNames, isLoadingContractData} = useContext(AllGeocacheDataContext)
+  const [errorMessage, setErrorMessage] = useState()
+  const connector = useWalletConnect();
+
+
+
   useEffect(() => {
-    console.log("active names on selector: " + activeGeocacheNames)
-  }, [activeGeocacheNames])
+    if(!isLoadingContractData)
+      console.log("active names on selector: " + activeGeocacheNames)
+    console.log("isLoadingContractData: " + isLoadingContractData)
+}, [isLoadingContractData])
+//   useEffect(() => {
+//     // console.log("active names on selector: " + activeGeocacheNames)
+    
+// }, [activeGeocacheNames])
 
   const delay = ms => new Promise(res => setTimeout(res, ms));
 
   const getData = async id => {
     //get data on selected geocache
-    console.log("Getting data for id: " + id)
+    // console.log("Getting data for id: " + id)
     setIsLoading(true);
     // setIsLoading(id);
-    var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(id);
+    var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(id).catch((e) => {alert("OOPS! Error: " + e)});
     var selectedGeocacheItemLocations =
-      await GeocacheContract.getGeolocationsOfGeocache(id);
-    console.log("selected geocahce: " + JSON.stringify(selectedGeocacheRawData, null, 2))
+      await GeocacheContract.getGeolocationsOfGeocache(id).catch((e) => {alert("OOPS! Error: " + e)});;
+    // console.log("selected geocahce: " + JSON.stringify(selectedGeocacheRawData, null, 2))
     // console.log("selected geocache gelocaitons: " + selectedGeocacheItemLocations)
     var itemLocations = [];
     selectedGeocacheItemLocations.map((coordsAsString, index) => {
@@ -81,8 +95,8 @@ export default function SelectGeocache() {
             setModalVisible(true);
           }}
           // disabled={activeGeocacheNames.length != activeGeocacheIds.length}
-          // disabled={!activeGeocacheNames.includes(undefined)}
-          // disabled={!activeGeocacheNames}
+          // disabled={activeGeocacheNames.includes(undefined)}
+          disabled={isLoadingContractData}
           title="Select Cache"
         />
 
@@ -94,9 +108,11 @@ export default function SelectGeocache() {
             // alert('Modal has been closed.');
             setModalVisible(false);
           }}>
-          <View style={{marginTop: 22}}>
+          <ScrollView style={{marginTop: 22}}>
             <View>
-              <Text style={globalStyles.centerText}>SelectGeocache</Text>
+              <Text style={globalStyles.titleText}>SelectGeocache</Text>
+              {connector.connected ? (
+                <>
               <Text style={globalStyles.centerText}>
                 Choose a Geocache ID below to switch what Geocache you are
                 searching
@@ -105,17 +121,15 @@ export default function SelectGeocache() {
                 <ActivityIndicator></ActivityIndicator>
               }
               {/* return ( */}
-                    <RadioButton.Group >
-                    {/* <RadioButton.Group onValueChange={value => setValue(value)} value={value}> */}
-
-                   {activeGeocacheIds.map((id, index) => {
+                    <RadioButton.Group style={styles.radioButtonContainer}>
+                   {activeGeocacheIds?.map((id, index) => {
                     return(
                       <>
-                      <View style={styles.radioButtonContainer}>
+                      {/* <View style={styles.radioButtonContainer}> */}
 
                       <RadioButton.Item
                         // style={styles.buttonContainer}
-                        key={id}
+                        // key={ird}
                         label={id + ' - "' + activeGeocacheNames[id] + '"'}
                         onPress={() => getData(id)}
                         // status={ id == cacheMetadata?.geocacheId ?  'checked' : 'unchecked'}
@@ -123,19 +137,19 @@ export default function SelectGeocache() {
                         position={"trailing"}
                         style={styles.radioButton}
                         >
-                        {/* <Text>"thes"</Text> */}
                       </RadioButton.Item>
-                      {/* <Text>
-                        {id + ' - "' + activeGeocacheNames[id] + '"'}
-                      </Text> */}
-                      </View>
                       </>
                     )
                    })}
+                   
+                   
                    </RadioButton.Group>
-                    {/* </View> */}
-                {/* ); */}
-              {/* })} */}
+              </>
+              ) : (
+                <>
+                  <Text style={globalStyles.centerText}>Uh-Oh! Please connect your wallet to select a geocache.</Text>
+                </>
+              )}
 
               <Button
                 onPress={() => {
@@ -144,7 +158,7 @@ export default function SelectGeocache() {
                 title="Close"
               />
             </View>
-          </View>
+          </ScrollView>
         </Modal>
       </>
     </View>
@@ -163,12 +177,13 @@ const styles = StyleSheet.create({
   },
   radioButton: {
     // flex: 1
+    // width: "90%"
   },
   radioButtonContainer: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
+    padding: 100,
     width: "100%"
   },
   button: {
