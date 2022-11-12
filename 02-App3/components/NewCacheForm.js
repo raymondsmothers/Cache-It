@@ -126,56 +126,73 @@ export default function NewCacheForm() {
     //     setIsTransactionDelayed(true && !hasDeployedGeocache)
     //   }, 2000)
     // }
+    const validateFormData = () => {
+      if(name = "") {
+        setErrorMessage("Please set a name for this geocache")
+        return false
+      }
+      if(radius > 2000) {
+        setErrorMessage("Please set radius <= 2000")
+        return false
+      }
+      if(numItems >= 10) {
+        setErrorMessage("Please set number of items <= 10")
+        return false
+      }
+      return true
+    }
+
     const createGeocacheSubmitHandler = async () => {
       // console.log("create geocache")
       //update location
-      setIsDeployingGeocache(false)
-      await findInitialCoordinates();
-      const itemLocations = generateItemLocations();
-      await providers.walletConnect.enable();
-      const ethers_provider = new ethers.providers.Web3Provider(providers.walletConnect);
-
-    const signer = await ethers_provider.getSigner();
-    const geocacheContractWithSigner = await GeocacheContract.connect(signer);
-
-    const date = new Date(Date.now()).toLocaleString();
-    // console.log("Date: " + date.toString)
-
-    const originStory = await generateGeocacheOriginStory()
-    const createGeocacheTxn = await geocacheContractWithSigner
-      .newGeocache(
-        numItems,
-        'https://gateway.pinata.cloud/ipfs/QmXgkKXsTyW9QJCHWsgrt2BW7p5csfFE21eWtmbd5Gzbjr/',
-        date.toString(),
-        itemLocations,
-        //TODO this context needs to be updated
-        currentPosition.latitude.toString(),
-        currentPosition.longitude.toString(),
-        radius,
-        name,
-        //Wait to deploy new contracts to include randomly generated originStory
-        "ppo",
-        {
-          gasLimit: 1000000,
-        }
-
-      )
-      .then((res) => {
-        setTransactionHash(res.hash)
-        setIsDeployingGeocache(true)
-        setTimeout(() => {
-          // console.log("DELAYED")
-          setIsTransactionDelayed(true && !hasDeployedGeocache)
-        }, 15000)
-        console.log("Success: " + JSON.stringify(res, null, 2))
-      })
-      .catch(error => {
-        // setHasThrownError(true)
-        setErrorMessage(error.message)
+      if(validateFormData()) {
         setIsDeployingGeocache(false)
-        console.log('Error: ' + error.message);
-      });
+        await findInitialCoordinates();
+        const itemLocations = generateItemLocations();
+        await providers.walletConnect.enable();
+        const ethers_provider = new ethers.providers.Web3Provider(providers.walletConnect);
 
+        const signer = await ethers_provider.getSigner();
+        const geocacheContractWithSigner = await GeocacheContract.connect(signer);
+
+        const date = new Date(Date.now()).toLocaleString();
+        // console.log("Date: " + date.toString)
+
+        const originStory = await generateGeocacheOriginStory()
+        const createGeocacheTxn = await geocacheContractWithSigner
+          .newGeocache(
+            numItems,
+            'https://gateway.pinata.cloud/ipfs/QmXgkKXsTyW9QJCHWsgrt2BW7p5csfFE21eWtmbd5Gzbjr/',
+            date.toString(),
+            itemLocations,
+            //TODO this context needs to be updated
+            currentPosition.latitude.toString(),
+            currentPosition.longitude.toString(),
+            radius,
+            name,
+            //Wait to deploy new contracts to include randomly generated originStory
+            "ppo",
+            {
+              gasLimit: 1000000,
+            }
+
+          )
+          .then((res) => {
+            setTransactionHash(res.hash)
+            setIsDeployingGeocache(true)
+            setTimeout(() => {
+              // console.log("DELAYED")
+              setIsTransactionDelayed(true && !hasDeployedGeocache)
+            }, 15000)
+            console.log("Success: " + JSON.stringify(res, null, 2))
+          })
+          .catch(error => {
+            // setHasThrownError(true)
+            setErrorMessage(error.message)
+            setIsDeployingGeocache(false)
+            console.log('Error: ' + error.message);
+          });
+      }
     // console.log('done');
   };
 
@@ -201,32 +218,47 @@ export default function NewCacheForm() {
     return itemLocationsFormatted;
   };
 
+  const resetState = () => {
+    setErrorMessage(undefined)
+    setIsDeployingGeocache(false)
+  }
+
 
 
     return (
-      <SafeAreaView>
+      <SafeAreaView >
       <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeName}
-          placeholder="Name"
-          // value={name}
-        />
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeRadius}
-          // value={radius}
-          placeholder="Radius (Meters)"
-          keyboardType="decimal-pad"
-        />
+        <View style={styles.inputContainer}>
+          <Text  style={globalStyles.text}>{"Choose a name for this geocache"}</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={onChangeName}
+            placeholder="Name"
+            blurOnSubmit={true}
+            // value={name}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text  style={globalStyles.text}>{"Set the radius of the geocache's search area. The search area will be centered at your current location"}</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={onChangeRadius}
+            // value={radius}
+            placeholder="Radius (Meters)"
+            keyboardType="decimal-pad"
+          />
+        </View>
         {/* TODO make it so a cache can only contain 10 items for now, so transaction doesn't run out of gas */}
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeNumItems}
-          // value={numItems}
-          placeholder="Number of items"
-          keyboardType="numeric"
-        />
+        <View style={styles.inputContainer}>
+          <Text  style={globalStyles.text}>{"Set the number of items in the geocache. This will randomly generate locations for the number of items you set within your geocache's search area."} </Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={onChangeNumItems}
+            // value={numItems}
+            placeholder="Number of items"
+            keyboardType="numeric"
+          />
+        </View>
         <Button
           // onPress={() => {generateGeocacheOriginStory()}}
           onPress={() => {createGeocacheSubmitHandler()}}
@@ -260,7 +292,7 @@ export default function NewCacheForm() {
         }
         {/* {hasThrownError && */}
         {errorMessage &&
-          <MessageModal title={"Error!"} body={errorMessage}></MessageModal>
+          <MessageModal title={"Uh-oh!"} body={errorMessage} resetParentState={resetState}></MessageModal>
         }
         </View>
       </SafeAreaView>
@@ -271,13 +303,29 @@ export default function NewCacheForm() {
   const styles = StyleSheet.create({
     input: {
       height: 40,
-      margin: 12,
+      marginTop: 12,
       borderWidth: 1,
       padding: 10,
+      width: "100%"
+    },
+    inputContainer: {
+      display: "flex",
+      justifyContent: "flex-start",
+      alignItems: "flex-start",
+      margin: 10,
+      padding: 5
     },
     container: {
+      // height: "100%",
       display: "flex",
       justifyContent: "center",
+      // padding: 15,
+      borderRadius: 14,
+      margin: 15,
+      borderColor: "black",
+      borderWidth: 3
+      // alignSelf: "center",
+      // backgroundColor: "orange"
     },
     text: {
       textAlign: "center",

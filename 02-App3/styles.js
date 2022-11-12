@@ -31,4 +31,8 @@ module.exports = StyleSheet.create({
       position: "absolute",
       left: 200
     },
+    text: {
+      // padding: 10,
+      fontSize: 14,
+    }
   });

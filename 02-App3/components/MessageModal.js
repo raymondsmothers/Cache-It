@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Alert, Linking, Modal, StyleSheet, Text, Pressable, View, ActivityIndicator} from "react-native";
 
-export default function MessageModal({title, transactionHash, isTransactionDelayed, openSeaURL, isProgress=false, body}) {
+export default function MessageModal({title, transactionHash, isTransactionDelayed, openSeaURL, isProgress=false, body, resetParentState}) {
   const [modalVisible, setModalVisible] = useState(true);
 
 
@@ -58,7 +58,10 @@ export default function MessageModal({title, transactionHash, isTransactionDelay
                 }
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}
+                  onPress={() => {
+                    setModalVisible(!modalVisible)
+                    resetParentState()
+                  }}
                 >
                   <Text style={styles.textStyle}>{"Close "}</Text>
                 </Pressable>
