@@ -1,0 +1,9 @@
+{
+  "image": "https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png",
+  "name": "Pinata test",
+  "attributes": [
+    { "trait_type": "Geocache Date Created", "display_type": "date", "value": 1668219853991 },
+    { "trait_type": "Geocache Size", "value": "5" },
+    { "trait_type": "Location Created", "value": "38.6506669, -90.2977434" }
+  ]
+}

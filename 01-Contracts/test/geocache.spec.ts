@@ -58,7 +58,8 @@ describe('Geocache Project', async () => {
         'epicenterlat',
         'epicenterlong',
         5,
-        'Test 1'
+        'Test 1',
+        'sample origin story'
       );
       await txn.wait();
       txn = await GeocacheInstance.connect(addr1).newGeocache(
@@ -69,7 +70,8 @@ describe('Geocache Project', async () => {
         'epicenterlat',
         'epicenterlong',
         5,
-        'Test 2'
+        'Test 2',
+        'sample origin story'
       );
       await txn.wait();
       // Updates # of geocaches
@@ -98,7 +100,8 @@ describe('Geocache Project', async () => {
         'epicenterlat',
         'epicenterlong',
         5,
-        'Test 3'
+        'Test 3',
+        'sample origin story'
       );
       await txn.wait();
       // Minting the # of times, shouldn't let people mint more
@@ -136,6 +139,13 @@ describe('Geocache Project', async () => {
     it('Correctly gets all active geocache IDs', async () => {
       const activeGeocaches = await GeocacheInstance.connect(owner).getAllActiveGeocacheIDs();
       await expect(activeGeocaches.length).to.equal(2);
+    });
+
+    it('Generates token URI', async () => {
+      expect((await GeocacheInstance.tokenIdToGeocache(0)).tokenURI).to.equal('uri');
+
+      const genURI = await GeocacheInstance.tokenURI(Geocache1155Instance.address, 0);
+      console.log(genURI);
     });
   });
 });

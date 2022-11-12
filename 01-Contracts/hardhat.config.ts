@@ -43,8 +43,8 @@ let config: HardhatUserConfig = {
       timeout: 0,
     },
     goerli: {
-      url: "https://eth-goerli.g.alchemy.com/v2/" + process.env.GOERLI_ALCHEMY_URL,
-      accounts: [process.env.CACHEIT_PRIVATE_KEY],
+      url: 'https://eth-goerli.g.alchemy.com/v2/' + process.env.GOERLI_ALCHEMY_KEY,
+      accounts: [process.env.CACHEIT_PRIVATE_KEY || ''],
     },
     hardhat: {},
 
@@ -68,6 +68,10 @@ let config: HardhatUserConfig = {
     alphaSort: true,
     runOnCompile: true,
     disambiguatePaths: false,
+  },
+
+  mocha: {
+    timeout: 400000,
   },
 };
 

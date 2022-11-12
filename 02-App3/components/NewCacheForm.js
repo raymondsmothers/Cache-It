@@ -34,15 +34,8 @@ import {ethers} from 'ethers';
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
 //OPENAI
 // const { Configuration, OpenAIApi } = require("openai");
-import {OPENAI_SECRET_KEY} from '@env';
-//
-// const configuration = new Configuration({
-//   apiKey: OPENAI_SECRET_KEY,
-// });
-const pinata = pinataSDK(
-  process.env.PINATA_KEY || '',
-  process.env.PINATA_SECRET || '',
-);
+import {OPENAI_SECRET_KEY, PINATA_KEY, PINATA_SECRET, PINATA_JWT} from '@env';
+import axios from 'axios';
 
 export default function NewCacheForm() {
   const {currentPosition, setCurrentPosition} = useContext(LocationContext);
@@ -63,6 +56,9 @@ export default function NewCacheForm() {
 
   useEffect(() => {
     GeocacheContract.on('GeocacheCreated', geocacheCreatedCallback);
+    // const testURI = getTokenURIPinata('name', 'story', 10, 'location...');
+    // console.log('TEST URIIII');
+    // console.log(testURI);
   });
 
   const geocacheCreatedCallback = (creatorAddress, geocacheName, numItems) => {
@@ -158,10 +154,22 @@ export default function NewCacheForm() {
     // console.log("Date: " + date.toString)
 
     const originStory = await generateGeocacheOriginStory();
+
+    const tokenURI = await getTokenURIPinata(
+      name,
+      originStory,
+      numItems,
+      String(
+        currentPosition.latitude.toString() +
+          ', ' +
+          currentPosition.longitude.toString(),
+      ),
+    );
+
     const createGeocacheTxn = await geocacheContractWithSigner
       .newGeocache(
         numItems,
-        'https://gateway.pinata.cloud/ipfs/QmXgkKXsTyW9QJCHWsgrt2BW7p5csfFE21eWtmbd5Gzbjr/',
+        tokenURI,
         date.toString(),
         itemLocations,
         //TODO this context needs to be updated
@@ -170,7 +178,7 @@ export default function NewCacheForm() {
         radius,
         name,
         //Wait to deploy new contracts to include randomly generated originStory
-        'ppo',
+        'ORIGIN STORY :)',
         {
           gasLimit: 1000000,
         },
@@ -192,6 +200,59 @@ export default function NewCacheForm() {
       });
 
     // console.log('done');
+  };
+
+  const getTokenURIPinata = async (
+    name,
+    originStory,
+    numItems,
+    locationCreated,
+  ) => {
+    // Creating our metadata
+    const metadataObj = {
+      image:
+        'https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png', // hardcoded image for now (TODO: change to user-uploaded photo)
+      name: name,
+      description: originStory,
+      attributes: [
+        // TODO: Determine what other attributes we want in metadata
+        {
+          trait_type: 'Geocache Date Created',
+          display_type: 'date',
+          value: Date.now(),
+        },
+        {trait_type: 'Geocache Size', value: numItems},
+        {trait_type: 'Location Created', value: locationCreated},
+      ],
+    };
+
+    // Getting pinata URL for tokenURI
+    const config = {
+      method: 'POST',
+      url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',
+      headers: {
+        pinata_api_key: `${PINATA_KEY}`,
+        pinata_secret_api_key: `${PINATA_SECRET}`,
+        Authorization: `Bearer ${PINATA_JWT}`,
+        'Content-Type': 'application/json',
+      },
+      data: JSON.stringify(metadataObj),
+    };
+
+    console.log('Making api call');
+
+    let ipfsURL;
+    try {
+      const res = await axios(config);
+      console.log('PINATA API RESULTS');
+      console.log(res.data);
+      ipfsURL = `ipfs://${res.data.IpfsHash}`;
+    } catch (error) {
+      console.log(error.response);
+    }
+
+    console.log('Final IPFS URL for metadata is: ', ipfsURL);
+    return ipfsURL; // Passing this into the newGeocache URI
   };
 
   const generateItemLocations = () => {
