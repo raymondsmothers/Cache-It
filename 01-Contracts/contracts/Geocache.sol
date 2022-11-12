@@ -83,7 +83,7 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
     {
         return
             interfaceId == type(ICreatorExtensionTokenURI).interfaceId ||
-            interfaceId == type(ICreatorCore).interfaceId ||
+            // interfaceId == type(ICreatorCore).interfaceId ||
             interfaceId == type(AdminControl).interfaceId ||
             interfaceId == type(IERC165).interfaceId ||
             super.supportsInterface(interfaceId);

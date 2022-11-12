@@ -153,7 +153,10 @@ export default function NewCacheForm() {
     const date = new Date(Date.now()).toLocaleString();
     // console.log("Date: " + date.toString)
 
-    const originStory = await generateGeocacheOriginStory();
+    // The generate origin story function isn't working @trey, hardcoding origin story for now
+    // const originStory = await generateGeocacheOriginStory();
+    const originStory =
+      "Here is an origin story. This will be the item's description!";
 
     const tokenURI = await getTokenURIPinata(
       name,

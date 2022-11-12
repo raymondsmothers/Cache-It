@@ -49,7 +49,7 @@ describe('Geocache Project', async () => {
       console.log('Creating geocache');
       let txn = await GeocacheInstance.connect(owner).newGeocache(
         3,
-        'uri',
+        'ipfs://QmXbDR6LEoPQRhdqPUSYKme6TraQd7MPbMRaT3vBknvi6K', // testing out an actual URI WITH description
         String(Date.now()),
         ['1', '2', '3'],
         'epicenterlat',
@@ -59,10 +59,11 @@ describe('Geocache Project', async () => {
         'sample origin story'
       );
       await txn.wait();
-      //   txn = await GeocacheInstance['setTokenURIExtension(uint256,string)'](
-      //     0,
-      //     'data:application/json;utf8,{"name": "Test 1", "description": "sample origin story", "image": "https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png", "attributes": [ { "trait_type": "Geocache Size", "value": 3}, { "trait_type": "Status", "value": "Active"}, { "display_type": "date", "trait_type": "Date Created", "value": 1668200252318} ]}'
-      //   );
+    });
+
+    it('Gets the URI for the newly made geocache', async () => {
+      let txn = await GeocacheInstance.tokenURI(Geocache1155Instance.address, 0);
+      console.log(txn);
     });
   });
 });

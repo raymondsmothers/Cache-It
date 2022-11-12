@@ -1,6 +1,7 @@
 {
   "image": "https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png",
   "name": "Pinata test",
+  "description": "Sample origin story",
   "attributes": [
     { "trait_type": "Geocache Date Created", "display_type": "date", "value": 1668219853991 },
     { "trait_type": "Geocache Size", "value": "5" },
