@@ -231,7 +231,7 @@ export default function NewCacheForm() {
       <SafeAreaView style={styles.container}>
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
-          <Text  style={globalStyles.text}>{"Choose a name for this geocache"}</Text>
+          <Text  style={globalStyles.text}>{"Choose a name for this geocache."}</Text>
           <TextInput
             style={styles.input}
             onChangeText={onChangeName}
@@ -241,7 +241,7 @@ export default function NewCacheForm() {
           />
         </View>
         <View style={styles.inputContainer}>
-          <Text  style={globalStyles.text}>{"Set the radius of the geocache's search area. The search area will be centered at your current location"}</Text>
+          <Text  style={globalStyles.text}>{"Set the radius of the geocache's search area. The search area will be centered at your current location."}</Text>
           <TextInput
             style={styles.input}
             onChangeText={onChangeRadius}
@@ -252,7 +252,7 @@ export default function NewCacheForm() {
         </View>
         {/* TODO make it so a cache can only contain 10 items for now, so transaction doesn't run out of gas */}
         <View style={styles.inputContainer}>
-          <Text  style={globalStyles.text}>{"Set the number of items in the geocache. This will randomly generate locations for the number of items you set within your geocache's search area."} </Text>
+          <Text  style={globalStyles.text}>{"Set the number of items in the geocache. This will randomly generate locations within your geocache's search area for the number of items you set below."} </Text>
           <TextInput
             style={styles.input}
             onChangeText={onChangeNumItems}

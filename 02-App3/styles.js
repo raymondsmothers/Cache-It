@@ -36,7 +36,7 @@ module.exports = StyleSheet.create({
     },
     text: {
       // padding: 10,
-      fontSize: 14,
+      fontSize: 18,
       // color: "white"
     },
     buttonText: {

@@ -32,6 +32,8 @@ import {ethers} from 'ethers';
 import {CACHEIT_PRIVATE_KEY} from '@env';
 import "./global"
 // The following disables the warning messages for the 'Require cycle' issue
+// Use prebuilt version of RNVI in dist folder
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 // TODO: Fix this issue
 LogBox.ignoreLogs([
@@ -68,11 +70,29 @@ function HomeTab() {
         component={CacheMap}
         options={{
           headerRight: () => <ConnectWalletButton />,
+          tabBarIcon: (color) => (<Icon name="map" size={20} color={color} />)
+
         }}
       />
-      <Tab.Screen name="New Cache Form" component={NewCacheForm} />
-      <Tab.Screen name="Seek" component={SeekScreen} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen name="New Cache Form" component={NewCacheForm}
+        options={{
+            headerRight: () => <ConnectWalletButton />,
+            tabBarIcon: (color) => (<Icon name="plus" size={20} color={color} />)
+
+          }} />
+      <Tab.Screen name="Seek" component={SeekScreen}         
+        options={{
+            headerRight: () => <ConnectWalletButton />,
+            tabBarIcon: (color) => (<Icon name="eye" size={20} color={color} />)
+
+          }}/>
+      <Tab.Screen name="Settings" component={SettingsScreen}         
+        options={{
+            headerRight: () => <ConnectWalletButton />,
+            tabBarIcon: (color) => (<Icon name="info" size={20} color={color} />)
+
+            
+          }}/>
     </Tab.Navigator>
   );
 }
