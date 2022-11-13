@@ -152,6 +152,11 @@ export default () => {
   const [isTransactionDelayed, setIsTransactionDelayed] = useState(false)
   const [newGeocacheId, setNewGeocacheId] = useState()
   const [errorMessage, setErrorMessage] = useState();
+
+  const resetState = () => {
+    setErrorMessage(undefined)
+    setIsMintingItem(false)
+  }
   //  available context in this file
   MintingContextValue = {
     setIsMintingItem: setIsMintingItem,
@@ -188,6 +193,7 @@ export default () => {
             style={globalStyles.messageModal}
             title={'Error'}
             body={errorMessage}
+            resetParentState={resetState}
           />
         )}
         {
@@ -198,6 +204,7 @@ export default () => {
               // isProgress={true}
               isTransactionDelayed={false}
               transactionHash={transactionHash}
+              resetParentState={resetState}
               //TODO add open sea url
               // openSeaURL={"https://testnets.opensea.io/" + connector.accounts[0]}
               openSeaURL={"https://testnets.opensea.io/assets/goerli/" + CONTRACT_ADDRESSES.Geocache1155 + "/" + newGeocacheId}

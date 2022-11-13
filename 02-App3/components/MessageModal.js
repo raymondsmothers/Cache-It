@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Alert, Linking, Modal, StyleSheet, Text, Pressable, View, ActivityIndicator} from "react-native";
+const globalStyles = require("../global")
 
 export default function MessageModal({title, transactionHash, isTransactionDelayed, openSeaURL, isProgress=false, body, resetParentState}) {
   const [modalVisible, setModalVisible] = useState(true);
@@ -29,20 +30,20 @@ export default function MessageModal({title, transactionHash, isTransactionDelay
           <View style={styles.modalView}>
             <Text style={styles.modalText}>{title}</Text>
             <Text style={styles.modalText}>{body}</Text>
-
+              {isTransactionDelayed && (
+                <Text style={[styles.modalText, {fontWeight:"bold"}]}>{"Uh-oh! This is taking much longer than usual. Please view your transaction on etherscan to verify the status."}</Text>
+              )}
               {isProgress && (
                 // <br>
                 <ActivityIndicator></ActivityIndicator>
                 // </br>
               )}
-              {isTransactionDelayed && (
-                <Text style={[styles.modalText, {fontWeight:"bold"}]}>{"Uh-oh! This is taking much longer than usual. Please view your transaction on etherscan to verify the status."}</Text>
-              )}
+
               <View style={styles.buttonContainer}>
                 {/*only show view on etherscan if a transaction hash is provided */}
                 {transactionHash &&
                 <Pressable
-                    style={[styles.button, styles.buttonOpen]}
+                    style={[styles.button, {backgroundColor : "navy"}]}
                     onPress={async () =>  await handleURLClick("https://goerli.etherscan.io/tx/" + transactionHash)}
                   >
                   <Text style={styles.textStyle}>{"View transaction on Etherscan"}</Text>
@@ -50,7 +51,7 @@ export default function MessageModal({title, transactionHash, isTransactionDelay
                 }
                 {openSeaURL &&
                 <Pressable
-                    style={[styles.button, {backgroundColor: "blue"}]}
+                    style={[styles.button, {backgroundColor: "#1868B7"}]}
                     onPress={async () =>  await handleURLClick(openSeaURL)}
                   >
                   <Text style={styles.textStyle}>{"View on OpenSea"}</Text>
@@ -119,7 +120,8 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   modalText: {
-    marginBottom: 15,
+    marginBottom: 12,
+    fontSize: 18,
     textAlign: "center"
   }
 });

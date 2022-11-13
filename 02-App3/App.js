@@ -62,7 +62,7 @@ function HomeTab() {
         tabBarActiveTintColor: global.secondaryColor,
         headerTintColor: global.secondaryColor,
         tabBarStyle: { backgroundColor: global.cream },
-        headerStyle: { backgroundColor: global.cream, fontWeight: "bold", fontColor: global.primaryColor},
+        headerStyle: { backgroundColor: global.cream},
       }}>
       {/* <Tab.Navigator tabBarPosition='bottom'> */}
       <Tab.Screen

@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect} from 'react';
 import { RecyclerViewBackedScrollViewComponent, Text, View, Button } from 'react-native';
-import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid, ActivityIndicator, Alert  } from "react-native";
+import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid, ActivityIndicator, Alert, ScrollView  } from "react-native";
 import { CacheMetadataContext, LocationContext, Web3ProviderContext, GeocacheContractContext } from '../App';
 import randomLocation from 'random-location';
 const globalStyles = require("../styles")
@@ -49,7 +49,8 @@ export default function NewCacheForm() {
 
     })
 
-    const geocacheCreatedCallback = (creatorAddress, geocacheName, numItems) => {
+    // TODO, send them to their new geocahce after this is completed
+    const geocacheCreatedCallback = (creatorAddress, geocacheName, newGeocacheId) => {
       creatorAddress = creatorAddress.toLocaleLowerCase()
       // console.log("creatorAddress in new cahce form callback: " + creatorAddress)
       const connectedAddress = connector.accounts[0];
@@ -229,7 +230,7 @@ export default function NewCacheForm() {
 
     return (
       <SafeAreaView style={styles.container}>
-      <View style={styles.formContainer}>
+      <ScrollView contentContainerStyle={styles.formContainer}>
         <View style={styles.inputContainer}>
           <Text  style={globalStyles.text}>{"Choose a name for this geocache."}</Text>
           <TextInput
@@ -279,9 +280,8 @@ export default function NewCacheForm() {
         }
         {/* {true &&  */}
         {isDeployingGeocache && 
-        // {isTransactionDelayed && 
         <View style={globalStyles.textContainer}>
-          <MessageModal title={"Deploying your Geocache"} isProgress={true} isTransactionDelayed={isTransactionDelayed} transactionHash={transactionHash} body={"Please wait for this transaction to complete."}>
+          <MessageModal title={"Deploying your Geocache"} isProgress={true} resetParentState={resetState} isTransactionDelayed={isTransactionDelayed} transactionHash={transactionHash} body={"Please wait for this transaction to complete."}>
           </MessageModal>
          
         </View>
@@ -289,7 +289,7 @@ export default function NewCacheForm() {
         
         {hasDeployedGeocache &&
         <View style={globalStyles.textContainer}>
-          <MessageModal title={"Success!"} body={"Finished deploying."}></MessageModal>
+          <MessageModal title={"Success!"} body={"Finished deploying."} resetParentState={resetState}></MessageModal>
 
         </View>
         }
@@ -297,7 +297,7 @@ export default function NewCacheForm() {
         {errorMessage &&
           <MessageModal title={"Uh-oh!"} body={errorMessage} resetParentState={resetState}></MessageModal>
         }
-        </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }
