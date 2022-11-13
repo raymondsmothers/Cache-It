@@ -15,6 +15,7 @@ import NewCacheForm from './components/NewCacheForm';
 import CacheMap from './components/CacheMap';
 import ConnectWalletButton from './components/ConnectWalletButton';
 import IntroductionPage from './components/introduction';
+import Collection from './components/Collection';
 
 //Web3 imports
 import {
@@ -69,6 +70,7 @@ function HomeTab() {
       <Tab.Screen name="NewCacheForm" component={NewCacheForm} />
       <Tab.Screen name="Seek" component={SeekScreen} />
       <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen name="Collection" component={Collection} />
     </Tab.Navigator>
   );
 }
@@ -114,13 +116,13 @@ function App() {
     activeGeocacheIds: activeGeocacheIds,
     setActiveGeocacheIds: setActiveGeocacheIds,
     activeGeocacheNames: activeGeocacheNames,
-    setActiveGeocacheNames: setActiveGeocacheNames
-  }
+    setActiveGeocacheNames: setActiveGeocacheNames,
+  };
 
   LocationContextValue = {
     currentPosition: currentPosition,
-    setCurrentPosition: setCurrentPosition
-  }
+    setCurrentPosition: setCurrentPosition,
+  };
 
   //Construct globally available contract context
   const GeocacheContract = new ethers.Contract(
@@ -129,10 +131,9 @@ function App() {
     defaultProvider,
   );
 
-
   const getAllGeocacheData = async () => {
-    if(!isLoading) {
-      setIsLoading(true)
+    if (!isLoading) {
+      setIsLoading(true);
       const getIDs = async () => {
         const ids = await GeocacheContract.getAllActiveGeocacheIDs();
         const formattedIds = ids.map((id, index) => Number(id));
@@ -141,32 +142,32 @@ function App() {
         setActiveGeocacheIds([...formattedIds]);
       };
       getIDs();
-      setIsLoading(false)
+      setIsLoading(false);
     }
     // return
-  }
+  };
 
   useEffect(() => {
     // conso  le.log("useEffect")
     //This event is firing many times
-    GeocacheContract.once("GeocacheCreated", getAllGeocacheData)
-    getAllGeocacheData()
+    GeocacheContract.once('GeocacheCreated', getAllGeocacheData);
+    getAllGeocacheData();
   }, []);
 
   //Make this into a useContext
   // TODO this doesn't feel efficient
-  const getGeocacheNames = async (ids) => {
-        const geocacheNames = [];
-        ids.map(async (geocacheID, index) => {
-        // console.log('getting name for : ' + geocacheID);
-        const selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(
-          geocacheID,
-        );
-        // console.log("raw: " + selectedGeocacheRawData)
-        geocacheNames[geocacheID] = selectedGeocacheRawData[7];
-        // console.log("geonames: " + geocacheNames)
-        setActiveGeocacheNames(geocacheNames);
-      });
+  const getGeocacheNames = async ids => {
+    const geocacheNames = [];
+    ids.map(async (geocacheID, index) => {
+      // console.log('getting name for : ' + geocacheID);
+      const selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(
+        geocacheID,
+      );
+      // console.log("raw: " + selectedGeocacheRawData)
+      geocacheNames[geocacheID] = selectedGeocacheRawData[7];
+      // console.log("geonames: " + geocacheNames)
+      setActiveGeocacheNames(geocacheNames);
+    });
   };
 
   useEffect(() => {
@@ -233,7 +234,7 @@ function App() {
         // console.log(position);
         setCurrentPosition({
           latitude: crd.latitude,
-          longitude: crd.longitude
+          longitude: crd.longitude,
         });
       },
       error => {
@@ -249,20 +250,21 @@ function App() {
       <Web3ProviderContext.Provider value={Web3ProviderContextValue}>
         <CacheMetadataContext.Provider value={cacheMetadataContextValue}>
           <GeocacheContractContext.Provider value={GeocacheContract}>
-            <AllGeocacheDataContext.Provider value={AllGeocacheDataContextValue}>
-            <NavigationContainer>
-              <Stack.Navigator>
-                <Stack.Screen
-                  options={{headerShown: false}}
-                  name="Home"
-                  component={HomeTab}
-                />
-                <Stack.Screen
-                  name="Introduction"
-                  component={IntroductionPage}
-                />
-              </Stack.Navigator>
-            </NavigationContainer>
+            <AllGeocacheDataContext.Provider
+              value={AllGeocacheDataContextValue}>
+              <NavigationContainer>
+                <Stack.Navigator>
+                  <Stack.Screen
+                    options={{headerShown: false}}
+                    name="Home"
+                    component={HomeTab}
+                  />
+                  <Stack.Screen
+                    name="Introduction"
+                    component={IntroductionPage}
+                  />
+                </Stack.Navigator>
+              </NavigationContainer>
             </AllGeocacheDataContext.Provider>
           </GeocacheContractContext.Provider>
         </CacheMetadataContext.Provider>
