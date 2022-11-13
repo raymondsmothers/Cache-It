@@ -209,8 +209,8 @@ export default function SeekScreen() {
   return connector.connected ? (
     cacheMetadata == undefined || cacheMetadata?.imgUrl == "" ? (
       // true ? (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={styles.text}>Please select a geocache to use Seek!</Text>
+        <View style={styles.container}>
+        <Text style={globalStyles.titleText}>Please select a geocache to use Seek!</Text>
       </View>
 
     ) : (
@@ -220,21 +220,21 @@ export default function SeekScreen() {
               //Maybe we show AR Vision when they are within 0.01, then only allow dragging of ar object when they are within 0.001? So they can move closer to a visible AR object?
               <ARvision></ARvision>         
         ) : (
-          <View style={ {flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={styles.text}>
+          <View style={styles.container}>
+            <Text style={globalStyles.titleText}>
               {' '}
               {'Searching "' + cacheMetadata.name + '"'}{' '}
             </Text>
-            <Text style={styles.subtitle}>
+            <Text style={globalStyles.centerText}>
               {' '}
               {'Created by:  "' + global.shortenAddress(cacheMetadata.creator) + '"'}{' '}
             </Text>
-            <Text style={styles.subtitle}>
+            <Text style={globalStyles.centerText}>
               {' '}
               {'Created On:  "' + cacheMetadata.date + '"'}{' '}
             </Text>
 
-            <Text style={styles.text}>
+            <Text style={globalStyles.titleText}>
               {' '}
               {'Pulse Strength: \n' + pulseStrength}{' '}
             </Text>
@@ -257,14 +257,14 @@ export default function SeekScreen() {
 
 
             </View> */}
-            <Text style={styles.text}>
+            <Text style={globalStyles.titleText}>
               {' '}
               {'Distance: \n' + distanceToNearestItem.toFixed(2) + ' Meters'}{' '}
             </Text>
           </View>
         )
       ) : (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={styles.container}>
           <Text style={styles.text}>Finding Nearest Item...</Text>
         </View>
       )
@@ -286,6 +286,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     padding: 20,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: global.cream
   },
   ring: {
     position: 'absolute',

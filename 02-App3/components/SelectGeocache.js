@@ -7,7 +7,8 @@ import {
   Modal,
   TouchableOpacity,
   ActivityIndicator,
-  ScrollView
+  ScrollView,
+  Pressable
 } from 'react-native';
 import {RadioButton} from 'react-native-paper';
 import {
@@ -21,6 +22,7 @@ import {
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
 
 const globalStyles = require('../styles');
+import "../global"
 
 export default function SelectGeocache() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -88,8 +90,9 @@ export default function SelectGeocache() {
   return (
     <View style={styles.container}>
       <>
-        <Button
-          // buttonStyle={{position: "absolute", bottom: 95}}
+        <Pressable
+          
+          style={globalStyles.button}
           // buttonStyle={styles.button}
           onPress={() => {
             setModalVisible(true);
@@ -97,8 +100,16 @@ export default function SelectGeocache() {
           // disabled={activeGeocacheNames.length != activeGeocacheIds.length}
           // disabled={activeGeocacheNames.includes(undefined)}
           disabled={isLoadingContractData}
-          title="Select Cache"
-        />
+          // disabled={true}
+          // activeOpacity={isLoadingContractData ? 1 : 0.1}
+          // title="Select Cache"
+        >      
+          {isLoadingContractData ? (
+            <ActivityIndicator color={"white"}></ActivityIndicator>
+          ) : (
+            <Text style={globalStyles.buttonText}>{"SELECT CACHE"}</Text>
+          )}
+        </Pressable>
 
         <Modal
           animationType="slide"
@@ -108,7 +119,7 @@ export default function SelectGeocache() {
             // alert('Modal has been closed.');
             setModalVisible(false);
           }}>
-          <ScrollView style={{marginTop: 22}}>
+          <ScrollView style={styles.scrollContainer}>
             <View>
               <Text style={globalStyles.titleText}>SelectGeocache</Text>
               {connector.connected ? (
@@ -130,7 +141,9 @@ export default function SelectGeocache() {
                       <RadioButton.Item
                         // style={styles.buttonContainer}
                         // key={ird}
+                        labelStyle={{color: global.secondaryColor}}
                         label={id + ' - "' + activeGeocacheNames[id] + '"'}
+                        color={global.primaryColor}
                         onPress={() => getData(id)}
                         // status={ id == cacheMetadata?.geocacheId ?  'checked' : 'unchecked'}
                         status={ id == cacheMetadata?.geocacheId ?  'checked' : 'unchecked'}
@@ -155,6 +168,7 @@ export default function SelectGeocache() {
                 onPress={() => {
                   setModalVisible(!modalVisible);
                 }}
+                color={global.primaryColor}
                 title="Close"
               />
             </View>
@@ -167,13 +181,11 @@ export default function SelectGeocache() {
 
 const styles = StyleSheet.create({
   container: {
-    // position: "abosulte",
-    // top: 100,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 3,
-    marginBottom: 25,
+    marginBottom: 20,
+  },
+  scrollContainer: {
+    // marginBottom: 20,
+    backgroundColor: global.cream
   },
   radioButton: {
     // flex: 1
@@ -187,7 +199,7 @@ const styles = StyleSheet.create({
     width: "100%"
   },
   button: {
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    backgroundColor: global.primaryColor,
     borderRadius: 20,
     padding: 10,
     marginLeft: 10,

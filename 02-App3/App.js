@@ -30,7 +30,7 @@ import '@ethersproject/shims';
 // Import the ethers library
 import {ethers} from 'ethers';
 import {CACHEIT_PRIVATE_KEY} from '@env';
-
+import "./global"
 // The following disables the warning messages for the 'Require cycle' issue
 
 // TODO: Fix this issue
@@ -57,16 +57,20 @@ function HomeTab() {
       screenOptions={{
         lazy: true,
         unmountOnBlur: true,
+        tabBarActiveTintColor: global.secondaryColor,
+        headerTintColor: global.secondaryColor,
+        tabBarStyle: { backgroundColor: global.cream },
+        headerStyle: { backgroundColor: global.cream, fontWeight: "bold", fontColor: global.primaryColor},
       }}>
       {/* <Tab.Navigator tabBarPosition='bottom'> */}
       <Tab.Screen
-        name="CacheMap"
+        name="Cache Map"
         component={CacheMap}
         options={{
           headerRight: () => <ConnectWalletButton />,
         }}
       />
-      <Tab.Screen name="NewCacheForm" component={NewCacheForm} />
+      <Tab.Screen name="New Cache Form" component={NewCacheForm} />
       <Tab.Screen name="Seek" component={SeekScreen} />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>

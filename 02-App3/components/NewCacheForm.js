@@ -4,6 +4,7 @@ import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid, ActivityIndica
 import { CacheMetadataContext, LocationContext, Web3ProviderContext, GeocacheContractContext } from '../App';
 import randomLocation from 'random-location';
 const globalStyles = require("../styles")
+import "../global"
 // import { URL, URLSearchParams } from 'react-native-url-polyfill';
 import Geolocation from 'react-native-geolocation-service';
 
@@ -18,6 +19,7 @@ import { useWalletConnect } from '@walletconnect/react-native-dapp';
 //OPENAI
 // const { Configuration, OpenAIApi } = require("openai");
 import {OPENAI_SECRET_KEY} from '@env';
+import { white } from 'react-native-paper/lib/typescript/styles/colors';
 // 
 // const configuration = new Configuration({
 //   apiKey: OPENAI_SECRET_KEY,
@@ -37,9 +39,9 @@ export default function NewCacheForm() {
     const [transactionHash, setTransactionHash] = useState()
     // const [hasThrownError, setHasThrownError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(false)
-    const [name, onChangeName] = useState("Default Name");
-    const [radius, onChangeRadius] = useState(1);
-    const [numItems, onChangeNumItems] = useState(5);
+    const [name, onChangeName] = useState();
+    const [radius, onChangeRadius] = useState();
+    const [numItems, onChangeNumItems] = useState();
     let fixedRadius = 0;
 
     useEffect(() => {
@@ -127,15 +129,15 @@ export default function NewCacheForm() {
     //   }, 2000)
     // }
     const validateFormData = () => {
-      if(name = "") {
+      if(name == "" || !name) {
         setErrorMessage("Please set a name for this geocache")
         return false
       }
-      if(radius > 2000) {
+      if(radius > 2000 || !radius) {
         setErrorMessage("Please set radius <= 2000")
         return false
       }
-      if(numItems >= 10) {
+      if(numItems >= 10 || !numItems) {
         setErrorMessage("Please set number of items <= 10")
         return false
       }
@@ -161,14 +163,14 @@ export default function NewCacheForm() {
         const originStory = await generateGeocacheOriginStory()
         const createGeocacheTxn = await geocacheContractWithSigner
           .newGeocache(
-            numItems,
+            Math.abs(Math.round(numItems)),
             'https://gateway.pinata.cloud/ipfs/QmXgkKXsTyW9QJCHWsgrt2BW7p5csfFE21eWtmbd5Gzbjr/',
             date.toString(),
             itemLocations,
             //TODO this context needs to be updated
             currentPosition.latitude.toString(),
             currentPosition.longitude.toString(),
-            radius,
+            Math.abs(Math.round(radius)),
             name,
             //Wait to deploy new contracts to include randomly generated originStory
             "ppo",
@@ -226,8 +228,8 @@ export default function NewCacheForm() {
 
 
     return (
-      <SafeAreaView >
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
+      <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
           <Text  style={globalStyles.text}>{"Choose a name for this geocache"}</Text>
           <TextInput
@@ -261,9 +263,10 @@ export default function NewCacheForm() {
         </View>
         <Button
           // onPress={() => {generateGeocacheOriginStory()}}
+          color={global.primaryColor}
           onPress={() => {createGeocacheSubmitHandler()}}
           title="Submit"
-          color="#841584"
+          // color="#841584"
           disabled={!connector.connected}
           accessibilityLabel="Learn more about this purple button"
         />
@@ -304,7 +307,7 @@ export default function NewCacheForm() {
     input: {
       height: 40,
       marginTop: 12,
-      borderWidth: 1,
+      borderBottomWidth: 1,
       padding: 10,
       width: "100%"
     },
@@ -315,20 +318,37 @@ export default function NewCacheForm() {
       margin: 10,
       padding: 5
     },
-    container: {
+    formContainer: {
       // height: "100%",
       display: "flex",
-      justifyContent: "center",
+      justifyContent: "flex-start",
+      backgroundColor: "white",
       // padding: 15,
       borderRadius: 14,
       margin: 15,
-      borderColor: "black",
+      zIndex: 3,
+      borderColor: global.primaryColor,
       borderWidth: 3
+      // alignSelf: "center",
+      // backgroundColor: "orange"
+    },
+    container: {
+      height: "100%",
+      display: "flex",
+      justifyContent: "flex-start",
+      backgroundColor: global.cream
+      // padding: 15,
+      // borderRadius: 14,
+      // margin: 15,
+      // zIndex: 3,
+      // borderColor: global.primaryColor,
+      // borderWidth: 3
       // alignSelf: "center",
       // backgroundColor: "orange"
     },
     text: {
       textAlign: "center",
-      fontSize: 24
+      fontSize: 24,
+      
     }
   });
