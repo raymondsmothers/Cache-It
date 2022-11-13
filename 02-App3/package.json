@@ -34,6 +34,8 @@
     "events": "^1.1.1",
     "expo-location": "^14.3.0",
     "https-browserify": "^0.0.1",
+    "ipfs-http-client": "^59.0.0",
+    "ipfs-mini": "^1.1.5",
     "node-libs-react-native": "^1.2.1",
     "openai": "^3.1.0",
     "path-browserify": "^0.0.0",

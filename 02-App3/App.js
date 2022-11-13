@@ -29,7 +29,7 @@ import GeocacheJSON from './contract_info/goerliAbis/Geocache.json';
 import '@ethersproject/shims';
 // Import the ethers library
 import {ethers} from 'ethers';
-import {CACHEIT_PRIVATE_KEY} from '@env';
+import {CACHEIT_PRIVATE_KEY, GOERLI_INFURA_KEY} from '@env';
 import "./global"
 // The following disables the warning messages for the 'Require cycle' issue
 // Use prebuilt version of RNVI in dist folder
@@ -63,7 +63,12 @@ function HomeTab() {
         headerTintColor: global.secondaryColor,
         tabBarStyle: { backgroundColor: global.cream },
         headerStyle: { backgroundColor: global.cream},
-      }}>
+      }}
+      // tabBarOptions={{
+      //   activeTintColor: 'tomato',
+      //   inactiveTintColor: 'gray',
+      // }}
+      >
       {/* <Tab.Navigator tabBarPosition='bottom'> */}
       <Tab.Screen
         name="Cache Map"
@@ -111,7 +116,7 @@ function App() {
   //  Create WalletConnect Provider for gettingSigner for state changing transactions
   const connector = useWalletConnect();
   const walletConnectProvider = new WalletConnectProvider({
-    infuraId: '1b9467bd46a7430faf4e825d24c63122', // Required //idk why process.env isn't working
+    infuraId: process.env.GOERLI_INFURA_KEY, // Required //idk why process.env isn't working
     connector: connector,
     qrcode: false,
     chainId: 5,

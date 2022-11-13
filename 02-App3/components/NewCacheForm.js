@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect} from 'react';
 import { RecyclerViewBackedScrollViewComponent, Text, View, Button } from 'react-native';
-import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid, ActivityIndicator, Alert, ScrollView  } from "react-native";
+import { SafeAreaView, StyleSheet, TextInput, PermissionsAndroid, ActivityIndicator, Alert, ScrollView, Image  } from "react-native";
 import { CacheMetadataContext, LocationContext, Web3ProviderContext, GeocacheContractContext } from '../App';
 import randomLocation from 'random-location';
 const globalStyles = require("../styles")
@@ -19,15 +19,26 @@ import { useWalletConnect } from '@walletconnect/react-native-dapp';
 //OPENAI
 // const { Configuration, OpenAIApi } = require("openai");
 import {OPENAI_SECRET_KEY} from '@env';
-import { white } from 'react-native-paper/lib/typescript/styles/colors';
+// import { white } from 'react-native-paper/lib/typescript/styles/colors';
 // 
 // const configuration = new Configuration({
 //   apiKey: OPENAI_SECRET_KEY,
 // });
+// import { create } from 'ipfs-http-client'
+// const ipfsClient = require('ipfs-http-client');
+
+import {GOERLI_INFURA_KEY} from '@env';
+
+// connect to the default API address http://localhost:5001
+const IPFS = require('ipfs-mini');
+
 
 
 
 export default function NewCacheForm() {
+    // const client = create()
+    // ipfs.add('hello world!').then(console.log).catch(console.log);
+ 
     const {currentPosition, setCurrentPosition} = useContext(LocationContext)
     const providers = useContext(Web3ProviderContext)
     const GeocacheContract = useContext(GeocacheContractContext)
@@ -37,6 +48,7 @@ export default function NewCacheForm() {
     const [isDeployingGeocache, setIsDeployingGeocache] = useState(false)
     const [hasDeployedGeocache, setHasDeployedGeocache] = useState(false)
     const [transactionHash, setTransactionHash] = useState()
+    const [imgUrl, setImgUrl] = useState()
     // const [hasThrownError, setHasThrownError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(false)
     const [name, onChangeName] = useState();
@@ -44,9 +56,23 @@ export default function NewCacheForm() {
     const [numItems, onChangeNumItems] = useState();
     let fixedRadius = 0;
 
+    // const auth = 'Basic ' + process.env.GOERLI_INFURA_KEY;
+    // const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https', headers: {
+    //   authorization: auth,
+    // }});
+    // const client = ipfsClient.create({
+    //     host: 'ipfs.infura.io',
+    //     port: 5001,
+    //     protocol: 'https',
+    //     headers: {
+    //         authorization: auth,
+    //     },
+    // });
+
     useEffect(() => {
       GeocacheContract.on("GeocacheCreated", geocacheCreatedCallback)
-
+      // ipfs.add('hello world!').then(console.log).catch(console.log);
+ 
     })
 
     // TODO, send them to their new geocahce after this is completed
@@ -95,7 +121,7 @@ export default function NewCacheForm() {
               "model": "text-davinci-002",
               "prompt": "Write a mysterious, interesting origin story for a geocache item.",
               "temperature": 0.7,
-              "max_tokens": 2263,
+              "max_tokens": 1500,
               "top_p": 1,
               "frequency_penalty": 0,
               "presence_penalty": 0
@@ -104,12 +130,15 @@ export default function NewCacheForm() {
             
             return response.json()
            
-        }).then(data=>{
+        }).then(async (data) => {
             // console.log(data)
             // console.log(typeof data)
             // console.log(Object.keys(data))
             console.log(data['choices'][0].text)
-            return data['choices'][0].text
+            const originStory = data['choices'][0].text
+            await generateGeocacheImage(originStory)
+            return(originStory)
+
             // console.log(JSON.stringify(data, null, 2))
             
         })
@@ -119,16 +148,45 @@ export default function NewCacheForm() {
     
     }
 
+
+    const generateGeocacheImage = async (originStory) => {
+        var prompt = originStory + " Generate an image that represents an item in this cache."
+        var url = "https://api.openai.com/v1/images/generations";
+        var bearer = 'Bearer ' + OPENAI_SECRET_KEY;
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': bearer,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              "prompt": prompt,
+              "n": 1,
+              "size": "1024x1024",
+              "response_format": "b64_json"
+            })    
+        }).then(response => {
+            
+            return response.json()
+           
+        }).then(data=>{
+            // console.log(data)
+            console.log(typeof data)
+            console.log(Object.keys(data))
+            console.log(JSON.stringify(data, null, 2).substring(0, 199))
+            setImgUrl('data:image/png;base64,' + data['data'][0]['b64_json'])
+            // console.log(data['choices'][0].text)
+            // return data['choices'][0].text
+            
+        })
+        .catch(error => {
+            console.log('Something bad happened ' + error)
+        });
     
-    // const createGeocacheSubmitHandler = async () => {
-    //   // setTransactionHash(res.hash)
-    //   setIsDeployingGeocache(true)
-    //   setTimeout(() => {
-    //     console.log("DELAYED")
-    //     // setIsTransactionDelayed(true)
-    //     setIsTransactionDelayed(true && !hasDeployedGeocache)
-    //   }, 2000)
-    // }
+    }
+
+    
+
     const validateFormData = () => {
       if(name == "" || !name) {
         setErrorMessage("Please set a name for this geocache")
@@ -265,7 +323,8 @@ export default function NewCacheForm() {
         <Button
           // onPress={() => {generateGeocacheOriginStory()}}
           color={global.primaryColor}
-          onPress={() => {createGeocacheSubmitHandler()}}
+          onPress={() => {generateGeocacheOriginStory()}}
+          // onPress={() => {createGeocacheSubmitHandler()}}
           title="Submit"
           // color="#841584"
           disabled={!connector.connected}
@@ -297,7 +356,11 @@ export default function NewCacheForm() {
         {errorMessage &&
           <MessageModal title={"Uh-oh!"} body={errorMessage} resetParentState={resetState}></MessageModal>
         }
+
         </ScrollView>
+        {imgUrl && 
+          <Image style={{width: 200, height: 200, borderWidth: 1, borderColor: 'red'}} source={{uri: imgUrl}}/>
+        }
       </SafeAreaView>
     );
   }
