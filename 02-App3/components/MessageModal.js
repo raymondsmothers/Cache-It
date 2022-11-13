@@ -28,10 +28,10 @@ export default function MessageModal({title, transactionHash, isTransactionDelay
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>{title}</Text>
+            <Text style={[styles.modalText, {fontWeight: "bold"}]}>{title}</Text>
             <Text style={styles.modalText}>{body}</Text>
               {isTransactionDelayed && (
-                <Text style={[styles.modalText, {fontWeight:"bold"}]}>{"Uh-oh! This is taking much longer than usual. Please view your transaction on etherscan to verify the status."}</Text>
+                <Text style={[styles.modalText, {color: "red"}]}>{"Uh-oh! This is taking longer than usual. Please view your transaction on Etherscan to verify the status."}</Text>
               )}
               {isProgress && (
                 // <br>
