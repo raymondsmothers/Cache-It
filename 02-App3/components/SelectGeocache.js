@@ -132,6 +132,7 @@ export default function SelectGeocache() {
                 <ActivityIndicator></ActivityIndicator>
               }
               {/* return ( */}
+              {activeGeocacheIds.length > 0 ? (
                     <RadioButton.Group style={styles.radioButtonContainer}>
                    {activeGeocacheIds?.map((id, index) => {
                     return(
@@ -154,9 +155,10 @@ export default function SelectGeocache() {
                       </>
                     )
                    })}
-                   
-                   
                    </RadioButton.Group>
+              ) : (
+                <Text style={globalStyles.centerText}>{"There are no active geocaches yet. Time for you to create one!"}</Text>
+              )}
               </>
               ) : (
                 <>

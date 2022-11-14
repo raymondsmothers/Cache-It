@@ -185,6 +185,7 @@ export default () => {
             isProgress={true}
             isTransactionDelayed={isTransactionDelayed}
             transactionHash={transactionHash}
+            resetParentState={resetState}
             body={'Please wait'}
           />
         )}

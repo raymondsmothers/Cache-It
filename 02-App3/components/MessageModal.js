@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Alert, Linking, Modal, StyleSheet, Text, Pressable, View, ActivityIndicator} from "react-native";
 const globalStyles = require("../global")
 
-export default function MessageModal({title, transactionHash, isTransactionDelayed, openSeaURL, isProgress=false, body, resetParentState}) {
+export default function MessageModal({title, transactionHash, isTransactionDelayed, openSeaURL, isProgress=false, body, resetParentState=() => {return}}) {
   const [modalVisible, setModalVisible] = useState(true);
 
 

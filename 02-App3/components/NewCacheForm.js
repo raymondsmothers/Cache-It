@@ -490,7 +490,7 @@ export default function NewCacheForm() {
               title={'Generating Image'}
               isProgress={true}
               resetParentState={resetState}
-              body={'Please wait '}></MessageModal>
+              body={'Please wait.'}></MessageModal>
           </View>
         )}
         {isGeneratingStory && (
@@ -500,7 +500,7 @@ export default function NewCacheForm() {
               isProgress={true}
               resetParentState={resetState}
               body={
-                'Please wait for this transaction to complete.'
+                'Please wait.'
               }></MessageModal>
           </View>
         )}
@@ -521,6 +521,7 @@ export default function NewCacheForm() {
         {hasDeployedGeocache && (
           <View style={globalStyles.textContainer}>
             <MessageModal
+              resetParentState={resetState}
               title={'Success!'}
               body={'Finished deploying.'}></MessageModal>
           </View>

@@ -64,6 +64,7 @@ function HomeTab() {
         headerTintColor: global.secondaryColor,
         tabBarStyle: {backgroundColor: global.cream},
         headerStyle: {backgroundColor: global.cream},
+
       }}
       // tabBarOptions={{
       //   activeTintColor: 'tomato',
@@ -96,8 +97,8 @@ function HomeTab() {
         }}
       />
       <Tab.Screen
-        name="Settings"
-        component={SettingsScreen}
+        name="Info"
+        component={IntroductionPage}
         options={{
           headerRight: () => <ConnectWalletButton />,
           tabBarIcon: color => <Icon name="info" size={20} color={color} />,
@@ -213,7 +214,7 @@ function App() {
   useEffect(() => {
     // conso  le.log("useEffect")
     //This event is firing many times
-    GeocacheContract.once('GeocacheCreated', getAllGeocacheData);
+    GeocacheContract.on('GeocacheCreated', getAllGeocacheData);
 
     getAllGeocacheData();
     // getAllGeocacheData().then(() => {
