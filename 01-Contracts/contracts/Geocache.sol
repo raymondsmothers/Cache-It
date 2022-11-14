@@ -43,13 +43,6 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         uint256 itemIndex
     );
 
-    //Should we make a mapping of creators to owned geocaches
-    // ^ Also no because we could just use the Alchemy or OpenSea API which makes that easy
-    // ^ Just did this for another project (retrieving all NFTs in a collection for a user) and it's super easy and faster than on-chain
-
-    //should we make a list of active instances?
-    // ^ Prob not because we already have the isActive property, would take up more gas
-
     // manifold creator contract address
     address public immutable creatorContract;
 
@@ -67,6 +60,14 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
 
     // mapping to keep track of one mint per tokenId per address
     mapping(uint256 => mapping(address => bool)) public hasMintedTokenId;
+
+    // Should we make a mapping of creators to owned geocaches
+    // Since metadata is glitchy, yes
+    // We can remove this once metadata is working well
+    mapping(address => uint256[]) public userToGeocache;
+
+    //should we make a list of active instances?
+    // ^ Prob not because we already have the isActive property, would take up more gas
 
     constructor(address _creatorContract) {
         creatorContract = _creatorContract;
@@ -120,6 +121,7 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
             _radius,
             _originStory
         );
+        userToGeocache[msg.sender].push(numGeocaches);
 
         numGeocaches++;
         numActiveGeocaches++;
@@ -175,6 +177,9 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         }
 
         _mint(_geocacheId, _user);
+
+        userToGeocache[_user].push(_geocacheId);
+
         emit GeocacheItemMinted(
             _user,
             _geocacheId,
@@ -264,6 +269,18 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         returns (string[] memory)
     {
         return tokenIdToGeocache[geocacheIndex].itemGeolocations;
+    }
+
+    /**
+     * @dev returning the geocache IDs of the geocaches where user has found an item
+     * @param _user the user to get geocache IDs for
+     */
+    function getUsersGeocaches(address _user)
+        external
+        view
+        returns (uint256[] memory)
+    {
+        return userToGeocache[_user];
     }
 
     // Keeping this here just in case we need to do on chain metadata

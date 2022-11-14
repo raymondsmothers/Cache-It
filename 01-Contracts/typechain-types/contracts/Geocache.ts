@@ -35,6 +35,7 @@ export interface GeocacheInterface extends utils.Interface {
     "getAdmins()": FunctionFragment;
     "getAllActiveGeocacheIDs()": FunctionFragment;
     "getGeolocationsOfGeocache(uint256)": FunctionFragment;
+    "getUsersGeocaches(address)": FunctionFragment;
     "hasMintedTokenId(uint256,address)": FunctionFragment;
     "isAdmin(address)": FunctionFragment;
     "mintItemInGeocache(uint256,address)": FunctionFragment;
@@ -49,6 +50,7 @@ export interface GeocacheInterface extends utils.Interface {
     "tokenURI(address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "updateGeocacheTokenURI(uint256,string)": FunctionFragment;
+    "userToGeocache(address,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -59,6 +61,7 @@ export interface GeocacheInterface extends utils.Interface {
       | "getAdmins"
       | "getAllActiveGeocacheIDs"
       | "getGeolocationsOfGeocache"
+      | "getUsersGeocaches"
       | "hasMintedTokenId"
       | "isAdmin"
       | "mintItemInGeocache"
@@ -73,6 +76,7 @@ export interface GeocacheInterface extends utils.Interface {
       | "tokenURI"
       | "transferOwnership"
       | "updateGeocacheTokenURI"
+      | "userToGeocache"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -95,6 +99,10 @@ export interface GeocacheInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getGeolocationsOfGeocache",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUsersGeocaches",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "hasMintedTokenId",
@@ -159,6 +167,10 @@ export interface GeocacheInterface extends utils.Interface {
     functionFragment: "updateGeocacheTokenURI",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "userToGeocache",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "approveAdmin",
@@ -179,6 +191,10 @@ export interface GeocacheInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getGeolocationsOfGeocache",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUsersGeocaches",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -226,6 +242,10 @@ export interface GeocacheInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "updateGeocacheTokenURI",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "userToGeocache",
     data: BytesLike
   ): Result;
 
@@ -353,6 +373,11 @@ export interface Geocache extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string[]]>;
 
+    getUsersGeocaches(
+      _user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     hasMintedTokenId(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<string>,
@@ -448,6 +473,12 @@ export interface Geocache extends BaseContract {
       _newTokenURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    userToGeocache(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
   };
 
   approveAdmin(
@@ -470,6 +501,11 @@ export interface Geocache extends BaseContract {
     geocacheIndex: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string[]>;
+
+  getUsersGeocaches(
+    _user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
 
   hasMintedTokenId(
     arg0: PromiseOrValue<BigNumberish>,
@@ -567,6 +603,12 @@ export interface Geocache extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  userToGeocache(
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   callStatic: {
     approveAdmin(
       admin: PromiseOrValue<string>,
@@ -588,6 +630,11 @@ export interface Geocache extends BaseContract {
       geocacheIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string[]>;
+
+    getUsersGeocaches(
+      _user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     hasMintedTokenId(
       arg0: PromiseOrValue<BigNumberish>,
@@ -682,6 +729,12 @@ export interface Geocache extends BaseContract {
       _newTokenURI: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    userToGeocache(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   filters: {
@@ -757,6 +810,11 @@ export interface Geocache extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getUsersGeocaches(
+      _user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     hasMintedTokenId(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<string>,
@@ -828,6 +886,12 @@ export interface Geocache extends BaseContract {
       _newTokenURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    userToGeocache(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -851,6 +915,11 @@ export interface Geocache extends BaseContract {
 
     getGeolocationsOfGeocache(
       geocacheIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUsersGeocaches(
+      _user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -926,6 +995,12 @@ export interface Geocache extends BaseContract {
       _tokenId: PromiseOrValue<BigNumberish>,
       _newTokenURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    userToGeocache(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

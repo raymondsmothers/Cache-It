@@ -147,5 +147,12 @@ describe('Geocache Project', async () => {
       const genURI = await GeocacheInstance.tokenURI(Geocache1155Instance.address, 0);
       console.log(genURI);
     });
+
+    it("Correctly gets a user's geocaches", async () => {
+      let txn = await GeocacheInstance.connect(owner).getUsersGeocaches(addr2.address);
+      const txnFormatted = txn.map((txn) => Number(txn));
+      expect(txnFormatted[0]).to.equal(2);
+      expect(txnFormatted.length).to.equal(1);
+    });
   });
 });
