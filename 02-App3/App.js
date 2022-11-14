@@ -103,7 +103,16 @@ function HomeTab() {
           tabBarIcon: color => <Icon name="info" size={20} color={color} />,
         }}
       />
-      <Tab.Screen name="Collection" component={Collection} />
+      <Tab.Screen
+        name="Collection"
+        component={Collection}
+        options={{
+          headerRight: () => <ConnectWalletButton />,
+          tabBarIcon: color => (
+            <Icon name="shopping-basket" size={20} color={color} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }
