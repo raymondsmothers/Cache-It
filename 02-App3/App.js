@@ -83,17 +83,7 @@ function HomeTab() {
           },
         }}
       />
-      <Tab.Screen
-        name="New Cache Form"
-        component={NewCacheForm}
-        options={{
-          headerRight: () => <ConnectWalletButton />,
-          tabBarIcon: color => <Icon name="plus" size={20} color={color} />,
-          tabBarLabel: () => {
-            return null;
-          },
-        }}
-      />
+
       <Tab.Screen
         name="Seek"
         component={SeekScreen}
@@ -106,16 +96,17 @@ function HomeTab() {
         }}
       />
       <Tab.Screen
-        name="Info"
-        component={IntroductionPage}
+        name="New Cache Form"
+        component={NewCacheForm}
         options={{
           headerRight: () => <ConnectWalletButton />,
-          tabBarIcon: color => <Icon name="info" size={20} color={color} />,
+          tabBarIcon: color => <Icon name="plus" size={20} color={color} />,
           tabBarLabel: () => {
             return null;
           },
         }}
       />
+
       <Tab.Screen
         name="Collection"
         component={Collection}
@@ -124,6 +115,17 @@ function HomeTab() {
           tabBarIcon: color => (
             <Icon name="shopping-basket" size={20} color={color} />
           ),
+          tabBarLabel: () => {
+            return null;
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Info"
+        component={IntroductionPage}
+        options={{
+          headerRight: () => <ConnectWalletButton />,
+          tabBarIcon: color => <Icon name="info" size={20} color={color} />,
           tabBarLabel: () => {
             return null;
           },
