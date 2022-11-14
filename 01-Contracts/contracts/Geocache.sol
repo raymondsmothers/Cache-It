@@ -36,7 +36,7 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         string originStory;
     }
 
-    event GeocacheCreated(address creator, string name, uint256 numItems);
+    event GeocacheCreated(address creator, string name, uint256 id);
     event GeocacheItemMinted(
         address receiver,
         uint256 geocacheIndex,
@@ -143,8 +143,7 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
             amounts,
             uris
         );
-
-        emit GeocacheCreated(msg.sender, _name, _numItems);
+        emit GeocacheCreated(msg.sender, _name, numGeocaches - 1);
     }
 
     /**

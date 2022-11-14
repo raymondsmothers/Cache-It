@@ -12,6 +12,11 @@ global.longitudeDelta = 0.01;
 //   LeagueOfLegendsLogicJSON.abi,
 //   provider
 // );
+global.primaryColor = "#0F737A";
+global.primarySquareColor = "#5B1B7A";
+global.secondaryColor = "#C75100";
+global.cream = "#FFF5EB"
+
 
 global.shortenAddress = (address) => {
     // console.log("address to shorten: " + address);

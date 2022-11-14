@@ -16,7 +16,8 @@ export default function ConnectWalletButton() {
      */
 
     return (
-      <Button title="Connect Wallet" onPress={() => connector.connect()} />
+      <Button         color={global.primaryColor}
+      title="Connect Wallet" onPress={() => connector.connect()} />
     );
   }
   else {
@@ -24,6 +25,7 @@ export default function ConnectWalletButton() {
     return (
       <Button
         // title="Disconnect Wallet"
+        color={global.primaryColor}
         title={"Disconnect " + global.shortenAddress(connector.accounts[0])}
         onPress={() => connector.killSession()}
       />

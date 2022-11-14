@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {Circle, Marker} from 'react-native-maps';
 import {useNavigation} from '@react-navigation/native';
 import {CacheMetadataContext} from '../App';
-
+import "../global"
 export default function NewCacheOverlay(props) {
   const defaultCircleColor = '#0000ff40';
   const navigation = useNavigation();
@@ -23,11 +23,13 @@ export default function NewCacheOverlay(props) {
             latitude: cacheMetadata?.epicenterLat,
             longitude: cacheMetadata?.epicenterLong,
           }}
-          fillColor={defaultCircleColor}
+          // fillColor={defaultCircleColor}
+          fillColor={global.primaryColor + "40"}
           radius={cacheMetadata?.radius}
         />
         {cacheMetadata?.geolocations.map((marker, index) => (
           <Marker
+            pinColor={'tomato'}
             title={cacheMetadata?.name}
             key={index}
             coordinate={marker}

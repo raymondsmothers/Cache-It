@@ -23,9 +23,23 @@
        }),
      },
      resolver: {
-      extraNodeModules: require('node-libs-react-native'),
-       assetExts: [...assetExts, "obj", "mtl", "JPG", "vrx", "hdr", "gltf", "glb", "bin", "arobject", "gif"]
+      sourceExts: ['jsx', 'js', 'ts', 'tsx', 'cjs', 'json'],//add here
+      // extraNodeModules: require('node-libs-react-native'),
+      assetExts: [...assetExts, "obj", "mtl", "JPG", "vrx", "hdr", "gltf", "glb", "bin", "arobject", "gif"]
      }
    }
  })();
  
+// module.exports = {
+//   transformer: {
+//     getTransformOptions: async () => ({
+//       transform: {
+//         experimentalImportSupport: false,
+//         inlineRequires: false,
+//       },
+//     }),
+//   },
+//   resolver: {
+//     sourceExts: ['jsx', 'js', 'ts', 'tsx', 'cjs', 'json'] //add here
+//   },
+// };
