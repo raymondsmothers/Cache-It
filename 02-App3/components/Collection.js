@@ -11,56 +11,83 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Grid from 'react-native-grid-component';
+import {Web3ProviderContext, GeocacheContractContext} from '../App';
 
 import '@ethersproject/shims';
 // // Import the ethers library
 import {ethers} from 'ethers';
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
-// //OPENAI
-// // const { Configuration, OpenAIApi } = require("openai");
-// import {OPENAI_SECRET_KEY, PINATA_KEY, PINATA_SECRET, PINATA_JWT} from '@env';
-// import axios from 'axios';
 
 export default function Collection() {
-  const [data, setData] = useState(null);
+  const [geocacheData, setGeocacheData] = useState(null);
   const connector = useWalletConnect();
+  const GeocacheContract = useContext(GeocacheContractContext);
+  const providers = useContext(Web3ProviderContext);
 
-  // Fetching our real geocache data
   // Getting the IDs by the user
   // Then getting the geocaches from that, and setting the state
-  useEffect(() => {}, []);
+  useEffect(() => {
+    async function getUsersItems() {
+      if (connector.connected) {
+        console.log('Fetching items!');
+        // User must have wallet connected for this screen (otherwise msg will appear)
+        // Connecting contract to wallet connect signer
+        await providers.walletConnect.enable();
+        const ethers_provider = new ethers.providers.Web3Provider(
+          providers.walletConnect,
+        );
+        const signer = await ethers_provider.getSigner();
+        const GeocacheContractWithSigner = GeocacheContract.connect(signer);
 
-  // Delete later
-  const dummyData = [
-    {
-      name: 'Test Geocache',
-      image:
-        'https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png',
+        let geocaches = [];
+        try {
+          const itemIDs = await GeocacheContractWithSigner.getUsersGeocaches(
+            connector.accounts[0],
+          );
+          const mappedIDs = itemIDs.map(id => Number(id));
 
-      location_found: '12783.3, 3920.201',
-    },
-    {
-      name: 'Test Geocache 2',
-      image:
-        'https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png',
+          for (let i = 0; i < mappedIDs.length; i++) {
+            let currCache = await GeocacheContractWithSigner.tokenIdToGeocache(
+              itemIDs[i],
+            );
+            console.log(currCache);
+            const cacheObj = {
+              name: String(currCache[7]),
+              location_found: String(currCache[5] + ', ' + currCache[6]),
+              image:
+                'https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png',
+            };
+            geocaches.push(cacheObj);
+          }
+          console.log('Geocaches is ');
+          console.log(geocaches);
+          setGeocacheData(geocaches);
+        } catch (error) {
+          console.log('Error getting IDs', error.message);
+        }
+      }
+    }
 
-      location_found: '127833.3, -392220.201',
-    },
-    {
-      name: 'Test Geocache 3',
-      image:
-        'https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png',
+    getUsersItems();
+  }, [connector.connected]);
 
-      location_found: '127833.3, -392220.201',
-    },
-    {
-      name: 'Test Geocache 4',
-      image:
-        'https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png',
+  // TODO: Delete hardcoded data later
+  // const dummyData = [
+  //   {
+  //     name: 'Test Geocache',
+  //     image:
+  //       'https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png',
 
-      location_found: '127833.3, -392220.201',
-    },
-  ];
+  //     location_found: '12783.3, 3920.201',
+  //   },
+  //   {
+  //     name: 'Test Geocache 2',
+  //     image:
+  //       'https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png',
+
+  //     location_found: '127833.3, -392220.201',
+  //   },
+  // ];
 
   const renderItem = (data, i) => (
     <TouchableOpacity style={{width: '50%', alignItems: 'center'}}>
@@ -85,16 +112,32 @@ export default function Collection() {
           <Text style={styles.text}>
             {'\n'}View Your Collected Geocache Items
           </Text>
-          {data && (
+          {geocacheData && geocacheData.length > 0 && (
             <Grid
               style={styles.list}
               renderItem={renderItem}
-              data={dummyData}
-              numColumns={2}
+              data={geocacheData}
+              numColumns={3}
             />
           )}
+          {geocacheData && geocacheData.length === 0 && (
+            <Text
+              style={
+                (styles.text,
+                {
+                  marginTop: '50%',
+                  marginBottom: '40%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                  textAlign: 'center',
+                  fontSize: 24,
+                })
+              }>
+              No geocache items found yet... Time to collect!
+            </Text>
+          )}
           {/* TODO ADD ACTUAL LOADING ICON*/}
-          {!data && <Text style={styles.text}>Loading...</Text>}
+          {!geocacheData && <Text style={styles.text}>Loading...</Text>}
         </View>
       </ScrollView>
     </SafeAreaView>
