@@ -78,6 +78,9 @@ function HomeTab() {
         options={{
           headerRight: () => <ConnectWalletButton />,
           tabBarIcon: color => <Icon name="map" size={20} color={color} />,
+          tabBarLabel: () => {
+            return null;
+          },
         }}
       />
       <Tab.Screen
@@ -86,6 +89,9 @@ function HomeTab() {
         options={{
           headerRight: () => <ConnectWalletButton />,
           tabBarIcon: color => <Icon name="plus" size={20} color={color} />,
+          tabBarLabel: () => {
+            return null;
+          },
         }}
       />
       <Tab.Screen
@@ -94,6 +100,9 @@ function HomeTab() {
         options={{
           headerRight: () => <ConnectWalletButton />,
           tabBarIcon: color => <Icon name="eye" size={20} color={color} />,
+          tabBarLabel: () => {
+            return null;
+          },
         }}
       />
       <Tab.Screen
@@ -102,6 +111,9 @@ function HomeTab() {
         options={{
           headerRight: () => <ConnectWalletButton />,
           tabBarIcon: color => <Icon name="info" size={20} color={color} />,
+          tabBarLabel: () => {
+            return null;
+          },
         }}
       />
       <Tab.Screen
@@ -112,6 +124,9 @@ function HomeTab() {
           tabBarIcon: color => (
             <Icon name="shopping-basket" size={20} color={color} />
           ),
+          tabBarLabel: () => {
+            return null;
+          },
         }}
       />
     </Tab.Navigator>
