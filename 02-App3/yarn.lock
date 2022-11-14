@@ -10106,12 +10106,6 @@
     "object-assign" "^4.1.1"
     "react-is" "^16.13.1"
 
-<<<<<<< HEAD
-"proxy-from-env@^1.1.0":
-  "integrity" "sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg=="
-  "resolved" "https://registry.npmjs.org/proxy-from-env/-/proxy-from-env-1.1.0.tgz"
-  "version" "1.1.0"
-=======
 "protobufjs@^7.0.0":
   "integrity" "sha512-4ZPTPkXCdel3+L81yw3dG6+Kq3umdWKh7Dc7GW/CpNk4SX3hK58iPCWeCyhVTDrbkNeKrYNZ7EojM5WDaEWTLQ=="
   "resolved" "https://registry.npmjs.org/protobufjs/-/protobufjs-7.1.2.tgz"
@@ -10129,7 +10123,11 @@
     "@protobufjs/utf8" "^1.1.0"
     "@types/node" ">=13.7.0"
     "long" "^5.0.0"
->>>>>>> main
+
+"proxy-from-env@^1.1.0":
+  "integrity" "sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg=="
+  "resolved" "https://registry.npmjs.org/proxy-from-env/-/proxy-from-env-1.1.0.tgz"
+  "version" "1.1.0"
 
 "prr@~0.0.0":
   "integrity" "sha512-LmUECmrW7RVj6mDWKjTXfKug7TFGdiz9P18HMcO4RHL+RW7MCOGNvpj5j47Rnp6ne6r4fZ2VzyUWEpKbg+tsjQ=="
@@ -10381,7 +10379,13 @@
   dependencies:
     "dotenv" "^10.0.0"
 
-<<<<<<< HEAD
+"react-native-fetch-api@^2.0.0":
+  "integrity" "sha512-GOA8tc1EVYLnHvma/TU9VTgLOyralO7eATRuCDchQveXW9Fr9vXygyq9iwqmM7YRZ8qRJfEt9xOS7OYMdJvRFw=="
+  "resolved" "https://registry.npmjs.org/react-native-fetch-api/-/react-native-fetch-api-2.0.0.tgz"
+  "version" "2.0.0"
+  dependencies:
+    "p-defer" "^3.0.0"
+
 "react-native-fs@^2.20.0":
   "integrity" "sha512-VkTBzs7fIDUiy/XajOSNk0XazFE9l+QlMAce7lGuebZcag5CnjszB+u4BdqzwaQOdcYb5wsJIsqq4kxInIRpJQ=="
   "resolved" "https://registry.npmjs.org/react-native-fs/-/react-native-fs-2.20.0.tgz"
@@ -10389,14 +10393,6 @@
   dependencies:
     "base-64" "^0.1.0"
     "utf8" "^3.0.0"
-=======
-"react-native-fetch-api@^2.0.0":
-  "integrity" "sha512-GOA8tc1EVYLnHvma/TU9VTgLOyralO7eATRuCDchQveXW9Fr9vXygyq9iwqmM7YRZ8qRJfEt9xOS7OYMdJvRFw=="
-  "resolved" "https://registry.npmjs.org/react-native-fetch-api/-/react-native-fetch-api-2.0.0.tgz"
-  "version" "2.0.0"
-  dependencies:
-    "p-defer" "^3.0.0"
->>>>>>> main
 
 "react-native-geolocation-service@^5.3.1":
   "integrity" "sha512-LTXPtPNmrdhx+yeWG47sAaCgQc3nG1z+HLLHlhK/5YfOgfLcAb9HAkhREPjQKPZOUx8pKZMIpdGFUGfJYtimXQ=="
