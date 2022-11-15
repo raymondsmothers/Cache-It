@@ -122,6 +122,7 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
             _originStory
         );
         userToGeocache[msg.sender].push(numGeocaches);
+        hasMintedTokenId[numGeocaches][msg.sender] = true;
 
         numGeocaches++;
         numActiveGeocaches++;
@@ -143,6 +144,7 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
             amounts,
             uris
         );
+
         emit GeocacheCreated(msg.sender, _name, numGeocaches - 1);
     }
 
