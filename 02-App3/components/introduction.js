@@ -13,7 +13,7 @@ function HowToPlay() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>
-        {"Welcome to Cache-it, the newest geocaching experience that let's you collect metaverse items straight from your phone!"}
+        {"Welcome to Cache-it, the newest geocaching experience that let's you collect metaverse items you find in the real world!"}
       </Text>
       <Text style={styles.text}>
         This app enables users to instantly create new Geocaches, attempt to search local Geocahces others have created, and claim items that you find in the Geocache. 
@@ -28,7 +28,7 @@ function HowToPlay() {
 }
 function HowToConnect() {
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor: global.cream}}>
     <View style={styles.container}>
       <Text style={styles.text}>
         {"First thing first, you will have to connect a web3 wallet to fully interact with this app. "}
@@ -50,7 +50,7 @@ function HowToConnect() {
 
 function HowToSearch() {
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor: global.cream}}>
     <View style={styles.container}>
       <Text style={styles.text}>
         {"Next, you probably want to search for items in Geocaches around you, right? "}
@@ -79,7 +79,7 @@ function HowToSearch() {
 
 function HowToMint() {
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor: global.cream}}>
     <View style={styles.container}>   
       <Text style={styles.text}>
         {"Once you claim an item, you will begin a series of transaction that will send you a a special NFT that represents that item. "}
@@ -97,7 +97,7 @@ function HowToMint() {
 
 function HowToCreate() {
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor: global.cream}}>
     <View style={styles.container}>   
       <Text style={styles.text}>
         {"Done searching? Time to create your own Geocache! Head over to the \"New Cache Form\" page. "}
@@ -147,6 +147,10 @@ export default function IntroductionPage() {
         fontWeight: "bold",   
         // wordBreak: "break-word"
       },
+      tabBarIndicatorStyle: {
+        backgroundColor: global.primaryColor
+      }
+      // tabBarActiveTintColor: "gre"
     }}
     >
       <introtab.Screen name="How to Play" component={HowToPlay} />

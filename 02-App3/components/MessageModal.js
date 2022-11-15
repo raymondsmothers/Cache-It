@@ -2,9 +2,13 @@ import React, { useState } from "react";
 import { Alert, Linking, Modal, StyleSheet, Text, Pressable, View, ActivityIndicator} from "react-native";
 const globalStyles = require("../global")
 
-export default function MessageModal({title, transactionHash, isTransactionDelayed, openSeaURL, isProgress=false, body, resetParentState=() => {return}}) {
+import {useNavigation} from '@react-navigation/native';
+import {NavigationContainer, StackActions} from '@react-navigation/native';
+export default function MessageModal({title, transactionHash, hasDeployedGeocache=false, isTransactionDelayed, openSeaURL, isProgress=false, body, resetParentState=() => {return}}) {
   const [modalVisible, setModalVisible] = useState(true);
 
+
+  const navigation = useNavigation() 
 
   const handleURLClick = async (url) => {
     Linking.canOpenURL(url).then(supported => {
@@ -38,21 +42,30 @@ export default function MessageModal({title, transactionHash, isTransactionDelay
                 <ActivityIndicator></ActivityIndicator>
                 // </br>
               )}
+  
 
               <View style={styles.buttonContainer}>
                 {/*only show view on etherscan if a transaction hash is provided */}
                 {transactionHash &&
                 <Pressable
                     style={[styles.button, {backgroundColor : "navy"}]}
-                    onPress={async () =>  await handleURLClick("https://goerli.etherscan.io/tx/" + transactionHash)}
+                    onPress={async () =>  await handleURLClick("https://goerli.etherscan.io/tx/" + transactionHash).catch((e) => {alert("OOPS! Error: " + e)})}
                   >
                   <Text style={styles.textStyle}>{"View transaction on Etherscan"}</Text>
+                </Pressable>
+                }
+                {hasDeployedGeocache &&
+                <Pressable
+                    style={[styles.button, {backgroundColor : "green"}]}
+                    onPress={async () =>  navigation.navigate("Cache Map")}
+                  >
+                  <Text style={styles.textStyle}>{"View on Cache Map"}</Text>
                 </Pressable>
                 }
                 {openSeaURL &&
                 <Pressable
                     style={[styles.button, {backgroundColor: "#1868B7"}]}
-                    onPress={async () =>  await handleURLClick(openSeaURL)}
+                    onPress={async () =>  await handleURLClick(openSeaURL).catch((e) => {alert("OOPS! Error: " + e)})}
                   >
                   <Text style={styles.textStyle}>{"View on OpenSea"}</Text>
                 </Pressable>

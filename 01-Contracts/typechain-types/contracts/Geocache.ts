@@ -289,7 +289,7 @@ export type AdminRevokedEventFilter = TypedEventFilter<AdminRevokedEvent>;
 export interface GeocacheCreatedEventObject {
   creator: string;
   name: string;
-  numItems: BigNumber;
+  id: BigNumber;
 }
 export type GeocacheCreatedEvent = TypedEvent<
   [string, string, BigNumber],
@@ -759,12 +759,12 @@ export interface Geocache extends BaseContract {
     "GeocacheCreated(address,string,uint256)"(
       creator?: null,
       name?: null,
-      numItems?: null
+      id?: null
     ): GeocacheCreatedEventFilter;
     GeocacheCreated(
       creator?: null,
       name?: null,
-      numItems?: null
+      id?: null
     ): GeocacheCreatedEventFilter;
 
     "GeocacheItemMinted(address,uint256,uint256)"(

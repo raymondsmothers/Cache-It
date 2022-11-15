@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useContext, useEffect, useState} from 'react';
-import {View, StyleSheet, Button, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, Button, TouchableOpacity, Text} from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import {
   CacheMetadataContext,
@@ -84,7 +84,7 @@ export default function CacheMap() {
         selectedGeocache,
       );
       var selectedGeocacheItemLocations =
-        await GeocacheContract.getGeolocationsOfGeocache(selectedGeocache);
+        await GeocacheContract.getGeolocationsOfGeocache(selectedGeocache).catch((e) => {alert("OOPS! Error: " + e)});
       // console.log("selected geocahce: " + JSON.stringify(selectedGeocacheRawData, null, 2))
       // console.log("selected geocache gelocaitons: " + selectedGeocacheItemLocations)
       var itemLocations = [];
@@ -127,6 +127,11 @@ export default function CacheMap() {
   return (
     <View style={styles.container}>
       {/* <Button></Button> */}
+      {cacheMetadata != undefined && cacheMetadata.imgUrl != "" &&  
+        <View style={styles.cacheNameContainer}>
+          <Text style={styles.cacheNameText}>{"Searching: \"" + cacheMetadata?.name + "\""}</Text>
+        </View>
+      }
       <MapView
         ref={mapRef}
         showsBuildings={true}
@@ -176,4 +181,18 @@ const styles = StyleSheet.create({
     bottom: 0,
     padding: 15,
   },
+  cacheNameContainer: {
+    position: "absolute", 
+    top: 10, 
+    opacity: 2, 
+    zIndex: 4
+  },
+  cacheNameText: {
+    color: global.cream,
+    fontSize: 20, 
+    backgroundColor: global.secondaryColor, 
+    textAlign: "center", 
+    padding: 10, 
+    borderRadius: 5
+  }
 });

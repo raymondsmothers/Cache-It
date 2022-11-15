@@ -64,7 +64,7 @@ function HomeTab() {
         headerTintColor: global.secondaryColor,
         tabBarStyle: {backgroundColor: global.cream},
         headerStyle: {backgroundColor: global.cream},
-
+        tabBarActiveTintColor: global.primaryColor
       }}
       // tabBarOptions={{
       //   activeTintColor: 'tomato',
@@ -77,7 +77,7 @@ function HomeTab() {
         component={CacheMap}
         options={{
           headerRight: () => <ConnectWalletButton />,
-          tabBarIcon: color => <Icon name="map" size={20} color={color} />,
+          tabBarIcon: ({focused, color}) => <Icon name="map" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
             return null;
           },
@@ -89,7 +89,7 @@ function HomeTab() {
         component={SeekScreen}
         options={{
           headerRight: () => <ConnectWalletButton />,
-          tabBarIcon: color => <Icon name="eye" size={20} color={color} />,
+          tabBarIcon: ({focused, color}) => <Icon name="eye" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
             return null;
           },
@@ -100,7 +100,7 @@ function HomeTab() {
         component={NewCacheForm}
         options={{
           headerRight: () => <ConnectWalletButton />,
-          tabBarIcon: color => <Icon name="plus" size={20} color={color} />,
+          tabBarIcon: ({focused, color}) => <Icon name="plus" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
             return null;
           },
@@ -112,9 +112,7 @@ function HomeTab() {
         component={Collection}
         options={{
           headerRight: () => <ConnectWalletButton />,
-          tabBarIcon: color => (
-            <Icon name="shopping-basket" size={20} color={color} />
-          ),
+          tabBarIcon: ({focused, color}) => <Icon name="shopping-basket" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
             return null;
           },
@@ -125,7 +123,7 @@ function HomeTab() {
         component={IntroductionPage}
         options={{
           headerRight: () => <ConnectWalletButton />,
-          tabBarIcon: color => <Icon name="info" size={20} color={color} />,
+          tabBarIcon: ({focused, color}) => <Icon name="info" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
             return null;
           },
@@ -213,7 +211,7 @@ function App() {
         // });
         setActiveGeocacheIds([...formattedIds]);
         setActiveGeocacheNames(names);
-        delay(1000);
+        await delay(600);
         setIsLoading(false);
         // return;
       };
@@ -229,15 +227,8 @@ function App() {
   };
 
   useEffect(() => {
-    // conso  le.log("useEffect")
-    //This event is firing many times
     GeocacheContract.on('GeocacheCreated', getAllGeocacheData);
-
     getAllGeocacheData();
-    // getAllGeocacheData().then(() => {
-    //   console.log("data got")
-    //   setIsLoading(false)
-    // })
   }, []);
 
   //Make this into a useContext
@@ -248,7 +239,7 @@ function App() {
       // console.log('getting name for : ' + geocacheID);
       const selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(
         geocacheID,
-      );
+      ).catch((e) => {alert("OOPS! Error: " + e)});
       // console.log("raw: " + selectedGeocacheRawData)
       geocacheNames[geocacheID] = selectedGeocacheRawData[7];
       // console.log("geonames: " + geocacheNames)

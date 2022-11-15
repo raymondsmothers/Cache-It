@@ -226,7 +226,6 @@ export default function SeekScreen() {
               {'Searching "' + cacheMetadata.name + '"'}{' '}
             </Text>
             <Text style={globalStyles.centerText}>
-              {' '}
               {'Created by:  "' + global.shortenAddress(cacheMetadata.creator) + '"'}{' '}
             </Text>
             <Text style={globalStyles.centerText}>
@@ -234,10 +233,10 @@ export default function SeekScreen() {
               {'Created On:  "' + cacheMetadata.date + '"'}{' '}
             </Text>
 
-            <Text style={globalStyles.titleText}>
+            {/* <Text style={globalStyles.titleText}>
               {' '}
               {'Pulse Strength: \n' + pulseStrength}{' '}
-            </Text>
+            </Text> */}
             <PulseRateContext.Provider value={PulseRateContextValue}>
 
                 <AnimatedRings></AnimatedRings>

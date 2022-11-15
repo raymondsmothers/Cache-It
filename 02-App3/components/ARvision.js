@@ -83,7 +83,8 @@ const ARVisionScene = () => {
     // Calling the contract function as contract owner
     const geocacheContractWithSigner = await GeocacheContract.connect(
       cacheItSigner,
-    );
+    )
+    // var selectedGeocacheItemLocations =;
     const mintItemInGeocacheTxn = await geocacheContractWithSigner
       .mintItemInGeocache(geocacheId, userAddress, {
         gasLimit: 10000000,

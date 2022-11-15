@@ -34,20 +34,27 @@ export default function SelectGeocache() {
   const connector = useWalletConnect();
 
 
+  // useEffect(() => {
+  //   GeocacheContract.on('GeocacheCreated', geocacheCreatedCallback);
+  //   // getAllGeocacheData();
+  // }, []);
 
-  useEffect(() => {
-    if(!isLoadingContractData)
-      console.log("active names on selector: " + activeGeocacheNames)
-    console.log("isLoadingContractData: " + isLoadingContractData)
-}, [isLoadingContractData])
-//   useEffect(() => {
-//     // console.log("active names on selector: " + activeGeocacheNames)
-    
-// }, [activeGeocacheNames])
+  // const geocacheCreatedCallback = async (
+  //   creatorAddress,
+  //   geocacheName,
+  //   newGeocacheId,
+  // ) => {
+  //   creatorAddress = creatorAddress.toLocaleLowerCase();
+  //   const connectedAddress = connector.accounts[0];
+  //   if (creatorAddress == connectedAddress) {
+  //     console.log('callback triggered in new selectgeo: ' + geocacheName + " id: " + newGeocacheId);
+  //     await getData(newGeocacheId)
+  //   }
+  // };
 
   const delay = ms => new Promise(res => setTimeout(res, ms));
 
-  const getData = async id => {
+  const getGeocacheMetadata = async id => {
     //get data on selected geocache
     // console.log("Getting data for id: " + id)
     setIsLoading(true);
@@ -121,7 +128,7 @@ export default function SelectGeocache() {
           }}>
           <ScrollView style={styles.scrollContainer}>
             <View>
-              <Text style={globalStyles.titleText}>SelectGeocache</Text>
+              <Text style={globalStyles.titleText}>Select Geocache</Text>
               {connector.connected ? (
                 <>
               <Text style={globalStyles.centerText}>
@@ -145,7 +152,7 @@ export default function SelectGeocache() {
                         labelStyle={{color: global.secondaryColor}}
                         label={id + ' - "' + activeGeocacheNames[id] + '"'}
                         color={global.primaryColor}
-                        onPress={() => getData(id)}
+                        onPress={() => getGeocacheMetadata(id)}
                         // status={ id == cacheMetadata?.geocacheId ?  'checked' : 'unchecked'}
                         status={ id == cacheMetadata?.geocacheId ?  'checked' : 'unchecked'}
                         position={"trailing"}

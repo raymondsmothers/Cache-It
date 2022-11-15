@@ -7,11 +7,7 @@ global.longitudeDelta = 0.01;
 //   "goerli",
 //   process.env.GOERLI_ALCHEMY_KEY
 // );
-// const LeagueProxyContract = new ethers.Contract(
-//   router.query.leagueRoute[0],
-//   LeagueOfLegendsLogicJSON.abi,
-//   provider
-// );
+
 global.primaryColor = "#0F737A";
 global.primarySquareColor = "#5B1B7A";
 global.secondaryColor = "#C75100";

@@ -49,7 +49,7 @@ export default function Collection() {
           for (let i = 0; i < mappedIDs.length; i++) {
             let currCache = await GeocacheContractWithSigner.tokenIdToGeocache(
               itemIDs[i],
-            );
+            ).catch((e) => {alert("OOPS! Error: " + e)});;
             console.log(currCache);
             const cacheObj = {
               name: String(currCache[7]),

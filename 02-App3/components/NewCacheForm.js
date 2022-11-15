@@ -5,6 +5,9 @@ import {
   View,
   Button,
 } from 'react-native';
+// import { useRoute } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import {NavigationContainer, StackActions} from '@react-navigation/native';
 import {
   SafeAreaView,
   StyleSheet,
@@ -29,6 +32,8 @@ import Geolocation from 'react-native-geolocation-service';
 
 //Component Imports
 import MessageModal from './MessageModal';
+  import { useRoute } from '@react-navigation/native';
+
 // Web3 Imports
 // Pull in the shims (BEFORE importing ethers)
 import '@ethersproject/shims';
@@ -51,13 +56,18 @@ import {GOERLI_INFURA_KEY} from '@env';
 // connect to the default API address http://localhost:5001
 const IPFS = require('ipfs-mini');
 
-export default function NewCacheForm() {
+export default function NewCacheForm({navigation}) {
   // const client = create()
   // ipfs.add('hello world!').then(console.log).catch(console.log);
+
+
+  //  const navigation = useNavigation()
 
   const {currentPosition, setCurrentPosition} = useContext(LocationContext);
   const providers = useContext(Web3ProviderContext);
   const GeocacheContract = useContext(GeocacheContractContext);
+  const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
+
   const connector = useWalletConnect();
   //Alert if transaction is delayed
   const [isTransactionDelayed, setIsTransactionDelayed] = useState(false);
@@ -68,6 +78,7 @@ export default function NewCacheForm() {
   const [geocacheOriginStory, setGeocacheOriginStory] = useState([]);
   const [isGeneratingStory, setIsGeneratingStory] = useState();
   const [isGeneratingImage, setIsGeneratingImage] = useState();
+  const [isLoading, setIsLoading] = useState()
   // const [hasThrownError, setHasThrownError] = useState(false)
   const [errorMessage, setErrorMessage] = useState(false);
   const [name, onChangeName] = useState();
@@ -93,8 +104,48 @@ export default function NewCacheForm() {
     // ipfs.add('hello world!').then(console.log).catch(console.log);
   });
 
+  const getGeocacheMetadata = async id => {
+    //get data on selected geocache
+    // console.log("Getting data for id: " + id)
+    setIsLoading(true);
+    // setIsLoading(id);
+    var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(id).catch((e) => {alert("OOPS! Error: " + e)});
+    var selectedGeocacheItemLocations =
+      await GeocacheContract.getGeolocationsOfGeocache(id).catch((e) => {alert("OOPS! Error: " + e)});;
+    // console.log("selected geocahce: " + JSON.stringify(selectedGeocacheRawData, null, 2))
+    // console.log("selected geocache gelocaitons: " + selectedGeocacheItemLocations)
+    var itemLocations = [];
+    selectedGeocacheItemLocations.map((coordsAsString, index) => {
+      var coord = {
+        latitude: parseFloat(
+          coordsAsString.substring(0, coordsAsString.indexOf(',')),
+        ),
+        longitude: parseFloat(
+          coordsAsString.substring(coordsAsString.indexOf(',') + 1),
+        ),
+      };
+      itemLocations.push(coord);
+    });
+    setCacheMetadata({
+      creator: selectedGeocacheRawData[0],
+      imgUrl: selectedGeocacheRawData[1],
+      date: selectedGeocacheRawData[2],
+      numberOfItems: parseInt(selectedGeocacheRawData[3]),
+      isActive: selectedGeocacheRawData[4],
+      epicenterLat: parseFloat(selectedGeocacheRawData[5]),
+      epicenterLong: parseFloat(selectedGeocacheRawData[6]),
+      name: selectedGeocacheRawData[7],
+      radius: parseInt(selectedGeocacheRawData[8]),
+      geolocations: itemLocations,
+      geocacheId: id,
+    });
+    setIsLoading(false);
+    // await delay(1000)
+    // setModalVisible(!modalVisible);
+  };
+
   // TODO, send them to their new geocahce after this is completed
-  const geocacheCreatedCallback = (
+  const geocacheCreatedCallback = async (
     creatorAddress,
     geocacheName,
     newGeocacheId,
@@ -104,8 +155,9 @@ export default function NewCacheForm() {
     const connectedAddress = connector.accounts[0];
     // console.log("connectorAddress in new cahce form callback: " + connectedAddress)
 
-    if (creatorAddress == connectedAddress) {
-      console.log('callback triggered in new cacheform');
+    if (creatorAddress == connectedAddress && !isLoading && !hasDeployedGeocache) {
+      console.log('callback triggered in new cacheform: ' + geocacheName + " id: " + newGeocacheId);
+      await getGeocacheMetadata(newGeocacheId)
       setIsDeployingGeocache(false);
       setHasDeployedGeocache(true);
     }
@@ -141,9 +193,9 @@ export default function NewCacheForm() {
         },
         body: JSON.stringify({
           model: 'text-davinci-002',
-          prompt: 'Write a mysterious, dark origin story for a geocache item.',
+          prompt: 'Write a mysterious, exciting origin story for a geocache item.',
           temperature: 0.9,
-          max_tokens: 1000,
+          max_tokens: 1750,
           top_p: 1,
           frequency_penalty: 1,
           presence_penalty: 1,
@@ -235,7 +287,7 @@ export default function NewCacheForm() {
       return false;
     }
     if (numItems >= 10 || !numItems) {
-      setErrorMessage('Please set number of items <= 10');
+      setErrorMessage('Please set number of items < 10');
       return false;
     }
     return true;
@@ -283,12 +335,12 @@ export default function NewCacheForm() {
                 Math.abs(Math.round(radius)),
                 name,
                 //Wait to deploy new contracts to include randomly generated originStory
-                'eeeee',
+                // 'eeeee',
                 //This always runs out of memory
-                // originStory.trim(),
-                {
-                  gasLimit: 1000000,
-                },
+                originStory.trim(),
+                // {
+                //   gasLimit: 10000000,
+                // },
               )
               .then(res => {
                 setTransactionHash(res.hash);
@@ -306,7 +358,11 @@ export default function NewCacheForm() {
                 console.log('Error: ' + error.message);
               });
           }
-        });
+        }).catch((e) => {
+          setErrorMessage(e.message);
+          setIsDeployingGeocache(false);
+          console.log('Error: ' + e.message);
+        });;
       });
 
       // console.log("out here story: " + originStory)
@@ -393,8 +449,9 @@ export default function NewCacheForm() {
   const resetState = () => {
     setErrorMessage(undefined);
     setIsDeployingGeocache(false);
-    // setImgUrl("")
-    // setGeocacheOriginStory("")
+    setHasDeployedGeocache(false);
+    // setImgUrl(undefined)
+    // setGeocacheOriginStory(undefined)
   };
 
   return (
@@ -464,13 +521,13 @@ export default function NewCacheForm() {
           )}
         </View>
         <View style={styles.container}>
-          {geocacheOriginStory && (
+          {geocacheOriginStory != undefined && (
             <Text
               style={[globalStyles.centerText, {color: global.secondaryColor}]}>
               {geocacheOriginStory}
             </Text>
           )}
-          {imgUrl && (
+          {imgUrl != undefined && (
             <Image
               style={{
                 margin: 20,
@@ -483,7 +540,7 @@ export default function NewCacheForm() {
             />
           )}
         </View>
-        {/* {true &&  */}
+        {/* {true && ( */}
         {isGeneratingImage && (
           <View style={globalStyles.textContainer}>
             <MessageModal
@@ -522,6 +579,7 @@ export default function NewCacheForm() {
           <View style={globalStyles.textContainer}>
             <MessageModal
               resetParentState={resetState}
+              hasDeployedGeocache={true}
               title={'Success!'}
               body={'Finished deploying.'}></MessageModal>
           </View>
