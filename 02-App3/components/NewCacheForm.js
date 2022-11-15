@@ -585,7 +585,7 @@ export default function NewCacheForm({navigation}) {
           </View>
         )}
         {/* {hasThrownError && */}
-        {errorMessage && (
+        {errorMessage != undefined && (
           <MessageModal
             title={'Uh-oh!'}
             body={errorMessage}
