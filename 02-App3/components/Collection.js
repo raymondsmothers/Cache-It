@@ -17,6 +17,9 @@ import '@ethersproject/shims';
 // // Import the ethers library
 import {ethers} from 'ethers';
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
+import useSWR from 'swr';
+import {Geocache1155} from '../contract_info/contractAddressesGoerli';
+import axios from 'axios';
 
 export default function Collection() {
   const [geocacheData, setGeocacheData] = useState(null);
@@ -24,70 +27,42 @@ export default function Collection() {
   const GeocacheContract = useContext(GeocacheContractContext);
   const providers = useContext(Web3ProviderContext);
 
-  // Getting the IDs by the user
-  // Then getting the geocaches from that, and setting the state
+  // Fetching our geocache items for the given user
   useEffect(() => {
-    async function getUsersItems() {
-      if (connector.connected) {
-        console.log('Fetching items!');
-        // User must have wallet connected for this screen (otherwise msg will appear)
-        // Connecting contract to wallet connect signer
-        await providers.walletConnect.enable();
-        const ethers_provider = new ethers.providers.Web3Provider(
-          providers.walletConnect,
-        );
-        const signer = await ethers_provider.getSigner();
-        const GeocacheContractWithSigner = GeocacheContract.connect(signer);
+    async function fetchData() {
+      const res = await axios.get(
+        `https://testnets-api.opensea.io/api/v1/assets?asset_contract_address=${Geocache1155}&owner=${connector.accounts[0]}`,
+      );
 
-        let geocaches = [];
-        try {
-          const itemIDs = await GeocacheContractWithSigner.getUsersGeocaches(
-            connector.accounts[0],
-          );
-          const mappedIDs = itemIDs.map(id => Number(id));
+      let geocacheDataArr = [];
+      for (let i = 0; i < res.data['assets'].length; i++) {
+        const currItem = res.data['assets'][i];
 
-          for (let i = 0; i < mappedIDs.length; i++) {
-            let currCache = await GeocacheContractWithSigner.tokenIdToGeocache(
-              itemIDs[i],
-            ).catch((e) => {alert("OOPS! Error: " + e)});;
-            console.log(currCache);
-            const cacheObj = {
-              name: String(currCache[7]),
-              location_found: String(currCache[5] + ', ' + currCache[6]),
-              image:
-                'https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png',
-            };
-            geocaches.push(cacheObj);
-          }
-          console.log('Geocaches is ');
-          console.log(geocaches);
-          setGeocacheData(geocaches);
-        } catch (error) {
-          console.log('Error getting IDs', error.message);
+        // Ordering of traits changes for some reason, so determining index for each trait
+        let dateCreatedIndex;
+        let sizeIndex;
+        let locationCreatedIndex;
+        for (let i = 0; i < currItem['traits'].length; i++) {
+          if (currItem['traits'][i]['trait_type'] === 'Geocache Date Created')
+            dateCreatedIndex = i;
+          if (currItem['traits'][i]['trait_type'] === 'Geocache Size')
+            sizeIndex = i;
+          if (currItem['traits'][i]['trait_type'] === 'Location Created')
+            locationCreatedIndex = i;
         }
+        geocacheDataArr.push({
+          name: currItem['name'],
+          image: currItem['image_url'],
+          location_found: currItem['traits'][locationCreatedIndex]['value'],
+          size: currItem['traits'][sizeIndex]['value'],
+          date_created: currItem['traits'][dateCreatedIndex]['value'],
+        });
       }
+
+      setGeocacheData(geocacheDataArr);
     }
-
-    getUsersItems();
-  }, [connector.connected]);
-
-  // TODO: Delete hardcoded data later
-  // const dummyData = [
-  //   {
-  //     name: 'Test Geocache',
-  //     image:
-  //       'https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png',
-
-  //     location_found: '12783.3, 3920.201',
-  //   },
-  //   {
-  //     name: 'Test Geocache 2',
-  //     image:
-  //       'https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png',
-
-  //     location_found: '127833.3, -392220.201',
-  //   },
-  // ];
+    fetchData();
+  }, [connector]);
 
   const renderItem = (data, i) => (
     <TouchableOpacity style={{width: '50%', alignItems: 'center'}}>
