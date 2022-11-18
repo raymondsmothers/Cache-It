@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
-  Pressable
+  Pressable,
 } from 'react-native';
 import {RadioButton} from 'react-native-paper';
 import {
@@ -16,23 +16,28 @@ import {
   LocationContext,
   Web3ProviderContext,
   GeocacheContractContext,
-  AllGeocacheDataContext
+  AllGeocacheDataContext,
 } from '../App';
 
-import { useWalletConnect } from '@walletconnect/react-native-dapp';
+import {useWalletConnect} from '@walletconnect/react-native-dapp';
 
 const globalStyles = require('../styles');
-import "../global"
+import '../global';
 
 export default function SelectGeocache() {
   const [modalVisible, setModalVisible] = useState(false);
   const GeocacheContract = useContext(GeocacheContractContext);
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
   const [isLoading, setIsLoading] = useState(false);
-  const {activeGeocacheIds, setActiveGeocacheIds, activeGeocacheNames, setActiveGeocacheNames, isLoadingContractData} = useContext(AllGeocacheDataContext)
-  const [errorMessage, setErrorMessage] = useState()
+  const {
+    activeGeocacheIds,
+    setActiveGeocacheIds,
+    activeGeocacheNames,
+    setActiveGeocacheNames,
+    isLoadingContractData,
+  } = useContext(AllGeocacheDataContext);
+  const [errorMessage, setErrorMessage] = useState();
   const connector = useWalletConnect();
-
 
   // useEffect(() => {
   //   GeocacheContract.on('GeocacheCreated', geocacheCreatedCallback);
@@ -59,9 +64,15 @@ export default function SelectGeocache() {
     // console.log("Getting data for id: " + id)
     setIsLoading(true);
     // setIsLoading(id);
-    var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(id).catch((e) => {alert("OOPS! Error: " + e)});
+    var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(
+      id,
+    ).catch(e => {
+      alert('OOPS! Error: ' + e);
+    });
     var selectedGeocacheItemLocations =
-      await GeocacheContract.getGeolocationsOfGeocache(id).catch((e) => {alert("OOPS! Error: " + e)});;
+      await GeocacheContract.getGeolocationsOfGeocache(id).catch(e => {
+        alert('OOPS! Error: ' + e);
+      });
     // console.log("selected geocahce: " + JSON.stringify(selectedGeocacheRawData, null, 2))
     // console.log("selected geocache gelocaitons: " + selectedGeocacheItemLocations)
     var itemLocations = [];
@@ -90,7 +101,7 @@ export default function SelectGeocache() {
       geocacheId: id,
     });
     setIsLoading(false);
-    await delay(1000)
+    await delay(1000);
     setModalVisible(!modalVisible);
   };
 
@@ -98,7 +109,6 @@ export default function SelectGeocache() {
     <View style={styles.container}>
       <>
         <Pressable
-          
           style={globalStyles.button}
           // buttonStyle={styles.button}
           onPress={() => {
@@ -110,11 +120,11 @@ export default function SelectGeocache() {
           // disabled={true}
           // activeOpacity={isLoadingContractData ? 1 : 0.1}
           // title="Select Cache"
-        >      
+        >
           {isLoadingContractData ? (
-            <ActivityIndicator color={"white"}></ActivityIndicator>
+            <ActivityIndicator color={'white'}></ActivityIndicator>
           ) : (
-            <Text style={globalStyles.buttonText}>{"SELECT CACHE"}</Text>
+            <Text style={globalStyles.buttonText}>{'SELECT CACHE'}</Text>
           )}
         </Pressable>
 
@@ -131,45 +141,53 @@ export default function SelectGeocache() {
               <Text style={globalStyles.titleText}>Select Geocache</Text>
               {connector.connected ? (
                 <>
-              <Text style={globalStyles.centerText}>
-                Choose a Geocache ID below to switch what Geocache you are
-                searching
-              </Text>
-              {isLoading &&
-                <ActivityIndicator></ActivityIndicator>
-              }
-              {/* return ( */}
-              {activeGeocacheIds.length > 0 ? (
+                  <Text style={globalStyles.centerText}>
+                    Choose a Geocache ID below to switch what Geocache you are
+                    searching
+                  </Text>
+                  {isLoading && <ActivityIndicator></ActivityIndicator>}
+                  {/* return ( */}
+                  {activeGeocacheIds.length > 0 ? (
                     <RadioButton.Group style={styles.radioButtonContainer}>
-                   {activeGeocacheIds?.map((id, index) => {
-                    return(
-                      <>
-                      {/* <View style={styles.radioButtonContainer}> */}
+                      {activeGeocacheIds?.map((id, index) => {
+                        return (
+                          <>
+                            {/* <View style={styles.radioButtonContainer}> */}
 
-                      <RadioButton.Item
-                        // style={styles.buttonContainer}
-                        // key={ird}
-                        labelStyle={{color: global.secondaryColor}}
-                        label={id + ' - "' + activeGeocacheNames[id] + '"'}
-                        color={global.primaryColor}
-                        onPress={() => getGeocacheMetadata(id)}
-                        // status={ id == cacheMetadata?.geocacheId ?  'checked' : 'unchecked'}
-                        status={ id == cacheMetadata?.geocacheId ?  'checked' : 'unchecked'}
-                        position={"trailing"}
-                        style={styles.radioButton}
-                        >
-                      </RadioButton.Item>
-                      </>
-                    )
-                   })}
-                   </RadioButton.Group>
-              ) : (
-                <Text style={globalStyles.centerText}>{"There are no active geocaches yet. Time for you to create one!"}</Text>
-              )}
-              </>
+                            <RadioButton.Item
+                              // style={styles.buttonContainer}
+                              // key={ird}
+                              labelStyle={{color: global.secondaryColor}}
+                              label={
+                                id + ' - "' + activeGeocacheNames[id] + '"'
+                              }
+                              color={global.primaryColor}
+                              onPress={() => getGeocacheMetadata(id)}
+                              // status={ id == cacheMetadata?.geocacheId ?  'checked' : 'unchecked'}
+                              status={
+                                id == cacheMetadata?.geocacheId
+                                  ? 'checked'
+                                  : 'unchecked'
+                              }
+                              position={'trailing'}
+                              style={styles.radioButton}></RadioButton.Item>
+                          </>
+                        );
+                      })}
+                    </RadioButton.Group>
+                  ) : (
+                    <Text style={globalStyles.centerText}>
+                      {
+                        'There are no active geocaches yet. Time for you to create one!'
+                      }
+                    </Text>
+                  )}
+                </>
               ) : (
                 <>
-                  <Text style={globalStyles.centerText}>Uh-Oh! Please connect your wallet to select a geocache.</Text>
+                  <Text style={globalStyles.centerText}>
+                    Uh-Oh! Please connect your wallet to select a geocache.
+                  </Text>
                 </>
               )}
 
@@ -194,7 +212,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     // marginBottom: 20,
-    backgroundColor: global.cream
+    backgroundColor: global.cream,
   },
   radioButton: {
     // flex: 1
@@ -205,7 +223,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 100,
-    width: "100%"
+    width: '100%',
   },
   button: {
     backgroundColor: global.primaryColor,
