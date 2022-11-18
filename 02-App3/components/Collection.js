@@ -56,6 +56,7 @@ export default function Collection() {
           location_found: currItem['traits'][locationCreatedIndex]['value'],
           size: currItem['traits'][sizeIndex]['value'],
           date_created: currItem['traits'][dateCreatedIndex]['value'],
+          origin_story: currItem['description'],
         });
       }
 
