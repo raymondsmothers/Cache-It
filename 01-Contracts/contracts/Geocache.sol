@@ -8,11 +8,10 @@ import "hardhat/console.sol";
 import {AdminControl} from "@manifoldxyz/libraries-solidity/contracts/access/AdminControl.sol";
 import {IERC165} from "@openzeppelin/contracts/interfaces/IERC165.sol";
 import {IERC1155CreatorCore} from "@manifoldxyz/creator-core-solidity/contracts/core/IERC1155CreatorCore.sol";
+import {ICreatorExtensionTokenURI} from "@manifoldxyz/creator-core-solidity/contracts/extensions/ICreatorExtensionTokenURI.sol";
 import {ICreatorCore} from "@manifoldxyz/creator-core-solidity/contracts/core/ICreatorCore.sol";
 import {IERC1155} from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import {ICreatorExtensionTokenURI} from "@manifoldxyz/creator-core-solidity/contracts/extensions/ICreatorExtensionTokenURI.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "./libraries/Base64.sol";
 
 // Custom errors
 error NotCreator();
@@ -108,6 +107,9 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         string memory _name,
         string memory _originStory
     ) external {
+        ++numGeocaches;
+        ++numActiveGeocaches;
+
         tokenIdToGeocache[numGeocaches] = GeocacheInstance(
             msg.sender,
             _tokenURI,
@@ -123,9 +125,6 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         );
         userToGeocache[msg.sender].push(numGeocaches);
         hasMintedTokenId[numGeocaches][msg.sender] = true;
-
-        numGeocaches++;
-        numActiveGeocaches++;
 
         // mint the first token of the Geocache to the creator
         address[] memory to = new address[](1);
