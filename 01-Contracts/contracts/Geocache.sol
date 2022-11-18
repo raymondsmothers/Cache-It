@@ -144,7 +144,7 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
             uris
         );
 
-        emit GeocacheCreated(msg.sender, _name, numGeocaches - 1);
+        emit GeocacheCreated(msg.sender, _name, numGeocaches);
     }
 
     /**
