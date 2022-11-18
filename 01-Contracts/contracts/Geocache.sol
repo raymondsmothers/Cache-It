@@ -221,17 +221,15 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
     {
          return tokenIdToGeocache[_tokenId].tokenURI;
     }
+
+
     /**
      * @notice return the metadata for a given tokenId
-     * @param _creatorContract to check the correct manifold creator contract
      * @param _tokenId of the NFT
      */
-
-
     function uri(uint256 _tokenId)
         public
         view
-        override
         returns (string memory)
     {
          return tokenIdToGeocache[_tokenId].tokenURI;

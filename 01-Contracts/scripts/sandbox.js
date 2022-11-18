@@ -19,6 +19,7 @@ async function main() {
       console.log("address: " + await CONTRACT_ADDRESSES.Geocache);
       const owner = new ethers.Wallet(process.env.CACHEIT_PRIVATE_KEY, provider);
       const geocacheContractWithSigner = await ethers.getContractAt("Geocache", CONTRACT_ADDRESSES.Geocache, owner);
+      const geocache1155ContractWithSigner = await ethers.getContractAt("Geocache1155", CONTRACT_ADDRESSES.Geocache1155, owner);
       const numGeocaches = await geocacheContractWithSigner.numGeocaches();
       console.log("numGeocaches: " + numGeocaches);
 
@@ -76,15 +77,17 @@ async function main() {
       };
 
 
-      // const uri = await getTokenURIPinata("name", "originStory", 1, "locationCreated");
-      // print the uri
+      // const uri = await getTokenURIPinata("name15", "originStory", 1, "locationCreated");
+      // // print the uri
       // console.log("uri: " + uri);
 
       // deploy a new geocache from the contract
       // const createGeocacheTxn = await geocacheContractWithSigner
       //         .newGeocache(
       //           3,
-      //           "ipfs://QmeW3AcQoAVmGoMQo7XKGp2CGs2CaNNWi3VNipKdkTQqja",
+      //           "https://gateway.pinata.cloud/ipfs/QmeY53g4dhyi5SfFdGPGM4W1UhLRF1t6FTtTFfQbJzv1D3",
+      //           // uri,
+      //           // "ipfs://QmeW3AcQoAVmGoMQo7XKGp2CGs2CaNNWi3VNipKdkTQqja",
       //           // 'https://gateway.pinata.cloud/ipfs/QmeW3AcQoAVmGoMQo7XKGp2CGs2CaNNWi3VNipKdkTQqja',
       //           // 'https://gateway.pinata.cloud/ipfs/QmXgkKXsTyW9QJCHWsgrt2BW7p5csfFE21eWtmbd5Gzbjr/',
       //           "date.toString()",
@@ -95,17 +98,11 @@ async function main() {
       //           3,
       //           "name15",
       //           "originStory.trim()",
-      //           // {
-      //           //   gasLimit: 10000000,
-      //           // },
       //         )
       //         .then(res => {
       //           console.log("Success: " + JSON.stringify(res, null, 2))
       //         })
       //         .catch(error => {
-      //           // // setHasThrownError(true)
-      //           // setErrorMessage(error.message);
-      //           // setIsDeployingGeocache(false);
       //           console.log('Error: ' + error.message);
       //         });
 
@@ -114,23 +111,18 @@ async function main() {
       geocacheName,
       newGeocacheId,
     ) => {
-      // creatorAddress = creatorAddress.toLocaleLowerCase();
-      // // console.log("creatorAddress in new cahce form callback: " + creatorAddress)
-      // const connectedAddress = connector.accounts[0];
-      // // console.log("connectorAddress in new cahce form callback: " + connectedAddress)
-  
-      // if (creatorAddress == connectedAddress && !isLoading && !hasDeployedGeocache) {
       console.log('contract deployed ' + geocacheName + " id: " + newGeocacheId);
-      //   await getGeocacheMetadata(newGeocacheId)
-      //   setIsDeployingGeocache(false);
-      //   setHasDeployedGeocache(true);
-      // }
     };
+
     const creatorContract = await geocacheContractWithSigner.creatorContract();
     console.log("creatorContract: " + creatorContract);
-    const tokenURI = await geocacheContractWithSigner.tokenURI(creatorContract, numGeocaches - 1);
+
+    const tokenURI = await geocache1155ContractWithSigner.tokenURI(creatorContract, numGeocaches - 1);
     console.log("tokenURI: " + tokenURI);
-    geocacheContractWithSigner.on('GeocacheCreated', geocacheCreatedCallback);
+    // const tokenURI = await geocache1155ContractWithSigner.uri(numGeocaches - 1);
+    // console.log("tokenURI: " + tokenURI);
+    
+    // geocacheContractWithSigner.on('GeocacheCreated', geocacheCreatedCallback);
 
 
 
