@@ -32,7 +32,7 @@ import Geolocation from 'react-native-geolocation-service';
 
 //Component Imports
 import MessageModal from './MessageModal';
-  import { useRoute } from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 
 // Web3 Imports
 // Pull in the shims (BEFORE importing ethers)
@@ -42,7 +42,8 @@ import {ethers} from 'ethers';
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
 //OPENAI
 // const { Configuration, OpenAIApi } = require("openai");
-import {OPENAI_SECRET_KEY} from '@env';
+import {OPENAI_SECRET_KEY, PINATA_KEY, PINATA_JWT, PINATA_SECRET} from '@env';
+import axios from 'axios';
 // import { white } from 'react-native-paper/lib/typescript/styles/colors';
 //
 // const configuration = new Configuration({
@@ -59,7 +60,6 @@ const IPFS = require('ipfs-mini');
 export default function NewCacheForm({navigation}) {
   // const client = create()
   // ipfs.add('hello world!').then(console.log).catch(console.log);
-
 
   //  const navigation = useNavigation()
 
@@ -78,7 +78,7 @@ export default function NewCacheForm({navigation}) {
   const [geocacheOriginStory, setGeocacheOriginStory] = useState([]);
   const [isGeneratingStory, setIsGeneratingStory] = useState();
   const [isGeneratingImage, setIsGeneratingImage] = useState();
-  const [isLoading, setIsLoading] = useState()
+  const [isLoading, setIsLoading] = useState();
   // const [hasThrownError, setHasThrownError] = useState(false)
   const [errorMessage, setErrorMessage] = useState(false);
   const [name, onChangeName] = useState();
@@ -109,9 +109,15 @@ export default function NewCacheForm({navigation}) {
     // console.log("Getting data for id: " + id)
     setIsLoading(true);
     // setIsLoading(id);
-    var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(id).catch((e) => {alert("OOPS! Error: " + e)});
+    var selectedGeocacheRawData = await GeocacheContract.tokenIdToGeocache(
+      id,
+    ).catch(e => {
+      alert('OOPS! Error: ' + e);
+    });
     var selectedGeocacheItemLocations =
-      await GeocacheContract.getGeolocationsOfGeocache(id).catch((e) => {alert("OOPS! Error: " + e)});;
+      await GeocacheContract.getGeolocationsOfGeocache(id).catch(e => {
+        alert('OOPS! Error: ' + e);
+      });
     // console.log("selected geocahce: " + JSON.stringify(selectedGeocacheRawData, null, 2))
     // console.log("selected geocache gelocaitons: " + selectedGeocacheItemLocations)
     var itemLocations = [];
@@ -155,9 +161,18 @@ export default function NewCacheForm({navigation}) {
     const connectedAddress = connector.accounts[0];
     // console.log("connectorAddress in new cahce form callback: " + connectedAddress)
 
-    if (creatorAddress == connectedAddress && !isLoading && !hasDeployedGeocache) {
-      console.log('callback triggered in new cacheform: ' + geocacheName + " id: " + newGeocacheId);
-      await getGeocacheMetadata(newGeocacheId)
+    if (
+      creatorAddress == connectedAddress &&
+      !isLoading &&
+      !hasDeployedGeocache
+    ) {
+      console.log(
+        'callback triggered in new cacheform: ' +
+          geocacheName +
+          ' id: ' +
+          newGeocacheId,
+      );
+      await getGeocacheMetadata(newGeocacheId);
       setIsDeployingGeocache(false);
       setHasDeployedGeocache(true);
     }
@@ -193,7 +208,8 @@ export default function NewCacheForm({navigation}) {
         },
         body: JSON.stringify({
           model: 'text-davinci-002',
-          prompt: 'Write a mysterious, exciting origin story for a geocache item.',
+          prompt:
+            'Write a mysterious, exciting origin story for a geocache item.',
           temperature: 0.9,
           max_tokens: 1750,
           top_p: 1,
@@ -252,6 +268,8 @@ export default function NewCacheForm({navigation}) {
         }),
       })
         .then(response => {
+          console.log('RES');
+          console.log(response);
           return response.json();
         })
         .then(data => {
@@ -317,74 +335,88 @@ export default function NewCacheForm({navigation}) {
         // console.log("Story: " + originStory)
         setGeocacheOriginStory(originStory);
         setIsGeneratingStory(false);
-        await generateGeocacheImage(originStory).then(async base64url => {
-          // console.log("base64: " + base64url.substring(0, 199))
-          setImgUrl(base64url);
-          setIsGeneratingImage(false);
-          if (base64url && originStory) {
-            console.log('sending transaction! ' + originStory.trim());
-            const createGeocacheTxn = await geocacheContractWithSigner
-              .newGeocache(
-                Math.abs(Math.round(numItems)),
-                'https://gateway.pinata.cloud/ipfs/QmXgkKXsTyW9QJCHWsgrt2BW7p5csfFE21eWtmbd5Gzbjr/',
-                date.toString(),
-                itemLocations,
-                //TODO this context needs to be updated
-                currentPosition.latitude.toString(),
-                currentPosition.longitude.toString(),
-                Math.abs(Math.round(radius)),
-                name,
-                //Wait to deploy new contracts to include randomly generated originStory
-                // 'eeeee',
-                //This always runs out of memory
-                originStory.trim(),
-                // {
-                //   gasLimit: 10000000,
-                // },
-              )
-              .then(res => {
-                setTransactionHash(res.hash);
-                setIsDeployingGeocache(true);
-                setTimeout(() => {
-                  // console.log("DELAYED")
-                  setIsTransactionDelayed(true && !hasDeployedGeocache);
-                }, 15000);
-                // console.log("Success: " + JSON.stringify(res, null, 2))
-              })
-              .catch(error => {
-                // setHasThrownError(true)
-                setErrorMessage(error.message);
-                setIsDeployingGeocache(false);
-                console.log('Error: ' + error.message);
-              });
-          }
-        }).catch((e) => {
-          setErrorMessage(e.message);
-          setIsDeployingGeocache(false);
-          console.log('Error: ' + e.message);
-        });;
-      });
+        await generateGeocacheImage(originStory)
+          .then(async base64url => {
+            // console.log("base64: " + base64url.substring(0, 199))
+            setImgUrl(base64url);
+            setIsGeneratingImage(false);
 
+            if (base64url && originStory) {
+              // Generating metadata, passing in image
+              const tokenURI = await getTokenURIPinata(
+                name,
+                originStory,
+                numItems,
+                String(
+                  currentPosition.latitude.toString() +
+                    ', ' +
+                    currentPosition.longitude.toString(),
+                ),
+                base64url,
+              );
+
+              console.log('sending transaction! ' + originStory.trim());
+              const createGeocacheTxn = await geocacheContractWithSigner
+                .newGeocache(
+                  Math.abs(Math.round(numItems)),
+                  tokenURI,
+                  date.toString(),
+                  itemLocations,
+                  //TODO this context needs to be updated
+                  currentPosition.latitude.toString(),
+                  currentPosition.longitude.toString(),
+                  Math.abs(Math.round(radius)),
+                  name,
+                  //Wait to deploy new contracts to include randomly generated originStory
+                  // 'eeeee',
+                  //This always runs out of memory
+                  originStory.trim(),
+                  // {
+                  //   gasLimit: 10000000,
+                  // },
+                )
+                .then(res => {
+                  setTransactionHash(res.hash);
+                  setIsDeployingGeocache(true);
+                  setTimeout(() => {
+                    // console.log("DELAYED")
+                    setIsTransactionDelayed(true && !hasDeployedGeocache);
+                  }, 15000);
+                  // console.log("Success: " + JSON.stringify(res, null, 2))
+                })
+                .catch(error => {
+                  // setHasThrownError(true)
+                  setErrorMessage(error.message);
+                  setIsDeployingGeocache(false);
+                  console.log('Error creating geocache: ' + error.message);
+                });
+            }
+          })
+          .catch(e => {
+            setErrorMessage(e.message);
+            setIsDeployingGeocache(false);
+            console.log('Error base64 part: ' + e.message);
+          });
+      });
       // console.log("out here story: " + originStory)
     }
-
     // console.log('done');
   };
 
+  // Generating our metadata and putting on IPFS
   const getTokenURIPinata = async (
     name,
     originStory,
     numItems,
     locationCreated,
+    imgURL,
   ) => {
     // Creating our metadata
     const metadataObj = {
-      image:
-        'https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png', // hardcoded image for now (TODO: change to user-uploaded photo)
+      image: imgURL,
       name: name,
       description: originStory,
       attributes: [
-        // TODO: Determine what other attributes we want in metadata
         {
           trait_type: 'Geocache Date Created',
           display_type: 'date',
@@ -394,8 +426,6 @@ export default function NewCacheForm({navigation}) {
         {trait_type: 'Location Created', value: locationCreated},
       ],
     };
-
-    // Getting pinata URL for tokenURI
     const config = {
       method: 'POST',
       url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',
@@ -408,19 +438,16 @@ export default function NewCacheForm({navigation}) {
       data: JSON.stringify(metadataObj),
     };
 
-    console.log('Making api call');
-
     let ipfsURL;
     try {
       const res = await axios(config);
-      console.log('PINATA API RESULTS');
-      console.log(res.data);
       ipfsURL = `ipfs://${res.data.IpfsHash}`;
+      return ipfsURL;
     } catch (error) {
-      console.log(error.response);
+      console.log('Error making request to Pinata API' + error);
     }
 
-    console.log('Final IPFS URL for metadata is: ', ipfsURL);
+    console.log('Final IPFS URL for metadata is: ' + ipfsURL);
     return ipfsURL; // Passing this into the newGeocache URI
   };
 
@@ -556,9 +583,7 @@ export default function NewCacheForm({navigation}) {
               title={'Generating Story'}
               isProgress={true}
               resetParentState={resetState}
-              body={
-                'Please wait.'
-              }></MessageModal>
+              body={'Please wait.'}></MessageModal>
           </View>
         )}
         {isDeployingGeocache && (
