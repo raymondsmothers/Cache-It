@@ -65,6 +65,26 @@ export default function CacheMap() {
     }
   }, [currentPosition]);
 
+  useEffect(() => {
+    console.log("epicenter: " + cacheMetadata?.epicenterLat)
+    if (cacheMetadata?.epicenterLat != undefined && cacheMetadata?.epicenterLong != undefined) {
+      mapRef.current.setCamera(
+        {
+          center: {
+            // latitude: 30,
+            // longitude: -90,
+            latitude: cacheMetadata?.epicenterLat,
+            longitude: cacheMetadata?.epicenterLong,
+            latitudeDelta: global.latitudeDelta,
+            longitudeDelta: global.longitudeDelta,
+          },
+          zoom: 15,
+        },
+        {duration: 2000},
+      );
+    }
+  }, [cacheMetadata]);
+
   // Getting all the active geocaches IDs
   // TODO: These are the IDs that the user should be able to select
   // useEffect(() => {

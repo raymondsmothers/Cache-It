@@ -80,7 +80,7 @@ export default function NewCacheForm({navigation}) {
   const [isGeneratingImage, setIsGeneratingImage] = useState();
   const [isLoading, setIsLoading] = useState();
   // const [hasThrownError, setHasThrownError] = useState(false)
-  const [errorMessage, setErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
   const [name, onChangeName] = useState();
   const [radius, onChangeRadius] = useState();
   const [numItems, onChangeNumItems] = useState();
@@ -170,9 +170,9 @@ export default function NewCacheForm({navigation}) {
         'callback triggered in new cacheform: ' +
           geocacheName +
           ' id: ' +
-          newGeocacheId,
+          newGeocacheId - 1,
       );
-      await getGeocacheMetadata(newGeocacheId);
+      await getGeocacheMetadata(newGeocacheId - 1);
       setIsDeployingGeocache(false);
       setHasDeployedGeocache(true);
     }
@@ -268,8 +268,8 @@ export default function NewCacheForm({navigation}) {
         }),
       })
         .then(response => {
-          console.log('RES');
-          console.log(response);
+          // console.log('RES');
+          // console.log(response);
           return response.json();
         })
         .then(data => {
@@ -339,7 +339,6 @@ export default function NewCacheForm({navigation}) {
           .then(async base64url => {
             // console.log("base64: " + base64url.substring(0, 199))
             setImgUrl(base64url);
-            setIsGeneratingImage(false);
 
             if (base64url && originStory) {
               // Generating metadata, passing in image
@@ -354,22 +353,22 @@ export default function NewCacheForm({navigation}) {
                 ),
                 base64url,
               );
+              setIsGeneratingImage(false);
 
-              console.log('sending transaction! ' + originStory.trim());
+
+              // console.log('sending transaction! ' + originStory.trim());
               const createGeocacheTxn = await geocacheContractWithSigner
                 .newGeocache(
                   Math.abs(Math.round(numItems)),
                   tokenURI,
                   date.toString(),
                   itemLocations,
-                  //TODO this context needs to be updated
                   currentPosition.latitude.toString(),
                   currentPosition.longitude.toString(),
+                  // "-90.0923910",
+                  // "27.9283901",
                   Math.abs(Math.round(radius)),
                   name,
-                  //Wait to deploy new contracts to include randomly generated originStory
-                  // 'eeeee',
-                  //This always runs out of memory
                   originStory.trim(),
                   // {
                   //   gasLimit: 10000000,
@@ -411,6 +410,7 @@ export default function NewCacheForm({navigation}) {
     locationCreated,
     imgURL,
   ) => {
+    // console.log("pinata secret: " + PINATA_JWT)
     // Creating our metadata
     const metadataObj = {
       image: imgURL,
@@ -447,7 +447,7 @@ export default function NewCacheForm({navigation}) {
       console.log('Error making request to Pinata API' + error);
     }
 
-    console.log('Final IPFS URL for metadata is: ' + ipfsURL);
+    // console.log('Final IPFS URL for metadata is: ' + ipfsURL);
     return ipfsURL; // Passing this into the newGeocache URI
   };
 
@@ -548,6 +548,9 @@ export default function NewCacheForm({navigation}) {
           )}
         </View>
         <View style={styles.container}>
+          <Text style={globalStyles.centerText} >
+            {"After clicking submit, you will be automatically redirected to confirm this transaction with your Wallet Provider."}
+          </Text>
           {geocacheOriginStory != undefined && (
             <Text
               style={[globalStyles.centerText, {color: global.secondaryColor}]}>
@@ -574,7 +577,7 @@ export default function NewCacheForm({navigation}) {
               title={'Generating Image'}
               isProgress={true}
               resetParentState={resetState}
-              body={'Please wait.'}></MessageModal>
+              body={'Please wait for AI to finish generating your geocache image. This may take 20 - 30 seconds.'}></MessageModal>
           </View>
         )}
         {isGeneratingStory && (
@@ -583,7 +586,7 @@ export default function NewCacheForm({navigation}) {
               title={'Generating Story'}
               isProgress={true}
               resetParentState={resetState}
-              body={'Please wait.'}></MessageModal>
+              body={'Please wait for AI to finish creating your geocache origin story.'}></MessageModal>
           </View>
         )}
         {isDeployingGeocache && (

@@ -46,7 +46,7 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
     address public immutable creatorContract;
 
     // total number of geocaches created so far
-    uint256 public numGeocaches;
+    uint256 public numGeocaches = 0;
 
     // active geocaches
     uint256 public numActiveGeocaches;
@@ -107,8 +107,7 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         string memory _name,
         string memory _originStory
     ) external {
-        ++numGeocaches;
-        ++numActiveGeocaches;
+
 
         tokenIdToGeocache[numGeocaches] = GeocacheInstance(
             msg.sender,
@@ -125,7 +124,8 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         );
         userToGeocache[msg.sender].push(numGeocaches);
         hasMintedTokenId[numGeocaches][msg.sender] = true;
-
+        ++numGeocaches;
+        ++numActiveGeocaches;
         // mint the first token of the Geocache to the creator
         address[] memory to = new address[](1);
         to[0] = msg.sender;

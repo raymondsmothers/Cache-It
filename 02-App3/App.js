@@ -201,10 +201,18 @@ function App() {
             alert('OOPS! Error: ' + e);
           },
         );
+        
         const formattedIds = ids.map((id, index) => Number(id));
-        // console.log('ids: ' + ids);
+        console.log("fomrateIds: " + formattedIds)
+        console.log('ids: ' + ids);
         const names = await getGeocacheNames(ids);
-
+        // console.log("name: " + names)
+        const num = await GeocacheContract.numActiveGeocaches().catch(
+          e => {
+            alert('OOPS! Error: ' + e);
+          },
+        );
+        console.log("num active: " + num)
         // await getGeocacheNames(ids).then(() => {
         //   console.log("data got")
         //   setIsLoading(false)
