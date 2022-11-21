@@ -17,7 +17,7 @@ export default function ConnectWalletButton() {
 
     return (
       <Button         color={global.primaryColor}
-      title="Connect Wallet" onPress={() => connector.connect()} />
+      title="Connect Wallet" onPress={() => connector.connect().catch((e) => {alert("OOPS! Error: " + e)})} />
     );
   }
   else {
