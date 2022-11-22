@@ -107,7 +107,8 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         string memory _name,
         string memory _originStory
     ) external {
-
+        ++numGeocaches;
+        ++numActiveGeocaches;
 
         tokenIdToGeocache[numGeocaches] = GeocacheInstance(
             msg.sender,
@@ -124,8 +125,7 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         );
         userToGeocache[msg.sender].push(numGeocaches);
         hasMintedTokenId[numGeocaches][msg.sender] = true;
-        ++numGeocaches;
-        ++numActiveGeocaches;
+
         // mint the first token of the Geocache to the creator
         address[] memory to = new address[](1);
         to[0] = msg.sender;
@@ -220,20 +220,15 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         override
         returns (string memory)
     {
-         return tokenIdToGeocache[_tokenId].tokenURI;
+        return tokenIdToGeocache[_tokenId].tokenURI;
     }
-
 
     /**
      * @notice return the metadata for a given tokenId
      * @param _tokenId of the NFT
      */
-    function uri(uint256 _tokenId)
-        public
-        view
-        returns (string memory)
-    {
-         return tokenIdToGeocache[_tokenId].tokenURI;
+    function uri(uint256 _tokenId) public view returns (string memory) {
+        return tokenIdToGeocache[_tokenId].tokenURI;
     }
 
     /**
