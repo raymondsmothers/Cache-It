@@ -3,7 +3,7 @@ require('node-libs-react-native/globals');
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React, {useEffect, useState, useContext} from 'react';
-import {PermissionsAndroid, Text, View, StyleSheet} from 'react-native';
+import {PermissionsAndroid} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import {LogBox} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -16,7 +16,6 @@ import CacheMap from './components/CacheMap';
 import ConnectWalletButton from './components/ConnectWalletButton';
 import IntroductionPage from './components/introduction';
 import Collection from './components/Collection';
-import HowToPlayModal from './components/HowToPlayModal';
 
 //Web3 imports
 import {
@@ -55,15 +54,6 @@ export const AllGeocacheDataContext = React.createContext({});
 
 const Stack = createNativeStackNavigator();
 
-const styles = StyleSheet.create({
-  rowContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    paddingRight: 5,
-  },
-});
-
 function HomeTab() {
   return (
     <Tab.Navigator
@@ -85,14 +75,8 @@ function HomeTab() {
       <Tab.Screen
         name="Cache Map"
         component={CacheMap}
-        options={{          
-          headerRight: () => 
-            <View style={styles.rowContainer}>
-              <ConnectWalletButton/>
-              {/* TODO: Cheating for now, go back and fix */}
-              <Text>  </Text>
-              <HowToPlayModal/>
-            </View>,
+        options={{
+          headerRight: () => <ConnectWalletButton />,
           tabBarIcon: ({focused, color}) => <Icon name="map" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
             return null;
@@ -104,13 +88,7 @@ function HomeTab() {
         name="Seek"
         component={SeekScreen}
         options={{
-          headerRight: () => 
-            <View style={styles.rowContainer}>
-              <ConnectWalletButton/>
-              {/* TODO: Cheating for now, go back and fix */}
-              <Text>  </Text>
-              <HowToPlayModal/>
-            </View>,
+          headerRight: () => <ConnectWalletButton />,
           tabBarIcon: ({focused, color}) => <Icon name="eye" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
             return null;
@@ -118,16 +96,10 @@ function HomeTab() {
         }}
       />
       <Tab.Screen
-        name="New Cache"
+        name="New Cache Form"
         component={NewCacheForm}
         options={{
-          headerRight: () => 
-            <View style={styles.rowContainer}>
-              <ConnectWalletButton/>
-              {/* TODO: Cheating for now, go back and fix */}
-              <Text>  </Text>
-              <HowToPlayModal/>
-            </View>,
+          headerRight: () => <ConnectWalletButton />,
           tabBarIcon: ({focused, color}) => <Icon name="plus" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
             return null;
@@ -139,14 +111,19 @@ function HomeTab() {
         name="Collection"
         component={Collection}
         options={{
-          headerRight: () => 
-            <View style={styles.rowContainer}>
-              <ConnectWalletButton/>
-              {/* TODO: Cheating for now, go back and fix */}
-              <Text>  </Text>
-              <HowToPlayModal/>
-            </View>,
+          headerRight: () => <ConnectWalletButton />,
           tabBarIcon: ({focused, color}) => <Icon name="shopping-basket" size={20} color={focused ? global.secondaryColor : "gray"} />,
+          tabBarLabel: () => {
+            return null;
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Info"
+        component={IntroductionPage}
+        options={{
+          headerRight: () => <ConnectWalletButton />,
+          tabBarIcon: ({focused, color}) => <Icon name="info" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
             return null;
           },
