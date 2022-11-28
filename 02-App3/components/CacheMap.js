@@ -66,21 +66,18 @@ export default function CacheMap() {
   }, [currentPosition]);
 
   useEffect(() => {
-    console.log("epicenter: " + cacheMetadata?.epicenterLat)
+    // console.log("epicenter: " + cacheMetadata?.epicenterLat + " \nmycenter: " + currentPosition.latitude)
+    
     if (cacheMetadata?.epicenterLat != undefined && cacheMetadata?.epicenterLong != undefined) {
-      mapRef.current.setCamera(
+      mapRef.current.animateCamera(
         {
           center: {
-            // latitude: 30,
-            // longitude: -90,
             latitude: cacheMetadata?.epicenterLat,
             longitude: cacheMetadata?.epicenterLong,
-            latitudeDelta: global.latitudeDelta,
-            longitudeDelta: global.longitudeDelta,
           },
-          zoom: 15,
+          // zoom: 1,
         },
-        {duration: 2000},
+        {duration: 5000},
       );
     }
   }, [cacheMetadata]);

@@ -100,6 +100,7 @@ export default function NewCacheForm({navigation}) {
   // });
 
   useEffect(() => {
+    //TODO this calls multiple times and breaks sometimes.
     GeocacheContract.on('GeocacheCreated', geocacheCreatedCallback);
     // ipfs.add('hello world!').then(console.log).catch(console.log);
   });
