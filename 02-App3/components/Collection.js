@@ -62,6 +62,7 @@ export default function Collection() {
             size: currItem["traits"][sizeIndex]["value"],
             date_created: currItem["traits"][dateCreatedIndex]["value"],
             origin_story: currItem["description"],
+            opensea_link: currItem["permalink"],
           });
         }
         setGeocacheData(geocacheDataArr);

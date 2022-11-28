@@ -7,12 +7,9 @@ import {
   Text,
   Pressable,
   View,
+  ScrollView,
   Image,
 } from "react-native";
-const globalStyles = require("../global");
-
-import { useNavigation } from "@react-navigation/native";
-import { NavigationContainer, StackActions } from "@react-navigation/native";
 
 export default function DetailedGeocachePopUp({
   metadata, // Metadata object being passed in
@@ -22,8 +19,15 @@ export default function DetailedGeocachePopUp({
 }) {
   const [modalVisible, setModalVisible] = useState(true);
 
-  console.log("Metadata is ");
-  console.log(metadata);
+  const handleURLClick = async (url) => {
+    Linking.canOpenURL(url).then((supported) => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        console.log("Don't know how to open URI: " + url);
+      }
+    });
+  };
 
   return (
     <Modal
@@ -36,7 +40,7 @@ export default function DetailedGeocachePopUp({
       }}
     >
       <View style={styles.centeredView}>
-        <View style={styles.modalView}>
+        <ScrollView contentContainerStyle={styles.modalView}>
           <Image
             style={styles.img}
             source={{
@@ -59,6 +63,16 @@ export default function DetailedGeocachePopUp({
             Date created: {metadata.date_created}
           </Text>
           <Pressable
+            style={[styles.button, { backgroundColor: "#1868B7" }]}
+            onPress={async () =>
+              await handleURLClick(metadata.opensea_link).catch((e) => {
+                alert("OOPS! Error: " + e);
+              })
+            }
+          >
+            <Text style={styles.textStyle}>{"View on OpenSea"}</Text>
+          </Pressable>
+          <Pressable
             style={[styles.button, styles.buttonClose]}
             onPress={() => {
               setModalVisible(false);
@@ -67,7 +81,7 @@ export default function DetailedGeocachePopUp({
           >
             <Text style={styles.textStyle}>{"Close "}</Text>
           </Pressable>
-        </View>
+        </ScrollView>
       </View>
     </Modal>
   );
