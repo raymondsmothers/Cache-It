@@ -204,7 +204,7 @@ function App() {
         
         const formattedIds = ids.map((id, index) => Number(id));
         // console.log("fomrateIds: " + formattedIds)
-        // console.log('ids: ' + ids);
+        console.log('ids: ' + ids);
         const names = await getGeocacheNames(ids);
         // console.log("name: " + names)
         const num = await GeocacheContract.numActiveGeocaches().catch(

@@ -8,6 +8,7 @@ import {
   GeocacheContractContext,
 } from '../App';
 import '../global';
+import TriviaModal from './TriviaModal';
 import NewCacheOverlay from './NewCacheOverlay';
 import SelectGeocache from './SelectGeocache';
 export default function CacheMap() {
@@ -68,7 +69,7 @@ export default function CacheMap() {
   useEffect(() => {
     // console.log("epicenter: " + cacheMetadata?.epicenterLat + " \nmycenter: " + currentPosition.latitude)
     
-    if (cacheMetadata?.epicenterLat != undefined && cacheMetadata?.epicenterLong != undefined) {
+    if (cacheMetadata?.epicenterLat != undefined && cacheMetadata?.epicenterLong != undefined && !isNaN(cacheMetadata?.epicenterLat) && !isNaN(cacheMetadata?.epicenterLong) ) {
       mapRef.current.animateCamera(
         {
           center: {
@@ -149,6 +150,9 @@ export default function CacheMap() {
           <Text style={styles.cacheNameText}>{"Searching: \"" + cacheMetadata?.name + "\""}</Text>
         </View>
       }
+      <TriviaModal>
+        
+      </TriviaModal>
       <MapView
         ref={mapRef}
         showsBuildings={true}

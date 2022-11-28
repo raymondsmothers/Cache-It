@@ -256,7 +256,7 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         uint256[] memory ids = new uint256[](numActiveGeocaches);
 
         uint256 counter;
-        for (uint256 i; i < numGeocaches; i++) {
+        for (uint256 i = 1; i <= numGeocaches; i++) {
             GeocacheInstance storage geocache = tokenIdToGeocache[i];
             if (geocache.isActive) {
                 ids[counter] = i;

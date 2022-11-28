@@ -21,6 +21,7 @@ import "../global";
 const DISTANCE_THRESHOLD = 40
 //Component imports
 import  AnimatedRings from "./AnimatedRing"
+import TriviaModal from './TriviaModal';
 // export const PulseRateContext = React.createContext({});
 export const PulseRateContext = React.createContext({
   pulseStrength: {},
@@ -221,6 +222,7 @@ export default function SeekScreen() {
               <ARvision></ARvision>         
         ) : (
           <View style={styles.container}>
+
             <Text style={globalStyles.titleText}>
               {' '}
               {'Searching "' + cacheMetadata.name + '"'}{' '}

@@ -171,9 +171,9 @@ export default function NewCacheForm({navigation}) {
         'callback triggered in new cacheform: ' +
           geocacheName +
           ' id: ' +
-          newGeocacheId - 1,
+          newGeocacheId,
       );
-      await getGeocacheMetadata(newGeocacheId - 1);
+      await getGeocacheMetadata(newGeocacheId);
       setIsDeployingGeocache(false);
       setHasDeployedGeocache(true);
     }

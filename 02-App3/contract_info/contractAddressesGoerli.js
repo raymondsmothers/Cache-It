@@ -1,2 +1,2 @@
-exports.Geocache1155 = '0x86578a726C7f7127bc360D559e18e78668CDcf7e';
-exports.Geocache = '0x2acE931b5B66030860BbD28372809A49aCf2aCDf';
+exports.Geocache1155 = '0xE7BdBc265547dB647e4EF3ac6ab081b6ba2f668B';
+exports.Geocache = '0x9b27657967Ee3Ca77cb468D8eCfD0a05ffc58F80';
