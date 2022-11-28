@@ -82,6 +82,7 @@ export default function NewCacheForm({navigation}) {
   // const [hasThrownError, setHasThrownError] = useState(false)
   const [errorMessage, setErrorMessage] = useState();
   const [name, onChangeName] = useState();
+  const [originAdjective, onChangeOriginAdjective] = useState()
   const [radius, onChangeRadius] = useState();
   const [numItems, onChangeNumItems] = useState();
   let fixedRadius = 0;
@@ -210,7 +211,8 @@ export default function NewCacheForm({navigation}) {
         body: JSON.stringify({
           model: 'text-davinci-002',
           prompt:
-            'Write a mysterious, exciting origin story for a geocache item.',
+            'Write a ' + originAdjective + ' origin story for a mysterious hidden item.',
+            // 'Write a mysterious, origin story for a geocache item.',
           temperature: 0.9,
           max_tokens: 1750,
           top_p: 1,
@@ -252,7 +254,7 @@ export default function NewCacheForm({navigation}) {
     return new Promise((resolve, reject) => {
       var prompt =
         originStory +
-        ' Generate a mysterious image that represents a single item in this cache. Do not include any human fingers in the image. Give the image a mysterious, outdoor background.';
+        ' Generate a mysterious image that represents a single item in this hidden cache. Do not include any human fingers in the image. Give the image a mysterious, outdoor background.';
       var url = 'https://api.openai.com/v1/images/generations';
       var bearer = 'Bearer ' + OPENAI_SECRET_KEY;
       fetch(url, {
@@ -495,6 +497,18 @@ export default function NewCacheForm({navigation}) {
               style={styles.input}
               onChangeText={onChangeName}
               placeholder="Name"
+              blurOnSubmit={true}
+              // value={name}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <Text style={globalStyles.text}>
+              {'Choose a adjective to describe the geocache\'s origin story'}
+            </Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={onChangeOriginAdjective}
+              placeholder="Scary"
               blurOnSubmit={true}
               // value={name}
             />

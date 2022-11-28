@@ -22,79 +22,11 @@ const globalStyles = require('../styles');
 export const MintingContext = React.createContext({});
 
 const ARVisionScene = () => {
-  // const [text, setText] = useState('Initializing AR...');
-  const [ignoreDrag, setIgnoreDrag] = useState(false);
-  const providersAndSigners = useContext(Web3ProviderContext);
-  const GeocacheContract = useContext(GeocacheContractContext);
-  const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
 
-  const connector = useWalletConnect();
-  const {setIsMintingItem, setHasMintedItem, hasMintedItem, setErrorMessage, setIsTransactionDelayed, setTransactionHash, setNewGeocacheId, setHasTriggeredTrivia} =
+  const {hasMintedItem, setHasTriggeredTrivia} =
     useContext(MintingContext);
 
 
-
-  useEffect(() => {
-    GeocacheContract.on('GeocacheItemMinted', geocacheItemMintedCallback);
-    // console.log('priv: ' + providersAndSigners.cacheItSigner.address);
-  });
-
-  //This callback is wrong, the CAcheIt wallet is always sending the transaction
-  const geocacheItemMintedCallback = (
-    receiverAddress,
-    geocacheId,
-    geocacheItemId,
-  ) => {
-    receiverAddress = receiverAddress.toLocaleLowerCase();
-    // console.log('creatorAddress: ' + creatorAddress);
-
-    if (receiverAddress == connector.accounts[0]) {
-    // if (geocacheId === cacheMetadata.geocacheId) {
-      setNewGeocacheId(geocacheId)
-      console.log('callback triggered');
-      setIsMintingItem(false);
-      setHasMintedItem(true);
-      setIsTransactionDelayed(false);
-    }
-  };
-
-  // _onClick(source) {
-  //   console.log("We just Clicked the image!");
-  // }
-
-  // Minting an item in collection for the user
-  const mintItemInGeocache = async () => {
-    setIsMintingItem(true);
-    const cacheItSigner = providersAndSigners.cacheItSigner;
-    const geocacheId = cacheMetadata?.geocacheId;
-    const userAddress = connector.accounts[0];
-    // console.log("User's address is ", userAddress);
-
-    // Calling the contract function as contract owner
-    const geocacheContractWithSigner = await GeocacheContract.connect(
-      cacheItSigner,
-    )
-    // var selectedGeocacheItemLocations =;
-    const mintItemInGeocacheTxn = await geocacheContractWithSigner
-      .mintItemInGeocache(geocacheId, userAddress, {
-        gasLimit: 10000000,
-      })
-      .then(res => {
-        console.log('Success: ' + JSON.stringify(res, null, 2));
-        // alert(`Successfully minted item for user ${userAddress}`);
-        setTransactionHash(res.hash)
-        setTimeout(() => {
-          // console.log("DELAYED")
-          setIsTransactionDelayed(true && !hasMintedItem)
-        }, 1000)
-      })
-      .catch(error => {
-        // alert('Error minting item: ' + error.message);
-        console.log('Error in MintTXn: ' + error.message);
-        setErrorMessage(error?.message);
-        setIsMintingItem(false);
-      });
-  };
 
   const initialPosition = [0, -0.5, -1];
   const objectScale = [10, 10, 10];
@@ -175,7 +107,7 @@ export default () => {
       setIsTransactionDelayed(false);
     }
   };
-  
+
   const mintItemInGeocache = async () => {
     setIsMintingItem(true);
     const cacheItSigner = providersAndSigners.cacheItSigner;
