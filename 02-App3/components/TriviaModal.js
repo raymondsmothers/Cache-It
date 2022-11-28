@@ -1,27 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { Alert, Linking, Modal, StyleSheet, Text, Pressable, View, ActivityIndicator} from "react-native";
 const globalStyles = require("../styles")
+const global = require("../global")
 import {OPENAI_SECRET_KEY} from '@env';
 import {RadioButton} from 'react-native-paper';
 
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {NavigationContainer, StackActions} from '@react-navigation/native';
-export default function TriviaModal() {
-  const [modalVisible, setModalVisible] = useState(true);
+export default function TriviaModal({mintItemInGeocache, modalVisible, setModalVisible}) {
+  // const [modalVisible, setModalVisible] = useState(true);
   const [isGeneratingTrivia, setIsGeneratingTrivia] = useState()
   const [triviaQuestion, setTriviaQuestion] = useState()
   const [triviaAnswerOptions, setTriviaAnswerOptions] = useState([])
   const [triviaCorrectAnswer, setTriviaCorrectAnswer] = useState()
+  const [isIncorrect, setIsIncorrect] = useState()
   const [selectedAnswer, setSelectedAnswer] = useState()
   const [errorMessage, setErrorMessage] = useState()
   const navigation = useNavigation() 
 
   const handleSubmit = async () => {
     //Check to see if selected radio button is correct trivia answer
-    if(selectedAnswer == triviaCorrectAnswer)
+    if(selectedAnswer == triviaCorrectAnswer) {
         console.log("correct!")
-    else
+        // setHasCorrectlyAnsweredTrivia(true)
+        mintItemInGeocache()
+        setModalVisible(!modalVisible);
+        // setModalVisible
+    }
+    else {
+      setIsIncorrect(true)
       console.log("incorrect")
+    }
   };
 
   useEffect(() => {
@@ -33,6 +42,11 @@ export default function TriviaModal() {
     data = data.filter(element => {
       return element != null && element != "";
     });
+    //If the generated trivia is only a answer question pair, regenerate
+    if(data.length <= 2) {
+      generateTrivia()
+      return
+    }
     var answerOptions = data.slice(1)
     answerOptions = answerOptions.sort((a, b) => 0.5 - Math.random());
     var correctAnswerIndex = answerOptions.indexOf(data[1]);
@@ -63,6 +77,7 @@ export default function TriviaModal() {
 
   const generateTrivia = async () => {
     setSelectedAnswer(undefined)
+    setIsIncorrect(false)
     setIsGeneratingTrivia(true);
     return new Promise((resolve, reject) => {
       var url = 'https://api.openai.com/v1/completions';
@@ -115,6 +130,8 @@ export default function TriviaModal() {
     });
   };
 
+  
+
 
 
   return (
@@ -130,7 +147,7 @@ export default function TriviaModal() {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={[styles.modalText, {fontWeight: "bold"}]}>{"Trivia Challenge"}</Text>
+            <Text style={globalStyles.titleText}>{"Trivia Challenge"}</Text>
             <Text style={styles.modalText}>{"Correctly answer the question below to mint the item."}</Text>
             {isGeneratingTrivia ? (
               <View>
@@ -152,7 +169,7 @@ export default function TriviaModal() {
                           
                           <RadioButton.Item
                             // style={styles.buttonContainer}
-                            key={index}
+                            key={option}
                             labelStyle={{color: global.secondaryColor}}
                             label={option}
                             color={global.primaryColor}
@@ -170,6 +187,9 @@ export default function TriviaModal() {
                 ) : (
                   <Text>{"Uh-Oh, something bad happened: " + errorMessage}</Text>
                 )}
+                {isIncorrect && (
+                  <Text style={[styles.modalText, {color: "red"}]}> Sorry, that is incorrect. Please generate a new question. </Text>
+                )}
               </View>
             )}
             
@@ -178,10 +198,11 @@ export default function TriviaModal() {
               <View style={styles.buttonContainer}>
 
 
-                {selectedAnswer != undefined &&
+                {selectedAnswer != undefined && !isIncorrect &&
                 <Pressable
                     style={[styles.button, {backgroundColor: "#1868B7"}]}
                     onPress={async () =>  await handleSubmit()}
+                    // disabled={isIncorrect}
                   >
                   <Text style={styles.textStyle}>{"Submit Answer"}</Text>
                 </Pressable>
@@ -272,6 +293,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     fontSize: 18,
     textAlign: "center"
+  },
+  modalTitle: {
+    marginBottom: 12,
+    fontSize: 18,
+    textAlign: "center",
+    fontWeight: "bold",
+    color: global.secondaryColor
   }
 });
 

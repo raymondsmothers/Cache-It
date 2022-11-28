@@ -17,6 +17,7 @@ import {useWalletConnect} from '@walletconnect/react-native-dapp';
 import {ethers} from 'ethers';
 import MessageModal from './MessageModal';
 import * as CONTRACT_ADDRESSES from '../contract_info/contractAddressesGoerli';
+import TriviaModal from './TriviaModal';
 const globalStyles = require('../styles');
 export const MintingContext = React.createContext({});
 
@@ -26,23 +27,12 @@ const ARVisionScene = () => {
   const providersAndSigners = useContext(Web3ProviderContext);
   const GeocacheContract = useContext(GeocacheContractContext);
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
+
   const connector = useWalletConnect();
-  const {setIsMintingItem, setHasMintedItem, hasMintedItem, setErrorMessage, setIsTransactionDelayed, setTransactionHash, setNewGeocacheId} =
+  const {setIsMintingItem, setHasMintedItem, hasMintedItem, setErrorMessage, setIsTransactionDelayed, setTransactionHash, setNewGeocacheId, setHasTriggeredTrivia} =
     useContext(MintingContext);
 
-  // const [ errorMessage, setErrorMessage ] = useState()
 
-  // function onInitialized(state, reason) {
-  //   console.log('guncelleme', state, reason);
-  //   // console.debug("bug")
-  //   // if (state === ViroConstants.TRACKING_NORMAL) {
-  //   if (state === 3) {
-  //     setText('Hello World!');
-  //   }
-  //   // else if (state === ViroConstants.TRACKING_NONE) {
-  //   //   // Handle loss of tracking
-  //   // }
-  // }
 
   useEffect(() => {
     GeocacheContract.on('GeocacheItemMinted', geocacheItemMintedCallback);
@@ -96,7 +86,7 @@ const ARVisionScene = () => {
         setTimeout(() => {
           // console.log("DELAYED")
           setIsTransactionDelayed(true && !hasMintedItem)
-        }, 15000)
+        }, 1000)
       })
       .catch(error => {
         // alert('Error minting item: ' + error.message);
@@ -120,20 +110,21 @@ const ARVisionScene = () => {
         materials={['grid']}
         // onClick={(position, source) => console.log('Click', position, source)}
         onClick={(position, source) => {
-          Alert.alert(
-            'Congratulations!',
-            'Would you like to claim this item?',
-            [
-              {
-                text: 'No',
-                onPress: () => console.log("Nah, I'm good"),
-              },
-              {
-                text: 'Yes',
-                onPress: () => mintItemInGeocache(),
-              },
-            ],
-          );
+          setHasTriggeredTrivia(true)
+          // Alert.alert(
+          //   'Congratulations!',
+          //   'Would you like to claim this item?',
+          //   [
+          //     {
+          //       text: 'No',
+          //       onPress: () => console.log("Nah, I'm good"),
+          //     },
+          //     {
+          //       text: 'Yes',
+          //       onPress: () => mintItemInGeocache(),
+          //     },
+          //   ],
+          // );
         }}
         dragType="FixedDistance"
         dragPlane={{
@@ -153,6 +144,70 @@ export default () => {
   const [isTransactionDelayed, setIsTransactionDelayed] = useState(false)
   const [newGeocacheId, setNewGeocacheId] = useState()
   const [errorMessage, setErrorMessage] = useState();
+  const [hasCorrectlyAnsweredTrivia, setHasCorrectlyAnsweredTrivia] = useState(false)
+  const [triviaIsVisible, setTriviaIsVisible] = useState(false)
+  const providersAndSigners = useContext(Web3ProviderContext);
+  const GeocacheContract = useContext(GeocacheContractContext);
+  const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
+  const connector = useWalletConnect();
+  
+
+  useEffect(() => {
+    GeocacheContract.on('GeocacheItemMinted', geocacheItemMintedCallback);
+    // console.log('priv: ' + providersAndSigners.cacheItSigner.address);
+  });
+
+  //This callback is wrong, the CAcheIt wallet is always sending the transaction
+  const geocacheItemMintedCallback = (
+    receiverAddress,
+    geocacheId,
+    geocacheItemId,
+  ) => {
+    receiverAddress = receiverAddress.toLocaleLowerCase();
+    // console.log('creatorAddress: ' + creatorAddress);
+
+    if (receiverAddress == connector.accounts[0]) {
+    // if (geocacheId === cacheMetadata.geocacheId) {
+      setNewGeocacheId(geocacheId)
+      console.log('callback triggered');
+      setIsMintingItem(false);
+      setHasMintedItem(true);
+      setIsTransactionDelayed(false);
+    }
+  };
+  
+  const mintItemInGeocache = async () => {
+    setIsMintingItem(true);
+    const cacheItSigner = providersAndSigners.cacheItSigner;
+    const geocacheId = cacheMetadata?.geocacheId;
+    const userAddress = connector.accounts[0];
+    // console.log("User's address is ", userAddress);
+
+    // Calling the contract function as contract owner
+    const geocacheContractWithSigner = await GeocacheContract.connect(
+      cacheItSigner,
+    )
+    // var selectedGeocacheItemLocations =;
+    const mintItemInGeocacheTxn = await geocacheContractWithSigner
+      .mintItemInGeocache(geocacheId, userAddress, {
+        gasLimit: 10000000,
+      })
+      .then(res => {
+        console.log('Success: ' + JSON.stringify(res, null, 2));
+        // alert(`Successfully minted item for user ${userAddress}`);
+        setTransactionHash(res.hash)
+        setTimeout(() => {
+          // console.log("DELAYED")
+          setIsTransactionDelayed(true && !hasMintedItem)
+        }, 15000)
+      })
+      .catch(error => {
+        // alert('Error minting item: ' + error.message);
+        console.log('Error in MintTXn: ' + error.message);
+        setErrorMessage(error?.message);
+        setIsMintingItem(false);
+      });
+  };
 
   const resetState = () => {
     setErrorMessage(undefined)
@@ -166,6 +221,7 @@ export default () => {
     setTransactionHash: setTransactionHash,
     setIsTransactionDelayed: setIsTransactionDelayed,
     setNewGeocacheId: setNewGeocacheId,
+    setHasTriggeredTrivia: setTriviaIsVisible,
     hasMintedItem: hasMintedItem
   };
   return (
@@ -179,15 +235,19 @@ export default () => {
           }}
           style={{flexGrow: 1, flex: 3}}
         />
+        {triviaIsVisible && (
+          // <TriviaModal mintItemInGeocache={mintItemInGeocache} setHasCorrectlyAnsweredTrivia={setHasCorrectlyAnsweredTrivia}></TriviaModal>
+          <TriviaModal mintItemInGeocache={mintItemInGeocache} setModalVisible={setTriviaIsVisible} modalVisible={triviaIsVisible} ></TriviaModal>
+        )}
         {isMintingItem && (
           <MessageModal
             style={globalStyles.messageModal}
-            title={'Minting'}
+            title={'Correct!'}
             isProgress={true}
             isTransactionDelayed={isTransactionDelayed}
             transactionHash={transactionHash}
             resetParentState={resetState}
-            body={'Please wait'}
+            body={' Now minting your item. Please wait.'}
           />
         )}
         {errorMessage && (

@@ -16,7 +16,7 @@ export default function CacheMap() {
   const mapRef = React.createRef();
   const GeocacheContract = useContext(GeocacheContractContext);
   // TODO this is a hardcode state variable, we need to create a switch to allow users to select a geocache id, by name maybe
-  const [selectedGeocache, setSelectedGeocache] = useState();
+  const [selectedGeocache, setSelectedGeocache] = useState(4);
   // const locationContext = useContext(LocationContext);
   const  {currentPosition } = useContext(LocationContext);
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
@@ -150,9 +150,9 @@ export default function CacheMap() {
           <Text style={styles.cacheNameText}>{"Searching: \"" + cacheMetadata?.name + "\""}</Text>
         </View>
       }
-      <TriviaModal>
+      {/* <TriviaModal>
         
-      </TriviaModal>
+      </TriviaModal> */}
       <MapView
         ref={mapRef}
         showsBuildings={true}

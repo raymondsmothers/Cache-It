@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Alert, Linking, Modal, StyleSheet, Text, Pressable, View, ActivityIndicator} from "react-native";
-const globalStyles = require("../global")
+const globalStyles = require("../styles")
 
 import {useNavigation} from '@react-navigation/native';
 import {NavigationContainer, StackActions} from '@react-navigation/native';
@@ -32,7 +32,7 @@ export default function MessageModal({title, transactionHash, hasDeployedGeocach
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={[styles.modalText, {fontWeight: "bold"}]}>{title}</Text>
+            <Text style={globalStyles.titleText}>{title}</Text>
             <Text style={styles.modalText}>{body}</Text>
               {isTransactionDelayed && (
                 <Text style={[styles.modalText, {color: "red"}]}>{"Uh-oh! This is taking longer than usual. Please view your transaction on Etherscan to verify the status."}</Text>
