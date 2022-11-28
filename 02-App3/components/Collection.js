@@ -85,8 +85,8 @@ export default function Collection() {
             }}
           />
           <Text style={styles.viewText}>{data.name}</Text>
-          <Text style={styles.viewText}>Location Found: </Text>
-          <Text>{data.location_found}</Text>
+          {/* <Text style={styles.viewText}>Location Found: </Text>
+          <Text>{data.location_found}</Text> */}
         </View>
       </TouchableOpacity>
     );
