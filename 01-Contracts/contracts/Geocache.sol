@@ -75,12 +75,9 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
     //TODO create a function that auto sets geocache to inactive (delete method)
 
     // Interfaces for project
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(IERC165, AdminControl)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(IERC165, AdminControl) returns (bool) {
         return
             interfaceId == type(ICreatorExtensionTokenURI).interfaceId ||
             // interfaceId == type(ICreatorCore).interfaceId ||
@@ -152,10 +149,10 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
      * @param _geocacheId the tokenId of the geocachea
      * @param _user address of the user who finds the item in the geocache
      */
-    function mintItemInGeocache(uint256 _geocacheId, address _user)
-        external
-        onlyOwner
-    {
+    function mintItemInGeocache(
+        uint256 _geocacheId,
+        address _user
+    ) external onlyOwner {
         // Check that _tokenId exists
         if (_geocacheId >= numGeocaches) revert NonExistentToken();
         // console.log(numGeocaches);
@@ -214,12 +211,10 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
      * @param _creatorContract to check the correct manifold creator contract
      * @param _tokenId of the NFT
      */
-    function tokenURI(address _creatorContract, uint256 _tokenId)
-        public
-        view
-        override
-        returns (string memory)
-    {
+    function tokenURI(
+        address _creatorContract,
+        uint256 _tokenId
+    ) public view override returns (string memory) {
         return tokenIdToGeocache[_tokenId].tokenURI;
     }
 
@@ -270,11 +265,9 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
      * @dev returning the geolocations of a geocache
      * @param geocacheIndex the ID of the geocache to return item geolocations for
      */
-    function getGeolocationsOfGeocache(uint256 geocacheIndex)
-        external
-        view
-        returns (string[] memory)
-    {
+    function getGeolocationsOfGeocache(
+        uint256 geocacheIndex
+    ) external view returns (string[] memory) {
         return tokenIdToGeocache[geocacheIndex].itemGeolocations;
     }
 
@@ -282,11 +275,9 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
      * @dev returning the geocache IDs of the geocaches where user has found an item
      * @param _user the user to get geocache IDs for
      */
-    function getUsersGeocaches(address _user)
-        external
-        view
-        returns (uint256[] memory)
-    {
+    function getUsersGeocaches(
+        address _user
+    ) external view returns (uint256[] memory) {
         return userToGeocache[_user];
     }
 
