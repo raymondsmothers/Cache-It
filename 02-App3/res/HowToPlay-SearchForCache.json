@@ -1,0 +1,16 @@
+{
+    "textSections": [
+        "Searching For A Cache",
+        "So you're lookig to start searching for your first Geocache!",
+        "Begin by navigating to the Cache Map tab and select the ‘Select Cache’ button.",
+        "Note: In order to access the ‘Select Cache’ button you need to be logged in to Metamask and have your wallet linked to the Cache It app.",
+        "A new screen should open with a list of all the caches that you can search for.",
+        "Select the cache you wish to search for and you will be returned to the Cache Map page where you will now see a marker that will represent the Geocache you indicated on the previous screen.",
+        "Congrats! Now you can begin searching for your first Geocache!"
+    ],
+    "images": [
+        "../res/HowToPlay/ConnectWallet/connect_wallet.png",
+        "../res/HowToPlay/ConnectWallet/metamask_confirm_wallet_link.png",
+        "../res/HowToPlay/ConnectWallet/disconnect_wallet"
+    ]
+}
