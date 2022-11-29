@@ -12,6 +12,7 @@ import {
   Web3ProviderContext,
   GeocacheContractContext,
   CacheMetadataContext,
+  LocationContext,
 } from '../App';
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
 import {ethers} from 'ethers';
@@ -20,7 +21,7 @@ import * as CONTRACT_ADDRESSES from '../contract_info/contractAddressesGoerli';
 const globalStyles = require('../styles');
 export const MintingContext = React.createContext({});
 
-const ARVisionScene = () => {
+const ARVisionScene = (props) => {
   // const [text, setText] = useState('Initializing AR...');
   const [ignoreDrag, setIgnoreDrag] = useState(false);
   const providersAndSigners = useContext(Web3ProviderContext);
@@ -29,6 +30,7 @@ const ARVisionScene = () => {
   const connector = useWalletConnect();
   const {setIsMintingItem, setHasMintedItem, hasMintedItem, setErrorMessage, setIsTransactionDelayed, setTransactionHash, setNewGeocacheId} =
     useContext(MintingContext);
+  const currentPosition = useContext(LocationContext);
 
   // const [ errorMessage, setErrorMessage ] = useState()
 
@@ -106,7 +108,52 @@ const ARVisionScene = () => {
       });
   };
 
-  const initialPosition = [0, -0.5, -1];
+  const convertGeoToCartesian = (lon, lat) => {
+    const R = 6371; // Approximate radius of the earth in kilometers
+    let x, y, z = 0;
+
+    x = R * Math.cos(lat) * Math.cos(lon);
+    y = R * Math.cos(lat) * Math.sin(lon);
+    z = R * Math.sin(lat);
+
+    return [x, y, z];
+  }
+
+  const positionObject = () => {
+    let objectPosition = [];
+    let myPosition = convertGeoToCartesian(currentPosition.longitude, currentPosition.latitude);
+    let cachePosition = convertGeoToCartesian(props.coord.longitude, props.coord.latitude);
+
+    // Set x position
+    if(myPosition[0] > cachePosition[0]) {
+      objectPosition.push(-1);
+    }
+    else if(myPosition[0] < cachePosition[0]) {
+      objectPosition.push(1);
+    }
+    else {
+      objectPosition.push(0);
+    }
+
+    // Set y position
+    if(myPosition[1] > cachePosition[1]) {
+      objectPosition.push(-1);
+    }
+    else if(myPosition[1] < cachePosition[1]) {
+      objectPosition.push(1);
+    }
+    else {
+      objectPosition.push(0);
+    }
+
+    // Set z position
+    objectPosition.push(-1);
+
+    return objectPosition;
+  }
+
+  // const initialPosition = [0, -0.5, -1];
+  const initialPosition = positionObject;
   const objectScale = [10, 10, 10];
   return (
     <ViroARScene>
@@ -114,7 +161,7 @@ const ARVisionScene = () => {
       {/* {false && */}
       {!hasMintedItem &&
       <ViroBox
-        position={[0, -0.5, -1]}
+        position={initialPosition}
         animation={{name: 'rotate', run: true, loop: true}}
         scale={[0.3, 0.3, 0.1]}
         materials={['grid']}
@@ -146,7 +193,7 @@ const ARVisionScene = () => {
   );
 };
 
-export default () => {
+export default (props) => {
   const [isMintingItem, setIsMintingItem] = useState(false);
   const [hasMintedItem, setHasMintedItem] = useState(false);
   const [transactionHash, setTransactionHash] = useState()
@@ -176,6 +223,7 @@ export default () => {
           initialScene={{
             // scene: () => {return(<></>)},
             scene: ARVisionScene,
+            passProps: { coord: props.coord }
           }}
           style={{flexGrow: 1, flex: 3}}
         />
