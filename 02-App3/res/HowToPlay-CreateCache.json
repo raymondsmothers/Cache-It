@@ -1,11 +1,6 @@
 {
     "textSections": [
-        "How To Create A New Cache",
-        "Step 1: Connect To Your Wallet",
-        "In order to create a new Geocache you must first connect to your Web3 Wallet using Metamask. Do this by going to the Cache Map tab and select the ‘Connect Wallet’ button in the upper right hand corner.",
-        "Login to Metamask and select ‘Connect’ to link your Metamask account.",
-        "Note: You will be able to tell when your Wallet is connected based on the ‘Connect Wallet’ changing to a ‘Disconnect’ Button.",
-        "Step 2: Creating the Cache",
+        "Creating A New Cache",
         "Once you connect to your Web3 Wallet, you are able to create Geocaches!",
         "Start by going to the Create Cache tab.",
         "Input the Name of the Geocache(s), how many you wish to create, and the radius (in meters) around your current position in which the caches should be placed in.",
@@ -14,9 +9,6 @@
         "Note: If you do not have enough funds to create the cache, you will be prompted to buy more from Metamask."
     ],
     "images": [
-        "../res/HowToPlay/CreatingCache/connect_wallet.png",
-        "../res/HowToPlay/CreatingCache/metamask_confirm_wallet_link.png",
-        "../res/HowToPlay/CreatingCache/disconnect_wallet",
         "../res/HowToPlay/CreatingCache/newCacheForm_tab.png",
         "../res/HowToPlay/CreatingCache/new_cache_form.png",
         "../res/HowToPlay/CreatingCache/confirm_payment.png"
