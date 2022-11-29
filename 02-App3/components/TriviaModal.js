@@ -43,7 +43,8 @@ export default function TriviaModal({mintItemInGeocache, modalVisible, setModalV
       return element != null && element != "";
     });
     //If the generated trivia is only a answer question pair, regenerate
-    if(data.length <= 2) {
+    if(data.length != 5) {
+      console.log("bad response")
       generateTrivia()
       return
     }
@@ -56,10 +57,10 @@ export default function TriviaModal({mintItemInGeocache, modalVisible, setModalV
     //       correctAnswer = answerOptions.indexOf(element)
     //     arr[index] = element.replace("*", "")
     // });
-    console.log("answer: " + correctAnswerIndex)
-    console.log("options: " + answerOptions)
-    console.log("question: " + data[0])
-    console.log("trivia data: " + data)
+    // console.log("answer: " + correctAnswerIndex)
+    // console.log("options: " + answerOptions)
+    // console.log("question: " + data[0])
+    // console.log("trivia data: " + data)
     setTriviaCorrectAnswer(correctAnswerIndex)
     setTriviaQuestion(data[0])
     setTriviaAnswerOptions(answerOptions)
@@ -92,12 +93,13 @@ export default function TriviaModal({mintItemInGeocache, modalVisible, setModalV
           model: 'text-davinci-002',
           // prompt: 'Generate a hard trivia question. Then print the answer to this trivia question on a new line. Then generate 4 trivia options for the trivia question on a new line',
           // prompt: 'Generate a hard trivia question, and then print the answer on a new line, and then generate 4 more trivia options on a new line.',
-          prompt: 'Generate an interesting trivia question, and then generate the answer on a new line, and then generate 3 more trivia options for that question on a new line. The trivia options should include the answer.',
-          temperature: 0.8,
-          max_tokens: 1000,
+          // prompt: 'Generate an interesting trivia question, and then generate the answer on a new line, and then generate 3 more trivia options for that question on a new line. The trivia options should include the answer.',
+          prompt: "Generate a hard trivia question, then generate 4 trivia options, each on a new line, with the first line containing the correct answer",
+          temperature: 0.95,
+          max_tokens: 500,
           top_p: 1,
-          frequency_penalty: 4,
-          presence_penalty: 1,
+          frequency_penalty: 0,
+          presence_penalty: 0,
           best_of: 2,
         }),
       })
