@@ -1,0 +1,15 @@
+{
+    "textSections": [
+        "Connect To Your Wallet",
+        "In order to create a new Geocache you must first connect to your Web3 Wallet using Metamask.",
+        "Note: Please ensure you have Metamask installed by going to the Google Play Store (Android) or the App Store (IOS)",
+        "Once you have the Metamask App, navigate to the Cache Map tab and select the ‘Connect Wallet’ button in the upper right hand corner.",
+        "Login to Metamask and select ‘Connect’ to link your Metamask account.",
+        "Note: You will be able to tell when your Wallet is connected based on the ‘Connect Wallet’ changing to a ‘Disconnect’ Button."
+    ],
+    "images": [
+        "../res/HowToPlay/ConnectWallet/connect_wallet.png",
+        "../res/HowToPlay/ConnectWallet/metamask_confirm_wallet_link.png",
+        "../res/HowToPlay/ConnectWallet/disconnect_wallet"
+    ]
+}

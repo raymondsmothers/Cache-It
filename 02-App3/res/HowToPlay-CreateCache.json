@@ -1,0 +1,16 @@
+{
+    "textSections": [
+        "Creating A New Cache",
+        "Once you connect to your Web3 Wallet, you are able to create Geocaches!",
+        "Start by going to the Create Cache tab.",
+        "Input the Name of the Geocache(s), how many you wish to create, and the radius (in meters) around your current position in which the caches should be placed in.",
+        "When you submit the request then you will be sent to Metamask that will request you to pay a small fee to generate the cache(s).",
+        "Confirm your payment and you will be sent back to the Cache Map screen and you will see the map updated with your new Caches.",
+        "Note: If you do not have enough funds to create the cache, you will be prompted to buy more from Metamask."
+    ],
+    "images": [
+        "../res/HowToPlay/CreatingCache/newCacheForm_tab.png",
+        "../res/HowToPlay/CreatingCache/new_cache_form.png",
+        "../res/HowToPlay/CreatingCache/confirm_payment.png"
+    ]
+}
