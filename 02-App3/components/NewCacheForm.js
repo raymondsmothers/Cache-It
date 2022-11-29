@@ -321,6 +321,7 @@ export default function NewCacheForm({navigation}) {
     if (validateFormData()) {
       // if(true) {
       setIsDeployingGeocache(false);
+      //TODO this location doesn't always complete if their is a timeout??
       await findInitialCoordinates();
       const itemLocations = generateItemLocations();
       await providers.walletConnect.enable();
