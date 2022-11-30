@@ -14,11 +14,11 @@ import {IERC1155} from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 // Custom errors
-error NotCreator();
-error NonExistentToken();
-error NotActiveGeocache();
-error UserAlreadyFound();
-error AlreadyMintedToken();
+error NotCreator(string msg);
+error NonExistentToken(string msg);
+error NotActiveGeocache(string msg);
+error UserAlreadyFound(string msg);
+error AlreadyMintedToken(string msg);
 
 contract Geocache is ICreatorExtensionTokenURI, AdminControl {
     struct GeocacheInstance {
@@ -154,16 +154,21 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         address _user
     ) external onlyOwner {
         // Check that _tokenId exists
-        if (_geocacheId >= numGeocaches) revert NonExistentToken();
+        if (_geocacheId >= numGeocaches)
+            revert NonExistentToken(
+                "This token doesn't exist. How are you doing this?"
+            );
         // console.log(numGeocaches);
         // Require that the user hasn't found yet
-        if (hasMintedTokenId[_geocacheId][_user]) revert UserAlreadyFound();
+        if (hasMintedTokenId[_geocacheId][_user])
+            revert UserAlreadyFound("You've already found this item.");
 
         GeocacheInstance memory geocache = tokenIdToGeocache[_geocacheId];
 
         // Require that the geocache is active
         //TODO we need to add language to indicate revert error
-        if (!geocache.isActive) revert NotActiveGeocache();
+        if (!geocache.isActive)
+            revert NotActiveGeocache("This is no longer an active geocache.");
 
         geocacheToNumFound[_geocacheId]++;
         hasMintedTokenId[_geocacheId][_user] = true;
@@ -236,7 +241,10 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         string memory _newTokenURI
     ) public {
         GeocacheInstance storage geocache = tokenIdToGeocache[_tokenId];
-        if (msg.sender != geocache.creator) revert NotCreator();
+        if (msg.sender != geocache.creator)
+            revert NotCreator(
+                "Not the creator of this geocache. You cannot update the URI."
+            );
         geocache.tokenURI = _newTokenURI;
     }
 
@@ -281,45 +289,11 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         return userToGeocache[_user];
     }
 
-    // Keeping this here just in case we need to do on chain metadata
-    // TODO: Delete this if off chain is working well
     /**
-     * @dev Just a test function to make sure tokenURI is formatted correctly
-     * @param _tokenId of the geocache you'd like to log the metadata for
+     * @dev check if user has minted an item in the geocache
+     * @param _geocacheId the Id of the geocache to check
      */
-    // function logTokenURI(uint256 _tokenId) public view {
-    //     // Getting the geocache info
-    //     GeocacheInstance memory cache = tokenIdToGeocache[_tokenId];
-    //     bytes memory byteString;
-    //     string
-    //         memory placeholderImgUrl = "https://www.mariowiki.com/images/thumb/f/fc/ItemBoxMK8.png/1200px-ItemBoxMK8.png";
-
-    //     // Actual metadata
-    //     byteString = abi.encodePacked(
-    //         "'data:application/json;utf8,"
-    //         '{"name": "',
-    //         // Passing in NFT name
-    //         cache.name,
-    //         // Description
-    //         '", "description": "',
-    //         cache.originStory,
-    //         // Image (IPFS Link)
-    //         '", "image": "',
-    //         placeholderImgUrl,
-    //         // NFT Attributes:
-    //         // TODO potentially add more here
-    //         '", "attributes": [ { "trait_type": "Geocache Size", "value": ',
-    //         Strings.toString(cache.numItems), // need to make string or set dynamically
-    //         '}, { "trait_type": "Status", "value": ',
-    //         cache.isActive ? '"Active"' : '"Inactive"', // need to make string or set dynamically
-    //         // '}, { "trait_type": "Location Created", "value": ',
-    //         // Strings.toString(abi.encodePacked(Strings.toString(cache.epicenterLat), ", ", Strings.toString(cache.epicenterLong))),
-    //         '}, { "display_type": "date", "trait_type": "Date Created", "value": ',
-    //         // Date the NFT was minted (unix timestamp)
-    //         cache.dateCreated,
-    //         "} ]}'"
-    //     );
-
-    //     console.log(string(byteString));
-    // }
+    function checkIfUserHasMinted(uint256 _geocacheId) external returns (bool) {
+        return hasMintedTokenId[_geocacheId][msg.sender];
+    }
 }
