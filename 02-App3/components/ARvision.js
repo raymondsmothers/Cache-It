@@ -183,7 +183,6 @@ export default (props) => {
     ).checkIfUserHasMinted(geocacheId);
     if (userHasItem) {
       setIsMintingItem(false);
-
       setErrorMessage(
         "Unable to mint. You're either the creator of this cache or you've already minted this item."
       );
