@@ -46,7 +46,7 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
     address public immutable creatorContract;
 
     // total number of geocaches created so far
-    uint256 public numGeocaches = 0;
+    uint256 public numGeocaches;
 
     // active geocaches
     uint256 public numActiveGeocaches;
@@ -290,10 +290,12 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
     }
 
     /**
-     * @dev check if user has minted an item in the geocache
+     * @dev check if user has minted an item in the geocache, returns true if so
      * @param _geocacheId the Id of the geocache to check
      */
-    function checkIfUserHasMinted(uint256 _geocacheId) external returns (bool) {
+    function checkIfUserHasMinted(
+        uint256 _geocacheId
+    ) external view returns (bool) {
         return hasMintedTokenId[_geocacheId][msg.sender];
     }
 }
