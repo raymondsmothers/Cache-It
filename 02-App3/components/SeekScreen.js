@@ -21,7 +21,10 @@ import "../global";
 const DISTANCE_THRESHOLD = 40
 //Component imports
 import  AnimatedRings from "./AnimatedRing"
-import TriviaModal from './TriviaModal';
+// import TriviaModal from './TriviaModal';
+import SelectGeocache from './SelectGeocache';
+import PleaseConnect from './PleaseConnect';
+
 // export const PulseRateContext = React.createContext({});
 export const PulseRateContext = React.createContext({
   pulseStrength: {},
@@ -212,6 +215,8 @@ export default function SeekScreen() {
       // true ? (
         <View style={styles.container}>
         <Text style={globalStyles.titleText}>Please select a geocache to use Seek!</Text>
+        <SelectGeocache style={{position: 'absolute', bottom: 95}} />
+
       </View>
 
     ) : (
@@ -260,7 +265,7 @@ export default function SeekScreen() {
             </View> */}
             <Text style={globalStyles.titleText}>
               {' '}
-              {'Distance: \n' + distanceToNearestItem.toFixed(2) + ' Meters'}{' '}
+              {'Distance to nearest item: \n' + distanceToNearestItem.toFixed(2) + ' Meters'}{' '}
             </Text>
           </View>
         )
@@ -271,8 +276,8 @@ export default function SeekScreen() {
       )
     )
   ) : (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text style={styles.text}>Uh-Oh! Please connect wallet to search for items.</Text>
+    <View style={styles.container}>
+      <PleaseConnect msg={" search a geocache. "}></PleaseConnect>
     </View>
   )
 }

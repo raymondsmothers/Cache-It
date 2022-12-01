@@ -140,13 +140,24 @@ function HomeTab() {
         component={Collection}
         options={{
           headerRight: () => 
-            <View style={styles.rowContainer}>
+            <View style={styles.rowContainer}>  
               <ConnectWalletButton/>
               {/* TODO: Cheating for now, go back and fix */}
               <Text>  </Text>
               <HowToPlayModal/>
             </View>,
           tabBarIcon: ({focused, color}) => <Icon name="shopping-basket" size={20} color={focused ? global.secondaryColor : "gray"} />,
+          tabBarLabel: () => {
+            return null;
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Info"
+        component={IntroductionPage}
+        options={{
+          headerRight: () => <ConnectWalletButton />,
+          tabBarIcon: ({focused, color}) => <Icon name="info" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
             return null;
           },

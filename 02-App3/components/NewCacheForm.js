@@ -53,6 +53,7 @@ import axios from 'axios';
 // const ipfsClient = require('ipfs-http-client');
 
 import {GOERLI_INFURA_KEY} from '@env';
+import PleaseConnect from './PleaseConnect';
 
 // connect to the default API address http://localhost:5001
 const IPFS = require('ipfs-mini');
@@ -489,6 +490,26 @@ export default function NewCacheForm({navigation}) {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         {/* <ScrollView contentContainerStyle={styles.container}> */}
+        <View >
+        {geocacheOriginStory != undefined && (
+            <Text
+              style={[globalStyles.centerText, {color: global.secondaryColor}]}>
+              {geocacheOriginStory}
+            </Text>
+          )}
+          {imgUrl != undefined && (
+            <Image
+              style={{
+                margin: 20,
+                width: 200,
+                height: 200,
+                borderWidth: 1,
+                borderColor: global.secondaryColor,
+              }}
+              source={{uri: imgUrl}}
+            />
+          )}
+          </View>
         <View style={styles.formContainer}>
           <View style={styles.inputContainer}>
             <Text style={globalStyles.text}>
@@ -556,35 +577,14 @@ export default function NewCacheForm({navigation}) {
             accessibilityLabel="Learn more about this purple button"
           />
           {!connector.connected && (
-            <View style={globalStyles.textContainer}>
-              <Text style={globalStyles.centerText}>
-                Uh-Oh! Please connect your wallet to create a new Geocache.
-              </Text>
-            </View>
+            <PleaseConnect msg={" create a new geocache"}></PleaseConnect>
           )}
         </View>
         <View style={styles.container}>
           <Text style={globalStyles.centerText} >
             {"After clicking submit, you will be automatically redirected to confirm this transaction with your Wallet Provider."}
           </Text>
-          {geocacheOriginStory != undefined && (
-            <Text
-              style={[globalStyles.centerText, {color: global.secondaryColor}]}>
-              {geocacheOriginStory}
-            </Text>
-          )}
-          {imgUrl != undefined && (
-            <Image
-              style={{
-                margin: 20,
-                width: 200,
-                height: 200,
-                borderWidth: 1,
-                borderColor: global.secondaryColor,
-              }}
-              source={{uri: imgUrl}}
-            />
-          )}
+          
         </View>
         {/* {true && ( */}
         {isGeneratingImage && (

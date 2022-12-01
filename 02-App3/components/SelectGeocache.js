@@ -18,11 +18,13 @@ import {
   GeocacheContractContext,
   AllGeocacheDataContext,
 } from '../App';
+import ConnectWalletButton from './ConnectWalletButton';
 
 import {useWalletConnect} from '@walletconnect/react-native-dapp';
 
 const globalStyles = require('../styles');
 import '../global';
+import PleaseConnect from './PleaseConnect';
 
 export default function SelectGeocache() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -184,11 +186,7 @@ export default function SelectGeocache() {
                   )}
                 </>
               ) : (
-                <>
-                  <Text style={globalStyles.centerText}>
-                    Uh-Oh! Please connect your wallet to select a geocache.
-                  </Text>
-                </>
+                <PleaseConnect msg={" select a geocache."}></PleaseConnect>
               )}
 
               <Button

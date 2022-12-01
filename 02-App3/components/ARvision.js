@@ -22,7 +22,7 @@ import TriviaModal from './TriviaModal';
 const globalStyles = require('../styles');
 export const MintingContext = React.createContext({});
 
-const ARVisionScene = () => {
+const ARVisionScene = (props) => {
 
   const {hasMintedItem, setHasTriggeredTrivia} =
     useContext(MintingContext);
@@ -118,7 +118,7 @@ const ARVisionScene = () => {
   );
 };
 
-export default () => {
+export default (props) => {
   const [isMintingItem, setIsMintingItem] = useState(false);
   const [hasMintedItem, setHasMintedItem] = useState(false);
   const [transactionHash, setTransactionHash] = useState()
