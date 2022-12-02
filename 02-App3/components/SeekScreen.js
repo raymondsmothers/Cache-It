@@ -31,27 +31,11 @@ export const PulseRateContext = React.createContext({
   setPulseStrength: () => {},
 });
 
-export default function SeekScreen() {
-  const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
-  const connector = useWalletConnect();
 
-  //Coordinates of the nearest geocache item
-  const [nearestItemCoords, setNearestItemCoords] = useState([]);
-  //Bool of if the user has succesfully come within proximity of geocache item to trigger AR vision
-  // this is to stop the bug of the SeekScreen flipping too quickly back and forth AR Vision of pulse indicator and causing app to crash
-  const [hasTriggeredARVision, setHasTriggeredARVision] = useState();
-  //Distance in degrees to nearest item
-  // I don't think you need to update this in state? it causes a rerender too frequently
-  const [distanceToNearestItem, setDistancetoNearestItem] = useState(undefined);
-  //sets pulse duration, 1 is strongest, 20 is weakest
-  const [pulseStrength, setPulseStrength] = useState(20);
-  PulseRateContextValue = {pulseStrength, setPulseStrength};
 
-  // Provider context
-  // const providers = useContext(Web3ProviderContext);
-
-  const Ring = React.memo(({delay, duration}) => {
+const Ring = React.memo(({pulseStrength1, delay, duration}) => {
   // const RingUnMemoed = ({delay, duration}) => {
+    const {pulseStrength, setPulseStrength} = useContext(PulseRateContext)
     const ring = useSharedValue(0);
 
     const ringStyle = useAnimatedStyle(() => {
@@ -75,18 +59,63 @@ export default function SeekScreen() {
           false,
         ),
       );
-    });
+        // }, []);
+    }, [delay, duration]);
+    // }, [delay, duration]);
     return <Animated.View style={[styles.ring, ringStyle]} />;
   },
   (prevProps, nextProps) => {
-    prevProps.delay === nextProps.delay && prevProps.duration === nextProps.duration
+    // prevProps.delay === nextProps.delay && prevProps.duration === nextProps.duration
+    prevProps.pulseStrength1 === nextProps.pulseStrength1
+
   }
   );
+
+  const AnimatedRing = React.memo(AnimatedRings,
+    (prevProps, nextProps) => {
+      prevProps.pulseStrength === nextProps.pulseStrength
+    }
+    );
+
+export default function SeekScreen() {
+  const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
+  const connector = useWalletConnect();
+
+  //Coordinates of the nearest geocache item
+  const [nearestItemCoords, setNearestItemCoords] = useState([]);
+  //Bool of if the user has succesfully come within proximity of geocache item to trigger AR vision
+  // this is to stop the bug of the SeekScreen flipping too quickly back and forth AR Vision of pulse indicator and causing app to crash
+  const [hasTriggeredARVision, setHasTriggeredARVision] = useState();
+  //Distance in degrees to nearest item
+  // I don't think you need to update this in state? it causes a rerender too frequently
+  const [distanceToNearestItem, setDistancetoNearestItem] = useState(undefined);
+  //sets pulse duration, 1 is strongest, 20 is weakest
+  const [pulseStrength, setPulseStrength] = useState(20);
+  PulseRateContextValue = {pulseStrength, setPulseStrength};
+
+
+  // Provider context
+  // const providers = useContext(Web3ProviderContext);
+
+  
 
   // const Ring = React.memo(
   //   RingUnMemoed, 
   //   (prevProps, nextProps) => prevProps.delay === nextProps.delay
   // );
+  useEffect(() => {
+  for(i = 0; i < 10; i++) {
+    // setTimeout(() => {
+    //   console.log("DELAYED")
+    //   setDistancetoNearestItem(Math.random() * 100 + 100)
+    // }, 2000)
+    const interval = setInterval( async () => {
+      console.log("DELAYED")
+      setDistancetoNearestItem(Math.random() * 100 + 100)
+      setPulseStrength(Math.random() * 20)
+    }, 5000);
+  }
+  }, [])
 
   //Every second check
   useEffect(() => {
@@ -99,17 +128,6 @@ export default function SeekScreen() {
 
     // return () => clearInterval(interval);
   }, []);
-
-  // // var newPulseStrength = 4;
-  // setTimeout(() => {
-  //   console.log("new pulserate")
-  //   newPulseStrength = Math.ceil(Math.random() * 10 + 1);
-  //   // if(newPulseStrength != pulseStrength)
-  //     // setPulseStrength(13);
-  //     setDistancetoNearestItem(Math.random() * 100 + 1)
-  // }, 5000)
-
-
 
   const calculateShortestDistance = async currentPosition => {
     //get coords
@@ -248,15 +266,20 @@ export default function SeekScreen() {
               {cacheMetadata.date}
             </Text>
 
-            {/* <Text style={globalStyles.titleText}>
+            <Text style={globalStyles.titleText}>
               {' '}
               {'Pulse Strength: \n' + pulseStrength}{' '}
-            </Text> */}
-            <PulseRateContext.Provider value={PulseRateContextValue}>
+            </Text>
+            {/* <PulseRateContext.Provider value={PulseRateContextValue}> */}
 
-                <AnimatedRings></AnimatedRings>
-            </PulseRateContext.Provider>
-            {/* <View
+                <AnimatedRing pulseStrength={pulseStrength}></AnimatedRing>
+            {/* </PulseRateContext.Provider> */}
+            {/* <PulseRateContext.Provider value={PulseRateContextValue}>
+
+                <AnimatedRings ></AnimatedRings>
+            </PulseRateContext.Provider> */}
+            {/* <PulseRateContext.Provider value={PulseRateContextValue}></PulseRateContext.Provider> */}
+            <View
               style={{
                 flex: 1,
                 alignItems: 'center',
@@ -264,13 +287,15 @@ export default function SeekScreen() {
                 flexDirection: 'column',
               }}> 
 
-              <Ring duration={1000 * pulseStrength} delay={0} />
-              <Ring duration={1000 * pulseStrength} delay={500 * pulseStrength} />
-              <Ring duration={1000 * pulseStrength} delay={250 * pulseStrength} />
-              <Ring duration={1000 * pulseStrength} delay={750 * pulseStrength} />
+              <Ring pulseStrength={pulseStrength} duration={1000 * pulseStrength} delay={0} />
+              <Ring pulseStrength={pulseStrength} duration={1000 * pulseStrength} delay={500 * pulseStrength} />
+              <Ring pulseStrength={pulseStrength} duration={1000 * pulseStrength} delay={250 * pulseStrength} />
+              <Ring pulseStrength={pulseStrength} duration={1000 * pulseStrength} delay={750 * pulseStrength} />
 
 
-            </View> */}
+            </View>
+            {/* </PulseRateContext.Provider> */}
+
             <Text style={globalStyles.titleText}>
               {' '}
               {'Distance to nearest item: \n' + distanceToNearestItem.toFixed(2) + ' Meters'}{' '}
