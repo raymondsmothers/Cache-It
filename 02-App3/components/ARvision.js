@@ -7,7 +7,7 @@ import {
   ViroMaterials,
 } from '@viro-community/react-viro';
 import React, {useState, useContext, useEffect} from 'react';
-import {StyleSheet, View, Alert} from 'react-native';
+import {StyleSheet, View, Alert, Text} from 'react-native';
 import {
   Web3ProviderContext,
   GeocacheContractContext,
@@ -217,6 +217,9 @@ export default (props) => {
           }}
           style={{flexGrow: 1, flex: 3}}
         />
+        <View style={styles.cacheNameContainer}>
+          <Text style={styles.cacheNameText}>{"Searching: \"" + cacheMetadata?.name + "\""}</Text>
+        </View>
         {triviaIsVisible && (
           // <TriviaModal mintItemInGeocache={mintItemInGeocache} setHasCorrectlyAnsweredTrivia={setHasCorrectlyAnsweredTrivia}></TriviaModal>
           <TriviaModal mintItemInGeocache={mintItemInGeocache} setModalVisible={setTriviaIsVisible} modalVisible={triviaIsVisible} ></TriviaModal>
@@ -276,7 +279,12 @@ ViroAnimations.registerAnimations({
   },
 });
 var styles = StyleSheet.create({
-  f1: {flex: 1},
+  f1: {
+    flex: 1,
+    // display: "flex",
+    // justifyContent: "center",
+    // alignItems: "center"
+  },
   container: {
     ...StyleSheet.absoluteFillObject,
     //   height: 400,
@@ -294,4 +302,21 @@ var styles = StyleSheet.create({
     textAlignVertical: 'center',
     textAlign: 'center',
   },
+  cacheNameContainer: {
+    position: "absolute", 
+    // flex: 1,
+    justifyContent: "center",
+    top: 10, 
+    left: "25%",
+    opacity: 2, 
+    zIndex: 4
+  },
+  cacheNameText: {
+    color: global.cream,
+    fontSize: 20, 
+    backgroundColor: global.secondaryColor, 
+    textAlign: "center", 
+    padding: 10, 
+    borderRadius: 5
+  }
 });

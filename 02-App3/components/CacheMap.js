@@ -83,18 +83,6 @@ export default function CacheMap() {
     }
   }, [cacheMetadata]);
 
-  // Getting all the active geocaches IDs
-  // TODO: These are the IDs that the user should be able to select
-  // useEffect(() => {
-  //   console.log("CacheMap useef ")
-  //   const getIDs = async () => {
-  //     const ids = await GeocacheContract.getAllActiveGeocacheIDs();
-  //     console.log("ids: " + ids)
-  //     const formattedIds = ids.map((id, index) => Number(id));
-  //     setActiveGeocacheIds([...formattedIds]);
-  //   };
-  //   getIDs();
-  // }, []);
 
   useEffect(() => {
     const getData = async () => {

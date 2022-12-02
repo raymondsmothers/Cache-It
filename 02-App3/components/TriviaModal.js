@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Alert, Linking, Modal, StyleSheet, Text, Pressable, View, ActivityIndicator} from "react-native";
 const globalStyles = require("../styles")
-const global = require("../global")
+// const global = require("../global")
+import "../global"
 import {OPENAI_SECRET_KEY} from '@env';
 import {RadioButton} from 'react-native-paper';
 
@@ -172,13 +173,15 @@ export default function TriviaModal({mintItemInGeocache, modalVisible, setModalV
                           <RadioButton.Item
                             // style={styles.buttonContainer}
                             key={option}
-                            labelStyle={{color: global.secondaryColor}}
+                            labelStyle={{color: (isIncorrect && index != triviaCorrectAnswer) ?  'grey' : global.secondaryColor}}
                             label={option}
-                            color={global.primaryColor}
+                            // color={global.primaryColor}
                             onPress={() => setSelectedAnswer(index)}
-                            status={ index == selectedAnswer ?  'checked' : 'unchecked'}
+                            status={ index == selectedAnswer || (isIncorrect && index == triviaCorrectAnswer) ?  'checked' : 'unchecked'}
                             position={"trailing"}
-                            style={styles.radioButton}
+                            disabled={(isIncorrect && index != triviaCorrectAnswer)}
+                            color={ (isIncorrect && index == triviaCorrectAnswer) ?  'green' : global.primaryColor}
+                            // style={ (isIncorrect && index == triviaCorrectAnswer) ?  styles.radioButton : styles.radioButton}
                             >
                           </RadioButton.Item>
                           </>
@@ -190,7 +193,7 @@ export default function TriviaModal({mintItemInGeocache, modalVisible, setModalV
                   <Text>{"Uh-Oh, something bad happened: " + errorMessage}</Text>
                 )}
                 {isIncorrect && (
-                  <Text style={[styles.modalText, {color: "red"}]}> Sorry, that is incorrect. Please generate a new question. </Text>
+                  <Text style={[styles.modalText, {color: "red"}]}> Sorry, that is incorrect. Please generate a new question and try again. </Text>
                 )}
               </View>
             )}
@@ -263,6 +266,7 @@ const styles = StyleSheet.create({
     elevation: 5
   },
   radioButton: {
+    color: global.primaryColor
     // flex: 1
     // width: "90%"
   },

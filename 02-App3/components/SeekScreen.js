@@ -228,16 +228,24 @@ export default function SeekScreen() {
         ) : (
           <View style={styles.container}>
 
-            <Text style={globalStyles.titleText}>
+            {/* <Text style={globalStyles.titleText}>
               {' '}
               {'Searching "' + cacheMetadata.name + '"'}{' '}
+            </Text> */}
+              <View style={styles.cacheNameContainer}>
+                <Text style={styles.cacheNameText}>{"Searching: \"" + cacheMetadata?.name + "\""}</Text>
+              </View>
+            <Text style={globalStyles.centerText}>
+              {'Created by:'}
             </Text>
             <Text style={globalStyles.centerText}>
-              {'Created by:  "' + global.shortenAddress(cacheMetadata.creator) + '"'}{' '}
+              {global.shortenAddress(cacheMetadata.creator)}
             </Text>
             <Text style={globalStyles.centerText}>
-              {' '}
-              {'Created On:  "' + cacheMetadata.date + '"'}{' '}
+              {'Created On:'}
+            </Text>
+            <Text style={globalStyles.centerText}>
+              {cacheMetadata.date}
             </Text>
 
             {/* <Text style={globalStyles.titleText}>
@@ -307,4 +315,21 @@ const styles = StyleSheet.create({
     borderColor: 'tomato',
     borderWidth: 10,
   },
+  cacheNameContainer: {
+    // position: "absolute", 
+    // flex: 1,
+    // justifyContent: "center",
+    // top: 10, 
+    // left: "25%",
+    // opacity: 2, 
+    // zIndex: 4
+  },
+  cacheNameText: {
+    color: global.cream,
+    fontSize: 20, 
+    backgroundColor: global.secondaryColor, 
+    textAlign: "center", 
+    padding: 10, 
+    borderRadius: 5
+  }
 });
