@@ -1,0 +1,12 @@
+{
+    "textSections": [
+        "View A Cache",
+        "In order to view an NFT you have collected, go to the Collection tab. There you will see all of the NFTs that you have claimed while using the App.",
+        "The NFTs will consist of an image and AI generated flavor text along with the data about where you found it.",
+        "You also have the option to view the NFTs on OpenSea, an NFT marketplace that allows you to sell NFTs you collect as well as purchase NFTs from other users."
+    ],
+    "images": [
+        "../res/HowToPlay/ViewingCache/app_nft.png",
+        "../res/HowToPlay/ConnectWallet/opensea_view.png"
+    ]
+}

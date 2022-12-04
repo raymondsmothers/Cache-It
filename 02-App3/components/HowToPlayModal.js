@@ -11,42 +11,40 @@ import {
     Modal 
 } from 'react-native';
 import { List } from 'react-native-paper';
-import "../global"
+import "../global";
 
-const howToPlay_createCache = require("../res/HowToPlay-CreateCache.json");
-const howToPlay_connectWallet = require("../res/HowToPlay-ConnectWallet.json");
-const howToPlay_searchForCache = require("../res/HowToPlay-SearchForCache.json");
+const howToPlay_CreateCache = require("../res/HowToPlay-CreateCache.json");
+const howToPlay_ConnectWallet = require("../res/HowToPlay-ConnectWallet.json");
+const howToPlay_SearchForCache = require("../res/HowToPlay-SearchForCache.json");
+const howToPlay_ViewCache = require("../res/HowToPlay-ViewCache.json");
+const howToPlay_ClaimCache = require("../res/HowToPlay-ClaimCache.json");
 
 function HowToPlayComponent_CreateCache() {
-    // console.log(require(JSON.stringify(howToPlay_createCache.images[0])));
-    console.log(typeof JSON.stringify(howToPlay_createCache.images[0]));
-
-    let imagePaths = [];
-    for(let i = 0; i < howToPlay_createCache.images.length; i++) {
-        imagePaths.push(JSON.stringify(howToPlay_createCache.images[i]));
-    }
-
     return (
             <View>
-                <Text style={styles.heading1}>{howToPlay_createCache.textSections[0] + "\n"}</Text>
-                <Text style={styles.howToPlayText}>{howToPlay_createCache.textSections[1] + "\n"}</Text>
+                <Text style={styles.heading1}>{howToPlay_CreateCache.textSections[0]}</Text>
+                <Text style={styles.howToPlayText}>{howToPlay_CreateCache.textSections[1]}</Text>
                 <Image
-                    source={require("../res/HowToPlay/CreatingCache/newCacheForm_tab.png")}
-                    style={styles.images}
+                    source={require("../res/HowToPlay/CreatingCache/new_cache_tab.png")}
+                    style={styles.images_landscape}
                 />
-                <Text style={styles.howToPlayText}>{howToPlay_createCache.textSections[2] + "\n"}</Text>
+                <Text style={styles.howToPlayText}>{howToPlay_CreateCache.textSections[2]}</Text>
                 <Image
                     source={require("../res/HowToPlay/CreatingCache/new_cache_form.png")}
-                    style={styles.images}
+                    style={styles.images_portrait}
                 />
-                <Text style={styles.howToPlayText}>{howToPlay_createCache.textSections[3] + "\n"}</Text>
+                <Text style={styles.howToPlayText}>{howToPlay_CreateCache.textSections[3]}</Text>
                 <Image
-                    source={require("../res/HowToPlay/CreatingCache/confirm_payment.png")}
-                    style={styles.images}
+                    source={require("../res/HowToPlay/CreatingCache/metamask_create_cache.png")}
+                    style={styles.images_landscape}
                 />
-                <Text style={styles.howToPlayText}>{howToPlay_createCache.textSections[4] + "\n"}</Text>
-                <Text style={styles.howToPlayText}>{howToPlay_createCache.textSections[5] + "\n"}</Text>
-                <Text style={[styles.howToPlayText, styles.noteText]}>{howToPlay_createCache.textSections[6] + "\n"}</Text>
+                <Text style={styles.howToPlayText}>{howToPlay_CreateCache.textSections[4]}</Text>
+                <Image
+                    source={require("../res/HowToPlay/CreatingCache/something_cache_cacheMap.png")}
+                    style={styles.images_landscape}
+                />
+                <Text style={styles.howToPlayText}>{howToPlay_CreateCache.textSections[5]}</Text>
+                <Text style={[styles.howToPlayText, styles.noteText]}>{howToPlay_CreateCache.textSections[6]}</Text>
             </View>
     )
 }
@@ -54,25 +52,25 @@ function HowToPlayComponent_CreateCache() {
 function HowToPlayComponent_ConnectWallet() {
     return (
         <View>
-            <Text style={styles.heading1}>{howToPlay_connectWallet.textSections[0] + "\n"}</Text>
-            <Text style={styles.howToPlayText}>{howToPlay_connectWallet.textSections[1] + "\n"}</Text>
-            <Text style={styles.howToPlayText}>{howToPlay_connectWallet.textSections[2] + "\n"}</Text>
+            <Text style={styles.heading1}>{howToPlay_ConnectWallet.textSections[0] + "\n"}</Text>
+            <Text style={styles.howToPlayText}>{howToPlay_ConnectWallet.textSections[1] + "\n"}</Text>
+            <Text style={styles.howToPlayText}>{howToPlay_ConnectWallet.textSections[2] + "\n"}</Text>
             <Image
                 source={require("../res/HowToPlay/ConnectWallet/connect_wallet.png")}
-                style={styles.images}
+                style={styles.images_landscape}
             />
-            <Text style={styles.howToPlayText}>{howToPlay_connectWallet.textSections[3] + "\n"}</Text>
+            <Text style={styles.howToPlayText}>{howToPlay_ConnectWallet.textSections[3] + "\n"}</Text>
 
             <Image
                 source={require("../res/HowToPlay/ConnectWallet/metamask_confirm_wallet_link.png")}
-                style={styles.images}
+                style={styles.images_portrait}
             />
-            <Text style={styles.howToPlayText}>{howToPlay_connectWallet.textSections[4] + "\n"}</Text>
+            <Text style={styles.howToPlayText}>{howToPlay_ConnectWallet.textSections[4] + "\n"}</Text>
             <Image
                 source={require("../res/HowToPlay/ConnectWallet/disconnect_wallet.png")}
-                style={styles.images}
+                style={styles.images_landscape}
             />
-            <Text style={[styles.howToPlayText, styles.noteText]}>{howToPlay_connectWallet.textSections[5] + "\n"}</Text>
+            <Text style={[styles.howToPlayText, styles.noteText]}>{howToPlay_ConnectWallet.textSections[5] + "\n"}</Text>
         </View>
     )
 }
@@ -80,35 +78,80 @@ function HowToPlayComponent_ConnectWallet() {
 function HowToPlayComponent_Search() {
     return (
         <View>
-            <Text style={styles.heading1}>{howToPlay_searchForCache.textSections[0] + "\n"}</Text>
-            <Text style={styles.howToPlayText}>{howToPlay_searchForCache.textSections[1] + "\n"}</Text>
+            <Text style={styles.heading1}>{howToPlay_SearchForCache.textSections[0] + "\n"}</Text>
+            <Text style={styles.howToPlayText}>{howToPlay_SearchForCache.textSections[1] + "\n"}</Text>
             <Image
                 source={require("../res/HowToPlay/SearchingForCache/select_cache.png")}
-                style={[styles.images, styles.images_search_1]}
+                style={styles.images_landscape}
             />
-            <Text style={[styles.howToPlayText, styles.noteText]}>{howToPlay_searchForCache.textSections[2] + "\n"}</Text>
-            <Text style={styles.howToPlayText}>{howToPlay_searchForCache.textSections[2] + "\n"}</Text>
+            <Text style={[styles.howToPlayText, styles.noteText]}>{howToPlay_SearchForCache.textSections[2] + "\n"}</Text>
+            <Text style={styles.howToPlayText}>{howToPlay_SearchForCache.textSections[2] + "\n"}</Text>
 
             <Image
                 source={require("../res/HowToPlay/SearchingForCache/select_cache_test_henry.png")}
-                style={[styles.images, styles.images_search_2_3]}
+                style={styles.images_landscape}
             />
-            <Text style={styles.howToPlayText}>{howToPlay_searchForCache.textSections[3] + "\n"}</Text>
+            <Text style={styles.howToPlayText}>{howToPlay_SearchForCache.textSections[3] + "\n"}</Text>
             
             <Image
                 source={require("../res/HowToPlay/SearchingForCache/test_henry_cache_cacheMap.png")}
-                style={[styles.images, styles.images_search_2_3]}
+                style={styles.images_landscape}
             />
-            <Text style={styles.howToPlayText}>{howToPlay_searchForCache.textSections[4] + "\n"}</Text>
-            <Text style={styles.howToPlayText}>{howToPlay_searchForCache.textSections[5] + "\n"}</Text>
+            <Text style={styles.howToPlayText}>{howToPlay_SearchForCache.textSections[4] + "\n"}</Text>
+            <Text style={styles.howToPlayText}>{howToPlay_SearchForCache.textSections[5] + "\n"}</Text>
         </View>
     )
 }
 
 function HowToPlayComponent_Minting() {
     return (
-        <View></View>
+        <View>
+            <Text style={styles.heading1}>{howToPlay_ClaimCache.textSections[0]}</Text>
+            <Text style={styles.howToPlayText}>{howToPlay_ClaimCache.textSections[1]}</Text>
+            <Image
+                source={require("../res/HowToPlay/ClaimingCache/seek_screen.png")}
+                style={styles.images_portrait}
+            />
+            <Text style={styles.howToPlayText}>{howToPlay_ClaimCache.textSections[2]}</Text>
+            <Image
+                source={require("../res/HowToPlay/ClaimingCache/ar_object.png")}
+                style={styles.images_portrait}
+            />
+            <Text style={styles.howToPlayText}>{howToPlay_ClaimCache.textSections[3]}</Text>
+            <Image
+                source={require("../res/HowToPlay/ClaimingCache/trivia.png")}
+                style={styles.images_portrait}
+            />
+            <Text style={styles.howToPlayText}>{howToPlay_ClaimCache.textSections[4]}</Text>
+            <Image
+                source={require("../res/HowToPlay/ClaimingCache/error_cache_creator.png")}
+                style={styles.images_portrait}
+            />
+            <Text style={[styles.howToPlayText, styles.noteText]}>{howToPlay_ClaimCache.textSections[5]}</Text>
+        </View>
     )
+}
+
+function HowToPlayComponent_ViewCache() {
+    return(
+        <View>
+            <Text style={styles.heading1}>{howToPlay_ViewCache.textSections[0] + "\n"}</Text>
+            <Text style={styles.howToPlayText}>{howToPlay_ViewCache.textSections[1] + "\n"}</Text>
+
+            <Image
+                source={require("../res/HowToPlay/ViewingCache/app_nft.png")}
+                style={styles.images_portrait}
+            />
+
+            <Text style={[styles.howToPlayText]}>{howToPlay_ViewCache.textSections[2] + "\n"}</Text>
+
+            <Image
+                source={require("../res/HowToPlay/ViewingCache/opensea_view.png")}
+                style={styles.images_portrait}
+            />
+            <Text style={styles.howToPlayText}>{howToPlay_ViewCache.textSections[3] + "\n"}</Text>
+        </View>
+    );
 }
 
 export default function HowToPlayModal() {
@@ -135,7 +178,7 @@ export default function HowToPlayModal() {
             >
                 <ScrollView>
                     <View style={styles.container}>
-                        <List.Section title='How To Play'>
+                        <List.Section title='Help'>
                         <List.Accordion
                                 title="Connect Your Crypto Wallet"
                             >
@@ -158,6 +201,12 @@ export default function HowToPlayModal() {
                                 title="Claim A Cache"
                             >
                                 <HowToPlayComponent_Minting />
+                            </List.Accordion>
+
+                            <List.Accordion
+                                title="Viewing A Cache"
+                            >
+                                <HowToPlayComponent_ViewCache />
                             </List.Accordion>
                         </List.Section>
                         <Button
@@ -214,16 +263,16 @@ const styles = StyleSheet.create({
     noteText: {
         fontWeight: "bold",
     },
-    images: {
-        aspectRatio: 1,
-        alignSelf: "center",
-        resizeMode: 'center',
-        margin: -110
+    images_portrait: {
+        height: 560, 
+        width: 280, 
+        alignSelf: 'center', 
+        resizeMode: 'center'
     },
-    images_search_1: {
-        margin: -150
+    images_landscape: {
+        height: 280, 
+        width: 560, 
+        alignSelf: 'center', 
+        resizeMode: 'center'
     },
-    images_search_2_3: {
-        margin: -350,
-    }
 });
