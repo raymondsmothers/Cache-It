@@ -10,6 +10,6 @@
     "images": [
         "../res/HowToPlay/ConnectWallet/connect_wallet.png",
         "../res/HowToPlay/ConnectWallet/metamask_confirm_wallet_link.png",
-        "../res/HowToPlay/ConnectWallet/disconnect_wallet"
+        "../res/HowToPlay/ConnectWallet/disconnect_wallet.png"
     ]
 }
