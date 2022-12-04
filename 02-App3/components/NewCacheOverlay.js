@@ -27,7 +27,7 @@ export default function NewCacheOverlay(props) {
           fillColor={global.primaryColor + "40"}
           radius={cacheMetadata?.radius}
         />
-        {cacheMetadata?.geolocations.map((marker, index) => (
+        {/* {cacheMetadata?.geolocations.map((marker, index) => (
           <Marker
             pinColor={'tomato'}
             title={cacheMetadata?.name}
@@ -39,7 +39,7 @@ export default function NewCacheOverlay(props) {
               });
             }}
           />
-        ))}
+        ))} */}
       </View>
     );
   }

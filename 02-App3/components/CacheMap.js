@@ -70,16 +70,28 @@ export default function CacheMap() {
     // console.log("epicenter: " + cacheMetadata?.epicenterLat + " \nmycenter: " + currentPosition.latitude)
     
     if (cacheMetadata?.epicenterLat != undefined && cacheMetadata?.epicenterLong != undefined && !isNaN(cacheMetadata?.epicenterLat) && !isNaN(cacheMetadata?.epicenterLong) ) {
-      mapRef.current.animateCamera(
-        {
-          center: {
+      console.log(cacheMetadata.radius)
+      mapRef.current.animateToRegion({
             latitude: cacheMetadata?.epicenterLat,
             longitude: cacheMetadata?.epicenterLong,
+            latitudeDelta: (cacheMetadata?.radius * 2 + 100) / 111139,
+            longitudeDelta: (cacheMetadata?.radius * 2 + 100)/ 111139,
           },
-          // zoom: 1,
-        },
-        {duration: 5000},
+        5000
       );
+      // mapRef.current.animateToRegion(
+      // // mapRef.current.animateCamera(
+      //   {
+      //     center: {
+      //       latitude: cacheMetadata?.epicenterLat,
+      //       longitude: cacheMetadata?.epicenterLong,
+      //       latitudeDelta: global.latitudeDelta,
+      //       longitudeDelta: global.longitudeDelta,
+      //     },
+      //     // zoom: 15,
+      //   },
+      //   {duration: 5000},
+      // );
     }
   }, [cacheMetadata]);
 
