@@ -16,10 +16,13 @@ global.cream = "#FFF5EB"
 
 global.shortenAddress = (address) => {
     // console.log("address to shorten: " + address);
-    const shortenedAddress1 = `${address.slice(0, 6)}...${address.slice(
-      address.length - 4,
-      address.length
-    )}`;
-    return shortenedAddress1;
+    if(address != undefined) {
+      const shortenedAddress1 = `${address?.slice(0, 6)}...${address?.slice(
+        address.length - 4,
+        address.length
+      )}`;
+      return shortenedAddress1;
+    }
+    else return "null"
     // setIsConnected(true);
   };

@@ -12,7 +12,7 @@ import Animated, {
   withTiming,
   interpolate,
 } from 'react-native-reanimated';
-import {CacheMetadataContext, Web3ProviderContext} from '../App';
+import {CacheMetadataContext, Web3ProviderContext, LocationContext} from '../App';
 import {CACHEIT_PRIVATE_KEY} from '@env';
 import {ethers} from 'ethers';
 import { ConnectorEvents, useWalletConnect } from '@walletconnect/react-native-dapp';
@@ -38,6 +38,8 @@ const AnimatedRing = React.memo(AnimatedRings)
 
 export default function SeekScreen() {
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
+  
+  const {currentPosition, setCurrentPosition} = useContext(LocationContext);
   const connector = useWalletConnect();
 
   //Coordinates of the nearest geocache item
@@ -53,29 +55,32 @@ export default function SeekScreen() {
   PulseRateContextValue = {pulseStrength, setPulseStrength};
 
 
-
-  useEffect(() => {
-  for(i = 0; i < 10; i++) {
-    const interval1 = setInterval( async () => {
-      setPulseStrength(Math.random() * 20)
-    }, 10000);
-    const interval = setInterval( async () => {
-      setDistancetoNearestItem(Math.random() + 200)
-    }, 1000);
-  }
-  }, [])
+  //Test useEffect
+  // useEffect(() => {
+  // for(i = 0; i < 10; i++) {
+  //   const interval1 = setInterval( async () => {
+  //     setPulseStrength(Math.random() * 20)
+  //   }, 10000);
+  //   const interval = setInterval( async () => {
+  //     setDistancetoNearestItem(Math.random() + 200)
+  //   }, 1000);
+  // }
+  // }, [])
 
   //Every second check
   useEffect(() => {
     findInitialCoordinates();
-    // const interval = setInterval( async () => {
-    // console.log("CAchemetadata: " + JSON.stringify(cacheMetadata, null, 2))
     updateCoordinates();
-    // calculateShortestDistance()
-    // }, 1000);
-
-    // return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    calculateShortestDistance({
+      latitude: currentPosition.latitude,
+      longitude: currentPosition.longitude,
+      latitudeDelta: global.latDelta,
+      longitudeDelta: global.longDelta,
+    });
+  }, [currentPosition]);
 
   const calculateShortestDistance = async currentPosition => {
     //get coords
@@ -94,35 +99,18 @@ export default function SeekScreen() {
       if (hyp < shortestHyp) {
         shortestHyp = hyp;
         shortestHypCoords = crd;
-
-        //convert distance to meters
-        // 111 kms is ~ 1 arc of longitude or lat
-        // console.log("shortesthypinmetesr " + shortestHypInMeters)
-        //If user is within 50 meters, pulse we be at max
-        //If user is more than 1 km away, pulse will be at min
-        // A change of 25 meters closer will increase the pulseStrength
-        // const newPulseStrength = Math.ceil(Math.min(1000 / shortestHypInMeters, 20))
-        
       }
     });
     const shortestHypInMeters = shortestHyp * 111 * 1000;
     var newPulseStrength = Math.ceil(
       Math.min(shortestHypInMeters / 25, 20),
     );
-    // setTimeout(() => {
-    //   console.log("DELAYED")
-      
-    // }, 2000)
-    // newPulseStrength = 2
     //Only update pulsestrength if it changes, to avoid rerendering circle2
     if(newPulseStrength != pulseStrength)
       setPulseStrength(newPulseStrength);
 
     setNearestItemCoords(shortestHypCoords);
     setDistancetoNearestItem(shortestHypInMeters);
-    // console.log("shortest hyp in meters: " + shortestHypInMeters)
-    console.log("HasTriggeredARVission1: " + shortestHypInMeters <= DISTANCE_THRESHOLD)
-    // console.log("HasTriggeredARVission2: " + hasTriggeredARVision)
     if(shortestHypInMeters <= DISTANCE_THRESHOLD)
         setHasTriggeredARVision(true);
   };
@@ -134,12 +122,16 @@ export default function SeekScreen() {
     const watcher = await Geolocation.watchPosition(
       position => {
         const crd = position.coords;
-        calculateShortestDistance({
+        setCurrentPosition({
           latitude: crd.latitude,
           longitude: crd.longitude,
-          latitudeDelta: global.latDelta,
-          longitudeDelta: global.longDelta,
         });
+        // calculateShortestDistance({
+        //   latitude: crd.latitude,
+        //   longitude: crd.longitude,
+        //   latitudeDelta: global.latDelta,
+        //   longitudeDelta: global.longDelta,
+        // });
       },
       error => {
         // See error code charts below.
@@ -161,12 +153,16 @@ export default function SeekScreen() {
       position => {
         const crd = position.coords;
         // console.log(position);
-        calculateShortestDistance({
+        setCurrentPosition({
           latitude: crd.latitude,
           longitude: crd.longitude,
-          latitudeDelta: global.latDelta,
-          longitudeDelta: global.longDelta,
         });
+        // calculateShortestDistance({
+        //   latitude: crd.latitude,
+        //   longitude: crd.longitude,
+        //   latitudeDelta: global.latDelta,
+        //   longitudeDelta: global.longDelta,
+        // });
       },
       error => {
         // See error code charts below.
@@ -194,31 +190,46 @@ export default function SeekScreen() {
         ) : (
           <View style={styles.container}>
 
-            {/* <Text style={globalStyles.titleText}>
-              {' '}
-              {'Searching "' + cacheMetadata.name + '"'}{' '}
-            </Text> */}
               <View style={styles.cacheNameContainer}>
                 <Text style={styles.cacheNameText}>{"Searching: \"" + cacheMetadata?.name + "\""}</Text>
               </View>
-            <Text style={globalStyles.centerText}>
-              {'Created by:'}
-            </Text>
-            <Text style={globalStyles.centerText}>
-              {global.shortenAddress(cacheMetadata.creator)}
-            </Text>
-            <Text style={globalStyles.centerText}>
-              {'Created On:'}
-            </Text>
-            <Text style={globalStyles.centerText}>
-              {cacheMetadata.date}
-            </Text>
+            <View style={styles.textContainer}>
+              <Text style={[globalStyles.centerText, {fontWeight: "bold"}]}>
+                {'Created by:'}
+              </Text>
+              <Text style={globalStyles.centerText}>
+                {global.shortenAddress(cacheMetadata?.creator)}
+              </Text>
+            </View>
+            <View style={styles.textContainer}>
+            <Text style={[globalStyles.centerText, {fontWeight: "bold"}]}>
+                {'Created On:'}
+              </Text>
+              <Text style={globalStyles.centerText}>
+                {cacheMetadata?.date}
+              </Text>
+            </View>
+            <View style={styles.textContainer}>
+              <Text style={[globalStyles.centerText, {fontWeight: "bold"}]}>
+                {'Number of item locations:'}
+              </Text>
+              <Text style={globalStyles.centerText}>
+                {cacheMetadata?.numberOfItems}
+              </Text>
 
-            <Text style={globalStyles.titleText}>
+            </View>
+            {/* <View style={styles.textContainer}> */}
+            <View >
+              <Text style={[globalStyles.centerText, {fontWeight: "bold"}]}>
+                {'Radar:'}
+              </Text>
+            </View>
+
+            {/* <Text style={globalStyles.titleText}>
               {' '}
               {'Pulse Strength: \n' + pulseStrength}{' '}
-            </Text>
-                <AnimatedRing pulseStrength={pulseStrength}></AnimatedRing>
+            </Text> */}
+            <AnimatedRing pulseStrength={pulseStrength}></AnimatedRing>
         
             <Text style={globalStyles.titleText}>
               {' '}
@@ -244,6 +255,14 @@ const styles = StyleSheet.create({
     fontSize: 30,
     textAlign: 'center',
     padding: 20,
+  },
+  textContainer: {
+    width: "80%",
+    padding: 5,
+    marginBottom: 5,
+    borderBottomWidth: 1,
+    // borderTopWidth: 1,
+    borderBottomColor: global.primaryColor
   },
   subtitle: {
     fontSize: 20,

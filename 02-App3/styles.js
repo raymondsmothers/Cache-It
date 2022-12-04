@@ -20,7 +20,7 @@ module.exports = StyleSheet.create({
     centerText: {
       textAlign: "center",
       fontSize: 20,
-      padding: 10,
+      padding: 5,
       color: global.primaryColor
     },
     titleText: {

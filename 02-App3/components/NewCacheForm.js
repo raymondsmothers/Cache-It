@@ -279,8 +279,8 @@ export default function NewCacheForm({navigation}) {
         .then(data => {
           // console.log(data)
           // console.log(typeof data)
-          // console.log(Object.keys(data))
-          // console.log(JSON.stringify(data, null, 2).substring(0, 199))
+          console.log(Object.keys(data))
+          console.log(JSON.stringify(data, null, 2).substring(0, 199))
           // setImgUrl('data:image/png;base64,' + data['data'][0]['b64_json'])
           if (data)
             resolve('data:image/png;base64,' + data['data'][0]['b64_json']);
