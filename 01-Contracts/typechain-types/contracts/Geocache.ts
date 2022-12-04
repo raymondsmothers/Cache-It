@@ -30,6 +30,7 @@ import type {
 export interface GeocacheInterface extends utils.Interface {
   functions: {
     "approveAdmin(address)": FunctionFragment;
+    "checkIfUserHasMinted(uint256)": FunctionFragment;
     "creatorContract()": FunctionFragment;
     "geocacheToNumFound(uint256)": FunctionFragment;
     "getAdmins()": FunctionFragment;
@@ -57,6 +58,7 @@ export interface GeocacheInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "approveAdmin"
+      | "checkIfUserHasMinted"
       | "creatorContract"
       | "geocacheToNumFound"
       | "getAdmins"
@@ -84,6 +86,10 @@ export interface GeocacheInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "approveAdmin",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "checkIfUserHasMinted",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "creatorContract",
@@ -180,6 +186,10 @@ export interface GeocacheInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "approveAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "checkIfUserHasMinted",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -362,6 +372,11 @@ export interface Geocache extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    checkIfUserHasMinted(
+      _geocacheId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     creatorContract(overrides?: CallOverrides): Promise<[string]>;
 
     geocacheToNumFound(
@@ -498,6 +513,11 @@ export interface Geocache extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  checkIfUserHasMinted(
+    _geocacheId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   creatorContract(overrides?: CallOverrides): Promise<string>;
 
   geocacheToNumFound(
@@ -631,6 +651,11 @@ export interface Geocache extends BaseContract {
       admin: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    checkIfUserHasMinted(
+      _geocacheId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     creatorContract(overrides?: CallOverrides): Promise<string>;
 
@@ -816,6 +841,11 @@ export interface Geocache extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    checkIfUserHasMinted(
+      _geocacheId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     creatorContract(overrides?: CallOverrides): Promise<BigNumber>;
 
     geocacheToNumFound(
@@ -925,6 +955,11 @@ export interface Geocache extends BaseContract {
     approveAdmin(
       admin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    checkIfUserHasMinted(
+      _geocacheId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     creatorContract(overrides?: CallOverrides): Promise<PopulatedTransaction>;

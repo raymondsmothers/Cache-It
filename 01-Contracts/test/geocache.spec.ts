@@ -80,14 +80,14 @@ describe('Geocache Project', async () => {
 
     it('Only admin can mint an item in the geocache', async () => {
       // Admin minting an item for addr1 in first geocache
-      let txn = await GeocacheInstance.connect(owner).mintItemInGeocache(1, addr1.address);
+      let txn = await GeocacheInstance.connect(owner).mintItemInGeocache(2, addr1.address);
       await txn.wait();
       // Doesn't let non admin mint item
       await expect(
-        GeocacheInstance.connect(addr1).mintItemInGeocache(1, addr1.address)
+        GeocacheInstance.connect(addr1).mintItemInGeocache(2, addr1.address)
       ).to.be.revertedWith('Ownable: caller is not the owner');
       // Mapping updates
-      expect(await GeocacheInstance.geocacheToNumFound(1)).to.equal(1);
+      expect(await GeocacheInstance.geocacheToNumFound(2)).to.equal(1);
     });
 
     it('Deactives the geocache after all of the items are found', async () => {
@@ -105,15 +105,15 @@ describe('Geocache Project', async () => {
       );
       await txn.wait();
       // Minting the # of times, shouldn't let people mint more
-      expect((await GeocacheInstance.tokenIdToGeocache(2)).tokenURI).to.equal('uri 3');
-      txn = await GeocacheInstance.connect(owner).mintItemInGeocache(2, addr1.address);
+      expect((await GeocacheInstance.tokenIdToGeocache(3)).tokenURI).to.equal('uri 3');
+      txn = await GeocacheInstance.connect(owner).mintItemInGeocache(3, addr1.address);
       await txn.wait();
-      txn = await GeocacheInstance.connect(owner).mintItemInGeocache(2, addr2.address);
+      txn = await GeocacheInstance.connect(owner).mintItemInGeocache(3, addr2.address);
       await txn.wait();
-      txn = await GeocacheInstance.connect(owner).mintItemInGeocache(2, addr3.address);
+      txn = await GeocacheInstance.connect(owner).mintItemInGeocache(3, addr3.address);
       await txn.wait();
       await expect(
-        GeocacheInstance.connect(owner).mintItemInGeocache(2, addr4.address)
+        GeocacheInstance.connect(owner).mintItemInGeocache(3, addr4.address)
       ).to.be.revertedWithCustomError(GeocacheInstance, 'NotActiveGeocache');
     });
 
@@ -153,6 +153,26 @@ describe('Geocache Project', async () => {
       const txnFormatted = txn.map((txn) => Number(txn));
       expect(txnFormatted[0]).to.equal(2);
       expect(txnFormatted.length).to.equal(1);
+    });
+
+    it("Correctly returns if a user has or hasn't minted an item from the geocache (including the creator)", async () => {
+      // Making new geocache (owner makes it)
+      let txn = await GeocacheInstance.connect(owner).newGeocache(
+        3,
+        'uri numero 4',
+        String(Date.now()),
+        ['1', '2', '3'],
+        'epicenterlat',
+        'epicenterlong',
+        5,
+        'Test for has minted token id',
+        'sample origin story'
+      );
+      await txn.wait();
+
+      // Checking if only owner has it so far (other addresses shouldn't have it)
+      expect(await GeocacheInstance.connect(owner).checkIfUserHasMinted(4)).to.equal(true);
+      expect(await GeocacheInstance.connect(addr1).checkIfUserHasMinted(4)).to.equal(false);
     });
   });
 });

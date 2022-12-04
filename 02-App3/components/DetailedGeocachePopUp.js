@@ -10,6 +10,7 @@ import {
   ScrollView,
   Image,
 } from "react-native";
+const globalStyles = require("../styles");
 
 export default function DetailedGeocachePopUp({
   metadata, // Metadata object being passed in
@@ -29,6 +30,12 @@ export default function DetailedGeocachePopUp({
     });
   };
 
+  const date = Date(metadata.date_created);
+  const dateFormat = new Date(date);
+  const newDateString = `${
+    dateFormat.getMonth() + 1
+  }/${dateFormat.getDate()}/${dateFormat.getFullYear()}`;
+
   return (
     <Modal
       animationType="slide"
@@ -39,7 +46,7 @@ export default function DetailedGeocachePopUp({
         setModalVisible(!modalVisible);
       }}
     >
-      <View style={styles.centeredView}>
+      <View style={[styles.centeredView]}>
         <ScrollView contentContainerStyle={styles.modalView}>
           <Image
             style={styles.img}
@@ -48,19 +55,31 @@ export default function DetailedGeocachePopUp({
             }}
           />
           <Text
-            style={[styles.modalText, { fontWeight: "bold", fontSize: 28 }]}
+            style={[
+              globalStyles.titleText,
+              { fontWeight: "bold", fontSize: 28 },
+            ]}
           >
             {metadata.name}
           </Text>
+
           <Text style={[styles.modalText]}>{metadata.origin_story}</Text>
-          <Text style={[styles.modalText, { textAlign: "left" }]}>
+          <Text
+            style={[
+              globalStyles.titleText,
+              { fontWeight: "bold", fontSize: 28 },
+            ]}
+          >
+            Traits
+          </Text>
+          <Text style={[styles.modalText]}>
             Location found: {metadata.location_found}
           </Text>
-          <Text style={[styles.modalText, { textAlign: "left" }]}>
+          <Text style={[styles.modalText]}>
             Number of items in this geocache: {metadata.size}
           </Text>
           <Text style={[styles.modalText, { textAlign: "left" }]}>
-            Date created: {metadata.date_created}
+            Date created: {newDateString}
           </Text>
           <Pressable
             style={[styles.button, { backgroundColor: "#1868B7" }]}

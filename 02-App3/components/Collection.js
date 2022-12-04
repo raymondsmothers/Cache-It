@@ -21,6 +21,8 @@ import useSWR from "swr";
 import { Geocache1155 } from "../contract_info/contractAddressesGoerli";
 import DetailedGeocachePopUp from "./DetailedGeocachePopUp";
 import axios from "axios";
+import { ActivityIndicator } from "react-native-paper";
+const globalStyles = require("../styles");
 
 export default function Collection() {
   const [geocacheData, setGeocacheData] = useState(null);
@@ -107,7 +109,7 @@ export default function Collection() {
     <SafeAreaView>
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.text}>
+          <Text style={globalStyles.titleText}>
             {"\n"}View Your Collected Geocache Items
           </Text>
           {showDetailedPopup && (
@@ -127,28 +129,33 @@ export default function Collection() {
           {geocacheData && geocacheData.length === 0 && (
             <Text
               style={
-                (styles.text,
-                {
-                  marginTop: "50%",
-                  marginBottom: "40%",
-                  marginLeft: "10%",
-                  marginRight: "10%",
-                  textAlign: "center",
-                  fontSize: 24,
-                })
+                globalStyles.titleText
+                // {
+                //   marginTop: "50%",
+                //   marginBottom: "40%",
+                //   marginLeft: "10%",
+                //   marginRight: "10%",
+                //   textAlign: "center",
+                //   fontSize: 24,
+                // }
               }
             >
-              No geocache items found yet... Time to collect!
+              {"\n"}No geocache items found yet... Time to collect!
             </Text>
           )}
           {/* TODO ADD ACTUAL LOADING ICON*/}
-          {!geocacheData && <Text style={styles.text}>Loading...</Text>}
+          {!geocacheData && (
+            <Text style={globalStyles.titleText}>
+              {"\n"}Loading{"\n"}
+              <ActivityIndicator></ActivityIndicator>
+            </Text>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
   ) : (
     <SafeAreaView>
-      <Text style={styles.text}>
+      <Text style={globalStyles.titleText}>
         Please connect your wallet to view your geocache items.
       </Text>
     </SafeAreaView>
