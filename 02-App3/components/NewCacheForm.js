@@ -518,8 +518,11 @@ export default function NewCacheForm({navigation}) {
                 }}
                 source={{uri: imgUrl}}
               />
-                <Text style={globalStyles.centerText} >
+              <Text style={globalStyles.centerText} >
                 {"After clicking \"Submit Geocache\", you will be automatically redirected to confirm this transaction with your Wallet Provider."}
+              </Text>
+              <Text style={globalStyles.centerText} >
+                {"If you don't like the story or image, feel free to generate a new one the same way as before using the form below."}
               </Text>
               <Button
                 // onPress={() => {generateGeocacheOriginStory()}}
@@ -530,21 +533,10 @@ export default function NewCacheForm({navigation}) {
                 }}
                 title="Submit Geocache"
                 // color="#841584"
-                // disabled={!connector.connected}
+                disabled={isDeployingGeocache || !connector.connected}
                 accessibilityLabel="Learn more about this purple button"
               />
-              {/* <Button
-                // onPress={() => {generateGeocacheOriginStory()}}
-                color={global.primaryColor}
-                // onPress={() => {generateGeocacheOriginStory()}}
-                onPress={() => {
-                  sendGeocacheTransaction();
-                }}
-                title="Send Transaction"
-                // color="#841584"
-                // disabled={!connector.connected}
-                accessibilityLabel="Learn more about this purple button"
-              /> */}
+
               </>
             )}
         </View>
@@ -569,7 +561,7 @@ export default function NewCacheForm({navigation}) {
             <TextInput
               style={styles.input}
               onChangeText={onChangeOriginAdjective}
-              placeholder="Scary"
+              placeholder="Adventurous"
               blurOnSubmit={true}
               // value={name}
             />
