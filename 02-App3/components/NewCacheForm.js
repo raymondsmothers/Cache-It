@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useRef, useContext, useEffect} from 'react';
 import {
   RecyclerViewBackedScrollViewComponent,
   Text,
@@ -75,11 +75,12 @@ export default function NewCacheForm({navigation}) {
   const [isDeployingGeocache, setIsDeployingGeocache] = useState(false);
   const [hasDeployedGeocache, setHasDeployedGeocache] = useState(false);
   const [transactionHash, setTransactionHash] = useState();
-  const [imgUrl, setImgUrl] = useState();
-  const [geocacheOriginStory, setGeocacheOriginStory] = useState([]);
+  const [imgUrl, setImgUrl] = useState('');
+  const [geocacheOriginStory, setGeocacheOriginStory] = useState('');
   const [isGeneratingStory, setIsGeneratingStory] = useState();
   const [isGeneratingImage, setIsGeneratingImage] = useState();
-  const [isLoading, setIsLoading] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFinalizingGeocache, setIsFinalizingGeocache] = useState()
   // const [hasThrownError, setHasThrownError] = useState(false)
   const [errorMessage, setErrorMessage] = useState();
   const [name, onChangeName] = useState();
@@ -88,23 +89,11 @@ export default function NewCacheForm({navigation}) {
   const [numItems, onChangeNumItems] = useState();
   let fixedRadius = 0;
 
-  // const auth = 'Basic ' + process.env.GOERLI_INFURA_KEY;
-  // const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https', headers: {
-  //   authorization: auth,
-  // }});
-  // const client = ipfsClient.create({
-  //     host: 'ipfs.infura.io',
-  //     port: 5001,
-  //     protocol: 'https',
-  //     headers: {
-  //         authorization: auth,
-  //     },
-  // });
+  const scrollRef = useRef();
 
   useEffect(() => {
     //TODO this calls multiple times and breaks sometimes.
     GeocacheContract.on('GeocacheCreated', geocacheCreatedCallback);
-    // ipfs.add('hello world!').then(console.log).catch(console.log);
   });
 
   const getGeocacheMetadata = async id => {
@@ -215,7 +204,7 @@ export default function NewCacheForm({navigation}) {
             'Write a ' + originAdjective + ' origin story for a mysterious hidden item.',
             // 'Write a mysterious, origin story for a geocache item.',
           temperature: 0.9,
-          max_tokens: 1750,
+          max_tokens: 1250,
           top_p: 1,
           frequency_penalty: 1,
           presence_penalty: 1,
@@ -225,16 +214,22 @@ export default function NewCacheForm({navigation}) {
         .then(response => {
           return response.json();
         })
+        .catch(error => {
+          console.log('Something bad happened ' + error);
+          setErrorMessage(
+            'Something bad happened while generating story, please try again:  ' +
+              error.message,
+          );
+          setIsGeneratingStory(false);
+          setGeocacheOriginStory('');
+        })
         .then(async data => {
-          // console.log(data)
-          // console.log(typeof data)
-          // console.log(Object.keys(data))
-          // console.log(data['choices'][0].text)
           const originStory = data['choices'][0].text;
-          // await generateGeocacheImage(originStory)
+          scrollRef.current?.scrollTo({
+            y: 0,
+            animated: true,
+          });
           resolve(originStory);
-
-          // console.log(JSON.stringify(data, null, 2))
         })
         .catch(error => {
           console.log('Something bad happened ' + error);
@@ -279,13 +274,23 @@ export default function NewCacheForm({navigation}) {
         .then(data => {
           // console.log(data)
           // console.log(typeof data)
-          console.log(Object.keys(data))
-          console.log(JSON.stringify(data, null, 2).substring(0, 199))
+          // console.log(Object.keys(data))
+          // console.log(JSON.stringify(data, null, 2).substring(0, 199))
           // setImgUrl('data:image/png;base64,' + data['data'][0]['b64_json'])
-          if (data)
+          if (data['error']) {
+            console.log('Something bad happened on line 295');
+
+            setErrorMessage(
+              'Something bad happened while generating image, please try again:  ' +
+                data['error']['message'],
+            );
+            setIsGeneratingImage(false);
+            setImgUrl('');
+            setGeocacheOriginStory('');
+
+          }
+          else if (data)
             resolve('data:image/png;base64,' + data['data'][0]['b64_json']);
-          // console.log(data['choices'][0].text)
-          // return data['choices'][0].text
         })
         .catch(error => {
           console.log('Something bad happened ' + error);
@@ -295,6 +300,8 @@ export default function NewCacheForm({navigation}) {
           );
           setIsGeneratingImage(false);
           setImgUrl('');
+          setGeocacheOriginStory('');
+
         });
     });
   };
@@ -315,27 +322,73 @@ export default function NewCacheForm({navigation}) {
     return true;
   };
 
+  const sendGeocacheTransaction = async () => {
+    // setIsDeployingGeocache(true)
+    setIsFinalizingGeocache(true)
+    await findInitialCoordinates();
+    const itemLocations = generateItemLocations();
+    await providers.walletConnect.enable();
+    const ethers_provider = new ethers.providers.Web3Provider(
+      providers.walletConnect,
+    );
+
+    const signer = await ethers_provider.getSigner();
+    const geocacheContractWithSigner = await GeocacheContract.connect(signer);
+
+    const date = new Date(Date.now()).toLocaleString();
+    if (imgUrl.length > 0 && geocacheOriginStory.length > 0) {
+      // Generating metadata, passing in image
+      const tokenURI = await getTokenURIPinata(
+        name,
+        geocacheOriginStory,
+        numItems,
+        String(
+          currentPosition.latitude.toString() +
+            ', ' +
+            currentPosition.longitude.toString(),
+        ),
+        imgUrl,
+      );
+      setIsFinalizingGeocache(false)
+
+
+      // console.log('sending transaction! ' + originStory.trim());
+      const createGeocacheTxn = await geocacheContractWithSigner
+        .newGeocache(
+          Math.abs(Math.round(numItems)),
+          tokenURI,
+          date.toString(),
+          itemLocations,
+          currentPosition.latitude.toString(),
+          currentPosition.longitude.toString(),
+          Math.abs(Math.round(radius)),
+          name,
+          geocacheOriginStory.trim(),
+        )
+        .then(res => {
+          setTransactionHash(res.hash);
+          setIsDeployingGeocache(true);
+          setTimeout(() => {
+            // console.log("DELAYED")
+            setIsTransactionDelayed(true && !hasDeployedGeocache);
+          }, 15000);
+          // console.log("Success: " + JSON.stringify(res, null, 2))
+        })
+        .catch(error => {
+          // setHasThrownError(true)
+          setErrorMessage(error.message);
+          setIsDeployingGeocache(false);
+          console.log('Error creating geocache: ' + error.message);
+        });
+      }
+  }
+
   const createGeocacheSubmitHandler = async () => {
     // console.log("create geocache")
     resetState();
     //update location
     if (validateFormData()) {
-      // if(true) {
       setIsDeployingGeocache(false);
-      //TODO this location doesn't always complete if their is a timeout??
-      await findInitialCoordinates();
-      const itemLocations = generateItemLocations();
-      await providers.walletConnect.enable();
-      const ethers_provider = new ethers.providers.Web3Provider(
-        providers.walletConnect,
-      );
-
-      const signer = await ethers_provider.getSigner();
-      const geocacheContractWithSigner = await GeocacheContract.connect(signer);
-
-      const date = new Date(Date.now()).toLocaleString();
-      // console.log("Date: " + date.toString)
-
       await generateGeocacheOriginStory().then(async originStory => {
         // console.log("Story: " + originStory)
         setGeocacheOriginStory(originStory);
@@ -344,57 +397,7 @@ export default function NewCacheForm({navigation}) {
           .then(async base64url => {
             // console.log("base64: " + base64url.substring(0, 199))
             setImgUrl(base64url);
-
-            if (base64url && originStory) {
-              // Generating metadata, passing in image
-              const tokenURI = await getTokenURIPinata(
-                name,
-                originStory,
-                numItems,
-                String(
-                  currentPosition.latitude.toString() +
-                    ', ' +
-                    currentPosition.longitude.toString(),
-                ),
-                base64url,
-              );
-              setIsGeneratingImage(false);
-
-
-              // console.log('sending transaction! ' + originStory.trim());
-              const createGeocacheTxn = await geocacheContractWithSigner
-                .newGeocache(
-                  Math.abs(Math.round(numItems)),
-                  tokenURI,
-                  date.toString(),
-                  itemLocations,
-                  currentPosition.latitude.toString(),
-                  currentPosition.longitude.toString(),
-                  // "-90.0923910",
-                  // "27.9283901",
-                  Math.abs(Math.round(radius)),
-                  name,
-                  originStory.trim(),
-                  // {
-                  //   gasLimit: 10000000,
-                  // },
-                )
-                .then(res => {
-                  setTransactionHash(res.hash);
-                  setIsDeployingGeocache(true);
-                  setTimeout(() => {
-                    // console.log("DELAYED")
-                    setIsTransactionDelayed(true && !hasDeployedGeocache);
-                  }, 15000);
-                  // console.log("Success: " + JSON.stringify(res, null, 2))
-                })
-                .catch(error => {
-                  // setHasThrownError(true)
-                  setErrorMessage(error.message);
-                  setIsDeployingGeocache(false);
-                  console.log('Error creating geocache: ' + error.message);
-                });
-            }
+            setIsGeneratingImage(false);
           })
           .catch(e => {
             setErrorMessage(e.message);
@@ -482,34 +485,70 @@ export default function NewCacheForm({navigation}) {
     setErrorMessage(undefined);
     setIsDeployingGeocache(false);
     setHasDeployedGeocache(false);
+    setIsFinalizingGeocache(false)
     // setImgUrl(undefined)
     // setGeocacheOriginStory(undefined)
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView ref={scrollRef}>
         {/* <ScrollView contentContainerStyle={styles.container}> */}
-        <View >
-        {geocacheOriginStory != undefined && (
-            <Text
-              style={[globalStyles.centerText, {color: global.secondaryColor}]}>
-              {geocacheOriginStory}
-            </Text>
-          )}
-          {imgUrl != undefined && (
-            <Image
-              style={{
-                margin: 20,
-                width: 200,
-                height: 200,
-                borderWidth: 1,
-                borderColor: global.secondaryColor,
-              }}
-              source={{uri: imgUrl}}
-            />
-          )}
-          </View>
+        <View style={styles.container} >
+          {geocacheOriginStory.length > 0 && (
+            <>
+              <Text style={[globalStyles.titleText, {paddingBottom: 0}]}>
+                {"Origin Story for \"" + name + "\""}
+              </Text>
+              <Text
+                style={[globalStyles.centerText, {paddingTop: 0, color: global.secondaryColor}]}>
+                {geocacheOriginStory}
+              </Text>
+              </>
+            )}
+            {imgUrl.length > 0 && (
+              <>
+              <Image
+                style={{
+                  margin: 20,
+                  width: 200,
+                  height: 200,
+                  borderWidth: 1,
+                  borderColor: global.secondaryColor,
+                }}
+                source={{uri: imgUrl}}
+              />
+                <Text style={globalStyles.centerText} >
+                {"After clicking \"Submit Geocache\", you will be automatically redirected to confirm this transaction with your Wallet Provider."}
+              </Text>
+              <Button
+                // onPress={() => {generateGeocacheOriginStory()}}
+                color={global.primaryColor}
+                // onPress={() => {generateGeocacheOriginStory()}}
+                onPress={() => {
+                  sendGeocacheTransaction();
+                }}
+                title="Submit Geocache"
+                // color="#841584"
+                // disabled={!connector.connected}
+                accessibilityLabel="Learn more about this purple button"
+              />
+              {/* <Button
+                // onPress={() => {generateGeocacheOriginStory()}}
+                color={global.primaryColor}
+                // onPress={() => {generateGeocacheOriginStory()}}
+                onPress={() => {
+                  sendGeocacheTransaction();
+                }}
+                title="Send Transaction"
+                // color="#841584"
+                // disabled={!connector.connected}
+                accessibilityLabel="Learn more about this purple button"
+              /> */}
+              </>
+            )}
+        </View>
+
         <View style={styles.formContainer}>
           <View style={styles.inputContainer}>
             <Text style={globalStyles.text}>
@@ -564,6 +603,12 @@ export default function NewCacheForm({navigation}) {
               keyboardType="numeric"
             />
           </View>
+          <View>
+          <Text style={globalStyles.centerText} >
+            {"After clicking \"Generate Geocache\", you will have a chance to view the generated Origin Story and Image before finalizing your submission."}
+          </Text>
+          
+        </View>
           <Button
             // onPress={() => {generateGeocacheOriginStory()}}
             color={global.primaryColor}
@@ -571,7 +616,7 @@ export default function NewCacheForm({navigation}) {
             onPress={() => {
               createGeocacheSubmitHandler();
             }}
-            title="Submit"
+            title="Generate Geocache"
             // color="#841584"
             disabled={!connector.connected}
             accessibilityLabel="Learn more about this purple button"
@@ -580,12 +625,7 @@ export default function NewCacheForm({navigation}) {
             <PleaseConnect msg={" create a new geocache"}></PleaseConnect>
           )}
         </View>
-        <View style={styles.container}>
-          <Text style={globalStyles.centerText} >
-            {"After clicking submit, you will be automatically redirected to confirm this transaction with your Wallet Provider."}
-          </Text>
-          
-        </View>
+
         {/* {true && ( */}
         {isGeneratingImage && (
           <View style={globalStyles.textContainer}>
@@ -615,6 +655,19 @@ export default function NewCacheForm({navigation}) {
               transactionHash={transactionHash}
               body={
                 'Please wait for this transaction to complete.'
+              }></MessageModal>
+          </View>
+        )}
+        {isFinalizingGeocache && (
+          <View style={globalStyles.textContainer}>
+            <MessageModal
+              title={'Finalizing your Geocache'}
+              isProgress={true}
+              resetParentState={resetState}
+              // isTransactionDelayed={isTransactionDelayed}
+              // transactionHash={transactionHash}
+              body={
+                'You will be redirected to your Wallet Provider soon.'
               }></MessageModal>
           </View>
         )}
@@ -662,6 +715,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     // padding: 15,
     borderRadius: 14,
+    // marginTop: 0,
     margin: 15,
     zIndex: 3,
     borderColor: global.primaryColor,
@@ -670,7 +724,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "orange"
   },
   container: {
-    height: '100%',
+    // height: '100%',
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -684,6 +738,21 @@ const styles = StyleSheet.create({
     // alignSelf: "center",
     // backgroundColor: "orange"
   },
+  // container: {
+  //   // height: '100%',
+  //   display: 'flex',
+  //   justifyContent: 'flex-start',
+  //   alignItems: 'center',
+  //   // backgroundColor: global.cream,
+  //   // padding: 15,
+  //   // borderRadius: 14,
+  //   // margin: 15,
+  //   // zIndex: 3,
+  //   // borderColor: global.primaryColor,
+  //   // borderWidth: 3
+  //   // alignSelf: "center",
+  //   // backgroundColor: "orange"
+  // },
   text: {
     textAlign: 'center',
     fontSize: 24,

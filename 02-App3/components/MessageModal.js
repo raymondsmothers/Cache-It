@@ -26,7 +26,7 @@ export default function MessageModal({title, transactionHash, hasDeployedGeocach
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
+          // Alert.alert("Modal has been closed.");
           setModalVisible(!modalVisible);
         }}
       >

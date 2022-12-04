@@ -42,6 +42,7 @@ LogBox.ignoreLogs([
   'Require cycle: node_modules\react-native-cryptoindex.js -> node_modules\react-native-randombytesindex.js -> node_modulessjclsjcl.js -> node_modules\react-native-cryptoindex.js',
 ]);
 console.disableYellowBox = true;
+LogBox.ignoreAllLogs()
 
 const Tab = createBottomTabNavigator();
 export const LocationContext = React.createContext({});
