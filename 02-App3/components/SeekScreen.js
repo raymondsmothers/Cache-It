@@ -33,70 +33,8 @@ export const PulseRateContext = React.createContext({
 
 
 
-const Ring = React.memo(({pulseStrength1, delay, duration}) => {
-  // const RingUnMemoed = ({delay, duration}) => {
-    const {pulseStrength, setPulseStrength} = useContext(PulseRateContext)
 
-    const ring = useSharedValue(0);
-
-    const ringStyle = useAnimatedStyle(() => {
-      return {
-        opacity: 0.8 - ring.value,
-        transform: [
-          {
-            scale: interpolate(ring.value, [0, 1], [0, 4]),
-          },
-        ],
-      };
-    });
-    useMemo(() => {
-    // useEffect(() => {
-      console.log("callback trig: " + delay)
-      ring.value = withDelay(
-        delay,
-        withRepeat(
-          withTiming(1, {
-            duration: duration,
-          }),
-          -1,
-          false,
-        ),
-      );
-    }, [delay]);
-    // useCallback(() => {
-    useEffect(() => {
-      console.log("useEffect trig: " + delay)
-      ring.value = withDelay(
-        delay,
-        withRepeat(
-          withTiming(1, {
-            duration: duration,
-          }),
-          -1,
-          false,
-        ),
-      );
-        }, []);
-    // }, [delay, duration]);
-    // }, [delay, duration]);
-    return <Animated.View style={[styles.ring, ringStyle]} />;
-  },
-  (prevProps, nextProps) => {
-    prevProps.delay === nextProps.delay && prevProps.duration === nextProps.duration
-    // prevProps.pulseStrength1 === nextProps.pulseStrength1
-    // console.log("should not rerender bottom circle: " + (prevProps.pulseStrength === nextProps.pulseStrength))  
-
-  }
-  );
-
-  const AnimatedRing = React.memo(AnimatedRings)
-  // const AnimatedRing = React.memo(AnimatedRings,
-  //   (prevProps, nextProps) => {
-  //     // console.log("prev top: " + prevProps.pulseStrength + " post top: " + nextProps.pulseStrength)
-  //     // console.log("should not rerender top circle: " + (prevProps.pulseStrength === nextProps.pulseStrength))  
-  //     prevProps.pulseStrength == nextProps.pulseStrength
-  //   }
-  //   );
+const AnimatedRing = React.memo(AnimatedRings)
 
 export default function SeekScreen() {
   const {cacheMetadata, setCacheMetadata} = useContext(CacheMetadataContext);
@@ -113,33 +51,16 @@ export default function SeekScreen() {
   //sets pulse duration, 1 is strongest, 20 is weakest
   const [pulseStrength, setPulseStrength] = useState(20);
   PulseRateContextValue = {pulseStrength, setPulseStrength};
-  const pulseStrengthChangeCallback = useCallback(() => setPulseStrength(pulseStrength),[pulseStrength]);
 
 
-  // Provider context
-  // const providers = useContext(Web3ProviderContext);
 
-  
-
-  // const Ring = React.memo(
-  //   RingUnMemoed, 
-  //   (prevProps, nextProps) => prevProps.delay === nextProps.delay
-  // );
   useEffect(() => {
   for(i = 0; i < 10; i++) {
-    // setTimeout(() => {
-    //   console.log("DELAYED")
-    //   setDistancetoNearestItem(Math.random() * 100 + 100)
-    // }, 2000)
     const interval1 = setInterval( async () => {
-      // console.log("DELAYED")
-      // setDistancetoNearestItem(Math.random() + 200)
       setPulseStrength(Math.random() * 20)
     }, 10000);
     const interval = setInterval( async () => {
-      // console.log("DELAYED")
       setDistancetoNearestItem(Math.random() + 200)
-      // setPulseStrength(Math.random() * 20)
     }, 1000);
   }
   }, [])
@@ -297,33 +218,8 @@ export default function SeekScreen() {
               {' '}
               {'Pulse Strength: \n' + pulseStrength}{' '}
             </Text>
-            {/* <PulseRateContext.Provider value={PulseRateContextValue}> */}
-
-                {/* <AnimatedRing pulseStrength={pulseStrengthChangeCallback}></AnimatedRing> */}
                 <AnimatedRing pulseStrength={pulseStrength}></AnimatedRing>
-            {/* </PulseRateContext.Provider> */}
-            {/* <PulseRateContext.Provider value={PulseRateContextValue}>
-
-                <AnimatedRings ></AnimatedRings>
-            </PulseRateContext.Provider> */}
-            {/* <PulseRateContext.Provider value={PulseRateContextValue}></PulseRateContext.Provider> */}
-            <View
-              style={{
-                flex: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-              }}> 
-
-              <Ring pulseStrength={pulseStrength} duration={1000 * pulseStrength} delay={0} />
-              <Ring pulseStrength={pulseStrength} duration={1000 * pulseStrength} delay={500 * pulseStrength} />
-              <Ring pulseStrength={pulseStrength} duration={1000 * pulseStrength} delay={250 * pulseStrength} />
-              <Ring pulseStrength={pulseStrength} duration={1000 * pulseStrength} delay={750 * pulseStrength} />
-
-
-            </View>
-            {/* </PulseRateContext.Provider> */}
-
+        
             <Text style={globalStyles.titleText}>
               {' '}
               {'Distance to nearest item: \n' + distanceToNearestItem.toFixed(2) + ' Meters'}{' '}
