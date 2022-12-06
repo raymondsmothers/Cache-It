@@ -35,9 +35,9 @@ contract Geocache is ICreatorExtensionTokenURI, AdminControl {
         string originStory;
     }
 
-    event GeocacheCreated(address creator, string name, uint256 id);
+    event GeocacheCreated(address indexed creator, string indexed name, uint256 id);
     event GeocacheItemMinted(
-        address receiver,
+        address indexed receiver,
         uint256 geocacheIndex,
         uint256 itemIndex
     );

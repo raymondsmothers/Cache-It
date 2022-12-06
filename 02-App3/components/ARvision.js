@@ -23,7 +23,7 @@ const globalStyles = require("../styles");
 export const MintingContext = React.createContext({});
 
 const ARVisionScene = (props) => {
-  // const { hasMintedItem, setHasTriggeredTrivia } = useContext(MintingContext);
+  const { hasMintedItem, setHasTriggeredTrivia } = useContext(MintingContext);
 
   const convertGeoToCartesian = (lon, lat) => {
     const R = 6371; // Approximate radius of the earth in kilometers

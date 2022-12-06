@@ -804,23 +804,23 @@ export interface Geocache extends BaseContract {
     ): AdminRevokedEventFilter;
 
     "GeocacheCreated(address,string,uint256)"(
-      creator?: null,
-      name?: null,
+      creator?: PromiseOrValue<string> | null,
+      name?: PromiseOrValue<string> | null,
       id?: null
     ): GeocacheCreatedEventFilter;
     GeocacheCreated(
-      creator?: null,
-      name?: null,
+      creator?: PromiseOrValue<string> | null,
+      name?: PromiseOrValue<string> | null,
       id?: null
     ): GeocacheCreatedEventFilter;
 
     "GeocacheItemMinted(address,uint256,uint256)"(
-      receiver?: null,
+      receiver?: PromiseOrValue<string> | null,
       geocacheIndex?: null,
       itemIndex?: null
     ): GeocacheItemMintedEventFilter;
     GeocacheItemMinted(
-      receiver?: null,
+      receiver?: PromiseOrValue<string> | null,
       geocacheIndex?: null,
       itemIndex?: null
     ): GeocacheItemMintedEventFilter;

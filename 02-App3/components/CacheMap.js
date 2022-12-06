@@ -64,13 +64,13 @@ export default function CacheMap() {
         {duration: 2000},
       );
     }
-  }, [currentPosition]);
+  }, []);
 
   useEffect(() => {
     // console.log("epicenter: " + cacheMetadata?.epicenterLat + " \nmycenter: " + currentPosition.latitude)
     
     if (cacheMetadata?.epicenterLat != undefined && cacheMetadata?.epicenterLong != undefined && !isNaN(cacheMetadata?.epicenterLat) && !isNaN(cacheMetadata?.epicenterLong) ) {
-      console.log(cacheMetadata.radius)
+      // console.log(cacheMetadata.radius)
       mapRef.current.animateToRegion({
             latitude: cacheMetadata?.epicenterLat,
             longitude: cacheMetadata?.epicenterLong,

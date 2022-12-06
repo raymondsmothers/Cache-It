@@ -214,6 +214,7 @@ export default function TriviaModal({mintItemInGeocache, modalVisible, setModalV
                 }
                 <Pressable
                   style={[styles.button, {backgroundColor: "green"}]}
+                  disabled={isGeneratingTrivia}
                   onPress={() => {
                     generateTrivia()
                     // resetParentState()

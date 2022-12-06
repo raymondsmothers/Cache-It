@@ -37,7 +37,9 @@ import { useRoute } from "@react-navigation/native";
 // Web3 Imports
 // Pull in the shims (BEFORE importing ethers)
 import "@ethersproject/shims";
-// Import the ethers library
+const {
+  hexZeroPad,
+} = require("@ethersproject/bytes");// Import the ethers library
 import { ethers } from "ethers";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 //OPENAI
@@ -54,7 +56,7 @@ import axios from "axios";
 
 import {GOERLI_INFURA_KEY} from '@env';
 import PleaseConnect from './PleaseConnect';
-
+import { utils } from 'ethers';
 // connect to the default API address http://localhost:5001
 const IPFS = require("ipfs-mini");
 
@@ -93,7 +95,22 @@ export default function NewCacheForm({ navigation }) {
 
   useEffect(() => {
     //TODO this calls multiple times and breaks sometimes.
-    GeocacheContract.on('GeocacheCreated', geocacheCreatedCallback);
+    // List all token transfers  *to*  myAddress:
+    // const filter = {
+    //   address: GeocacheContract.address,
+    //   topics: [
+    //     // GeocacheCreated(msg.sender, _name, numGeocaches)
+    //       utils.id("GeocacheCreated(msg.sender, _name, numGeocaches)"),
+    //       // connector.accounts[0],
+    //       // hexZeroPad(connector?.accounts[0], 32),
+    //       null,
+    //       name,
+    //       null
+    //   ]
+    // };
+    const filter = GeocacheContract.filters.GeocacheCreated(connector.accounts[0])
+    GeocacheContract.on(filter, geocacheCreatedCallback);
+    // GeocacheContract.on('GeocacheCreated', geocacheCreatedCallback);
   });
 
   const getGeocacheMetadata = async (id) => {
@@ -206,7 +223,7 @@ export default function NewCacheForm({ navigation }) {
             " origin story for a mysterious hidden item.",
           // 'Write a mysterious, origin story for a geocache item.',
           temperature: 0.9,
-          max_tokens: 1250,
+          max_tokens: 1000,
           top_p: 1,
           frequency_penalty: 1,
           presence_penalty: 1,

@@ -39,7 +39,7 @@ export default function MessageModal({title, transactionHash, hasDeployedGeocach
               )}
               {isProgress && (
                 // <br>
-                <ActivityIndicator></ActivityIndicator>
+                <ActivityIndicator style={global.primaryColor}></ActivityIndicator>
                 // </br>
               )}
   

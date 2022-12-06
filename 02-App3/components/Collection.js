@@ -1,4 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
+
+import PleaseConnect from './PleaseConnect';
 import {
   RecyclerViewBackedScrollViewComponent,
   Text,
@@ -12,7 +14,7 @@ import {
 } from "react-native";
 import Grid from "react-native-grid-component";
 import { Web3ProviderContext, GeocacheContractContext } from "../App";
-
+import "../global";
 import "@ethersproject/shims";
 // // Import the ethers library
 import { ethers } from "ethers";
@@ -36,7 +38,7 @@ export default function Collection() {
   useEffect(() => {
     async function fetchData() {
       if (connector.accounts) {
-        console.log("Getting for wallet " + connector.accounts[0]);
+        // console.log("Getting for wallet " + connector.accounts[0]);
         const res = await axios.get(
           `https://testnets-api.opensea.io/api/v1/assets?asset_contract_address=${Geocache1155}&owner=${connector.accounts[0]}`
         );
@@ -76,7 +78,7 @@ export default function Collection() {
   const renderItem = (data, i) => {
     return (
       <TouchableOpacity
-        style={{ width: "50%", alignItems: "center" }}
+        style={{ width: "50%", alignItems: "center"}}
         onPress={() => renderDetailedMetadataPg(data)}
       >
         <View style={styles.container} key={i}>
@@ -86,7 +88,7 @@ export default function Collection() {
               uri: data.image,
             }}
           />
-          <Text style={styles.viewText}>{data.name}</Text>
+          <Text style={globalStyles.centerText}>{data.name}</Text>
           {/* <Text style={styles.viewText}>Location Found: </Text>
           <Text>{data.location_found}</Text> */}
         </View>
@@ -106,7 +108,7 @@ export default function Collection() {
   };
 
   return connector.connected ? (
-    <SafeAreaView>
+    <SafeAreaView style={{ backgroundColor: global.cream, height: "100%"}}>
       <ScrollView>
         <View style={styles.container}>
           <Text style={globalStyles.titleText}>
@@ -147,7 +149,7 @@ export default function Collection() {
           {!geocacheData && (
             <Text style={globalStyles.titleText}>
               {"\n"}Loading{"\n"}
-              <ActivityIndicator></ActivityIndicator>
+              <ActivityIndicator color={global.primaryColor}></ActivityIndicator>
             </Text>
           )}
         </View>
@@ -155,9 +157,9 @@ export default function Collection() {
     </SafeAreaView>
   ) : (
     <SafeAreaView>
-      <Text style={globalStyles.titleText}>
-        Please connect your wallet to view your geocache items.
-      </Text>
+      <View style={styles.container}>
+        <PleaseConnect msg={" view your collection. "}></PleaseConnect>
+      </View>
     </SafeAreaView>
   );
 }
@@ -170,6 +172,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   container: {
+    backgroundColor: global.cream,
+    height: "100%",
     display: "flex",
     justifyContent: "center",
     padding: 10,

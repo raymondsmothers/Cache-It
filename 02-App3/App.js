@@ -91,8 +91,8 @@ function HomeTab() {
             <View style={styles.rowContainer}>
               <ConnectWalletButton/>
               {/* TODO: Cheating for now, go back and fix */}
-              <Text>  </Text>
-              <HowToPlayModal/>
+              {/* <Text>  </Text>
+              <HowToPlayModal/> */}
             </View>,
           tabBarIcon: ({focused, color}) => <Icon name="map" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
@@ -109,8 +109,8 @@ function HomeTab() {
             <View style={styles.rowContainer}>
               <ConnectWalletButton/>
               {/* TODO: Cheating for now, go back and fix */}
-              <Text>  </Text>
-              <HowToPlayModal/>
+              {/* <Text>  </Text>
+              <HowToPlayModal/> */}
             </View>,
           tabBarIcon: ({focused, color}) => <Icon name="eye" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
@@ -126,8 +126,8 @@ function HomeTab() {
             <View style={styles.rowContainer}>
               <ConnectWalletButton/>
               {/* TODO: Cheating for now, go back and fix */}
-              <Text>  </Text>
-              <HowToPlayModal/>
+              {/* <Text>  </Text>
+              <HowToPlayModal/> */}
             </View>,
           tabBarIcon: ({focused, color}) => <Icon name="plus" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
@@ -144,8 +144,8 @@ function HomeTab() {
             <View style={styles.rowContainer}>  
               <ConnectWalletButton/>
               {/* TODO: Cheating for now, go back and fix */}
-              <Text>  </Text>
-              <HowToPlayModal/>
+              {/* <Text>  </Text>
+              <HowToPlayModal/> */}
             </View>,
           tabBarIcon: ({focused, color}) => <Icon name="shopping-basket" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
@@ -157,7 +157,13 @@ function HomeTab() {
         name="Info"
         component={IntroductionPage}
         options={{
-          headerRight: () => <ConnectWalletButton />,
+          headerRight: () =>
+          <View style={styles.rowContainer}>  
+            <ConnectWalletButton/>
+            {/* TODO: Cheating for now, go back and fix */}
+            {/* <Text>  </Text>
+            <HowToPlayModal/> */}
+          </View>,
           tabBarIcon: ({focused, color}) => <Icon name="info" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
             return null;
