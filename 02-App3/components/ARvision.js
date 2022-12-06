@@ -38,7 +38,7 @@ const ARVisionScene = (props) => {
     return [x, y, z];
   };
 
-  const positionObject = () => {
+  function positionObject () {
     let objectPosition = [];
     let myPosition = convertGeoToCartesian(
       currentPosition.longitude,

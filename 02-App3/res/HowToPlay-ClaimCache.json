@@ -1,0 +1,15 @@
+{
+    "textSections": [
+        "Claim A Cache",
+        "As you search for a Geocache, the indicator on the Seek screen will speed up as you get closer to a cache.",
+        "Once you are within 10 meters of the object, your screen will transition to an AR view where you will be able to see the object itself. To collect the Cache and Mint your NFT reward, tap on the object.",
+        "Once you tap on the object, you will be prompted with a randomly generated question in order to claim the question",
+        "Once you answer correctly, a new NFT will be minted that you can view on the Collection tab.",
+        "Note: If you are the creator of the Cache you will be presented with an popup saying you cannot claim your own cache."
+    ],
+    "images": [
+        "../res/HowToPlay/ConnectWallet/connect_wallet.png",
+        "../res/HowToPlay/ConnectWallet/metamask_confirm_wallet_link.png",
+        "../res/HowToPlay/ConnectWallet/disconnect_wallet.png"
+    ]
+}
