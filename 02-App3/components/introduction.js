@@ -13,7 +13,7 @@ function HowToPlay() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>
-        {"Welcome to Cache-it, the newest geocaching experience that let's you collect metaverse items you find in the real world!"}
+        {"Welcome to Cache-it, the newest geocaching experience that let's you find digitable collectibles in the real world!"}
       </Text>
       <Text style={styles.text}>
         This app enables users to instantly create new Geocaches, attempt to search local Geocahces others have created, and claim items that you find in the Geocache. 
@@ -56,21 +56,23 @@ function HowToSearch() {
         {"Next, you probably want to search for items in Geocaches around you, right? "}
       </Text>      
       <Text style={styles.text}>
-        {"On the \"Cache Map\" tab, click the \"Select Cache\" button to see a list of all active Geocaches."}
+        {"On the Map tab, click the \"Select Cache\" button to see a list of all active Geocaches."}
       </Text>      
       <Text style={styles.text}>
-        {"Click any one of these Geocaches, and you will see it populated on your Cache Map, as a circular georegion, with a handful of random markers."}
+        {"Click any one of these Geocaches, and you will see it populated on your Cache Map, as a circular georegion. This georegion represents the search radius for the geocache."}
       </Text>      
       <Text style={styles.text}>
-        {"These markers represent hidden Geocache items! You are now ready to get serious"}
+        {"Move over to the Eye screen to begin your hunt. Here you can see some details of the Cache you are currently seeking, and your distance from the nearest item in the Geocache. " }
       </Text>      
       <Text style={styles.text}>
-        {"Move over to the \"Seek\" to begin your hunt. Here you can see some details of the Cache you are currently seeking, and your distance from the nearest item in the Geocache. " 
-          + "You can see a pulse indicator and pulse strength, to help you feel how far away you are. The stronger the pulse strength, the farther away you are."}
+        {"You can see a flashing pulse indicator to help you feel how far away you are. The slower the circles are pulsing, the farther away you are."}
       </Text>      
       <Text style={styles.text}>
-        {"Something special happens when you get within 10 meters of an item. Your trusty Augemented Reality Lens will open up, and you will be able to see an AR object that represents a hidden cache item! " 
-        + " Tap on the AR object to claim the item."}
+        {"Something special happens when you get within 10 meters of an item. Your trusty Augemented Reality (AR) Lens will open up, and you will be able to see an AR object that represents a hidden cache item! " 
+        + " Tap on the AR object when you see it."}
+      </Text>      
+      <Text style={styles.text}>
+        {"But the challenge isn't over yet. Once you tap an AR item, you will have to correctly answer a difficult, AI-generated trivia question to claim the item. Good luck! "}
       </Text>      
     </View>
     </ScrollView>
@@ -100,17 +102,17 @@ function HowToCreate() {
     <ScrollView style={{backgroundColor: global.cream}}>
     <View style={styles.container}>   
       <Text style={styles.text}>
-        {"Done searching? Time to create your own Geocache! Head over to the \"New Cache Form\" page. "}
+        {"Done searching? Time to create your own Geocache! Head over to the \"+\" page. "}
       </Text>      
       <Text style={styles.text}>
-        {"Here you decide on the radius of your Geocache, the number of items in your Geocache, and the name of your Geocache. " 
+        {"Here you decide on the radius of your Geocache, the number of items in your Geocache, the name of your Geocache and a single adjective to describe the Origin Story of your Geocache." 
         + " This will generate a Geocache with your desired number of items, randomly located within your desired radius from your current location."}
       </Text>      
       <Text style={styles.text}>
-        {"When you tap \"Submit\", we use a super cool AI engine to randomly generate an Origin Story for your cache, and a random image  based on that story. "}
+        {"When you tap \"Generate Geocache\", we use a super cool AI engine to randomly generate an Origin Story for your cache using the adjective you provided, and a randomly generated image based on that story. "}
       </Text>      
       <Text style={styles.text}>
-        {"When those generations are complete, we will send a transaction request to your wallet to create your Geocache on the Ethereum Blockchain. "}
+        {"When those generations are complete, we give you a chance to look over the Origin Story and Image. If everything looks good, you can click \"Submit Geocache\" to send a transaction request to your wallet to create your Geocache on the Ethereum Blockchain. "}
       </Text>      
       <Text style={styles.text}>
         {"Let this transaction complete, and then boom! You have officialy created your Geocache for everyone to search. "}

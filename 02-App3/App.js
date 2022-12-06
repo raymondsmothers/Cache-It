@@ -91,8 +91,8 @@ function HomeTab() {
             <View style={styles.rowContainer}>
               <ConnectWalletButton/>
               {/* TODO: Cheating for now, go back and fix */}
-              {/* <Text>  </Text>
-              <HowToPlayModal/> */}
+              <Text>  </Text>
+              <HowToPlayModal/>
             </View>,
           tabBarIcon: ({focused, color}) => <Icon name="map" size={20} color={focused ? global.secondaryColor : "gray"} />,
           tabBarLabel: () => {
